@@ -1,0 +1,176 @@
+import {effect, inject, Injectable, PLATFORM_ID, signal} from '@angular/core';
+import {Subject} from "rxjs";
+import {isPlatformBrowser} from "@angular/common";
+import {AppConfig} from './interfaces/app-config';
+import {LayoutState} from './interfaces/layout-state';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class LayoutService {
+
+  _config: AppConfig = {
+    ripple: false,
+    inputStyle: 'outlined',
+    menuMode: 'static',
+    colorScheme: 'light',
+    theme: 'indigo',
+    scale: 14,
+    menuTheme: 'colorScheme',
+  };
+
+  config = signal<AppConfig>(this._config);
+
+  state: LayoutState = {
+    staticMenuDesktopInactive: false,
+    overlayMenuActive: false,
+    profileSidebarVisible: false,
+    configSidebarVisible: false,
+    staticMenuMobileActive: false,
+    menuHoverActive: false,
+    sidebarActive: false,
+    anchored: false,
+  };
+
+  private configUpdate = new Subject<AppConfig>();
+
+  private overlayOpen = new Subject<any>();
+
+  configUpdate$ = this.configUpdate.asObservable();
+
+  overlayOpen$ = this.overlayOpen.asObservable();
+
+  private platformId = inject(PLATFORM_ID);
+
+  constructor() {
+    effect(() => {
+      const config = this.config();
+      if (this.updateStyle(config)) {
+        this.changeTheme();
+      }
+      this.changeScale(config.scale);
+      this.onConfigUpdate();
+    });
+  }
+
+  updateStyle(config: AppConfig) {
+    return (
+      config.theme !== this._config.theme ||
+      config.colorScheme !== this._config.colorScheme
+    );
+  }
+
+  onMenuToggle() {
+    if (this.isOverlay()) {
+      this.state.overlayMenuActive = !this.state.overlayMenuActive;
+
+      if (this.state.overlayMenuActive) {
+        this.overlayOpen.next(null);
+      }
+    }
+
+    if (this.isDesktop()) {
+      this.state.staticMenuDesktopInactive =
+        !this.state.staticMenuDesktopInactive;
+    } else {
+      this.state.staticMenuMobileActive =
+        !this.state.staticMenuMobileActive;
+
+      if (this.state.staticMenuMobileActive) {
+        this.overlayOpen.next(null);
+      }
+    }
+  }
+
+  onOverlaySubmenuOpen() {
+    this.overlayOpen.next(null);
+  }
+
+  showProfileSidebar() {
+    this.state.profileSidebarVisible = true;
+  }
+
+  showConfigSidebar() {
+    this.state.configSidebarVisible = true;
+  }
+
+  isOverlay() {
+    return this.config().menuMode === 'overlay';
+  }
+
+  isDesktop() {
+    return isPlatformBrowser(this.platformId) && window.innerWidth > 991;
+  }
+
+  isSlim() {
+    return this.config().menuMode === 'slim';
+  }
+
+  isSlimPlus() {
+    return this.config().menuMode === 'slim-plus';
+  }
+
+  isHorizontal() {
+    return this.config().menuMode === 'horizontal';
+  }
+
+  isMobile() {
+    return !this.isDesktop();
+  }
+
+  onConfigUpdate() {
+    this._config = {...this.config()};
+    this.configUpdate.next(this.config());
+  }
+
+  changeTheme() {
+    if (isPlatformBrowser(this.platformId)) {
+      const config = this.config();
+      const themeLink = document.getElementById('theme-link') as HTMLLinkElement;
+      if (!themeLink) return;
+
+      const themeLinkHref = themeLink.getAttribute('href')!;
+      const newHref = themeLinkHref
+        .split('/')
+        .map((el) =>
+          el == this._config.theme
+            ? config.theme
+            : el == `theme-${this._config.colorScheme}`
+              ? `theme-${config.colorScheme}`
+              : el
+        )
+        .join('/');
+
+      this.replaceThemeLink(newHref);
+    }
+  }
+
+  replaceThemeLink(href: string) {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+    const id = 'theme-link';
+    let themeLink = <HTMLLinkElement>document.getElementById(id);
+    const cloneLinkElement = <HTMLLinkElement>themeLink.cloneNode(true);
+
+    cloneLinkElement.setAttribute('href', href);
+    cloneLinkElement.setAttribute('id', id + '-clone');
+
+    themeLink.parentNode!.insertBefore(
+      cloneLinkElement,
+      themeLink.nextSibling
+    );
+    cloneLinkElement.addEventListener('load', () => {
+      themeLink.remove();
+      cloneLinkElement.setAttribute('id', id);
+    });
+  }
+
+  changeScale(value: number) {
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    document.documentElement.style.fontSize = `${value}px`;
+  }
+}

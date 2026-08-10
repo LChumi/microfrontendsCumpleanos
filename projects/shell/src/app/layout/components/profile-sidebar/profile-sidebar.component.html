@@ -1,0 +1,36 @@
+<p-sidebar [(visible)]="visible" position="right" [transitionOptions]="'.3s cubic-bezier(0, 0, 0.2, 1)'"
+           styleClass="layout-profile-sidebar w-full sm:w-25rem">
+  <div class="flex flex-column mx-auto md:mx-0">
+    <span class="mb-2 font-semibold">Bienvenido</span>
+    <span class="text-color-secondary font-medium mb-5">{{ nombre }}</span>
+
+    <ul class="list-none m-0 p-0">
+      <li>
+        <a
+          class="cursor-pointer flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150">
+                    <span>
+                        <i class="pi pi-user text-xl text-primary"></i>
+                    </span>
+          <div class="ml-3">
+            <span class="mb-2 font-semibold">{{ username }}</span>
+            <p class="text-color-secondary m-0"></p>
+          </div>
+        </a>
+      </li>
+      <li>
+        <a
+          class="cursor-pointer flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150"
+          (click)="signOut()">
+                    <span>
+                        <i class="pi pi-power-off text-xl text-primary"></i>
+                    </span>
+          <div class="ml-3">
+            <span class="mb-2 font-semibold">Cerrar Sesion</span>
+            <p class="text-color-secondary m-0">Salir de la aplicacion</p>
+          </div>
+        </a>
+      </li>
+    </ul>
+  </div>
+
+</p-sidebar>
