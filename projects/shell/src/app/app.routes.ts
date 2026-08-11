@@ -1,6 +1,7 @@
 import {Routes} from '@angular/router';
 import {LayoutComponent} from './layout/components/layout/layout.component';
 import {loadRemoteModule} from '@angular-architects/module-federation';
+import {authGuard} from './guards/auth.guard';
 
 export const routes: Routes = [
   {
@@ -18,6 +19,7 @@ export const routes: Routes = [
   {
     path: 'erp',
     component: LayoutComponent,
+    canActivate: [authGuard],
     children: [
       {
         path: 'contabilidad',
