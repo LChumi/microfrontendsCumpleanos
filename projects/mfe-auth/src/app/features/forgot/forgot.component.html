@@ -3,11 +3,11 @@
 
   <div class="w-full max-w-md">
     <!-- Logo -->
-    <div class="flex items-center justify-center gap-2 mb-8">
-      <img ngSrc="/images/logo_assist.webp" alt="" class="h-9 w-auto object-contain" height="91" width="130"/>
-      <div class="leading-tight">
-        <p class="font-[Manrope] font-bold text-[#4d4d4f] tracking-wide text-sm">ASSIST</p>
-        <p class="text-[9px] tracking-[0.2em] text-gray-400">SOFTWARE</p>
+    <div class="flex items-center justify-center gap-3 mb-7">
+      <img ngSrc="/images/logo_assist.webp" alt="" class="h-16 w-auto object-contain" height="91" width="130"/>
+      <div class="leading-none">
+        <span class="font-[Poppins] font-extrabold text-[#4d4d4f] tracking-wide text-2xl">ASSIST</span><br>
+        <span class="text-[10px] font-medium tracking-[0.22em] text-gray-400">SOFTWARE</span>
       </div>
     </div>
 
@@ -15,11 +15,11 @@
       <!-- Estado: formulario -->
       <div class="bg-white rounded-2xl border border-gray-100 shadow-xl shadow-gray-200/50 p-8 sm:p-10">
         <div class="flex flex-col items-center text-center">
-          <div class="flex items-center justify-center w-14 h-14 rounded-full bg-[#00acec] mb-5">
+          <div class="flex items-center justify-center w-14 h-14 rounded-full bg-[#00acec] mb-2">
             <i class="pi pi-lock text-white text-xl"></i>
           </div>
-          <h2 class="font-[Manrope] text-xl font-bold text-[#4d4d4f] mb-1.5">Recuperar contraseña</h2>
-          <p class="text-sm text-gray-500 mb-7">Ingresá tu nombre de usuario para restablecer tu contraseña</p>
+          <h2 class="font-[Poppins] text-xl font-bold text-[#4d4d4f] mb-1.5">Recuperar contraseña</h2>
+          <p class="text-sm text-gray-500 mb-4">Ingresá tu nombre de usuario para restablecer tu contraseña</p>
 
           <form [formGroup]="resendForm" (ngSubmit)="onSubmit()" novalidate class="w-full text-left">
             <label for="username" class="block text-sm font-medium text-[#4d4d4f] mb-1.5">Usuario</label>
@@ -83,7 +83,7 @@
           <div class="flex items-center justify-center w-14 h-14 rounded-full bg-emerald-500 mb-5">
             <i class="pi pi-check text-white text-xl"></i>
           </div>
-          <h2 class="font-[Manrope] text-xl font-bold text-[#4d4d4f] mb-1.5">Éxito</h2>
+          <h2 class="font-[Poppins] text-xl font-bold text-[#4d4d4f] mb-1.5">Éxito</h2>
           <p class="text-sm text-gray-500 mb-7">{{ serviceResponse.message }} Verificá tu correo.</p>
           <button
             type="button"
@@ -103,7 +103,7 @@
           <div class="flex items-center justify-center w-14 h-14 rounded-full bg-red-500 mb-5">
             <i class="pi pi-times text-white text-xl"></i>
           </div>
-          <h2 class="font-[Manrope] text-xl font-bold text-[#4d4d4f] mb-1.5">Error</h2>
+          <h2 class="font-[Poppins] text-xl font-bold text-[#4d4d4f] mb-1.5">Error</h2>
           <p class="text-sm text-gray-500 mb-7">{{ serviceResponse.message }} Revisá tus datos y probá nuevamente.</p>
           <button
             type="button"
