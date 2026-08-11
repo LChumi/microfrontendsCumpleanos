@@ -1,1 +1,120 @@
-<p>forgot works!</p>
+<div class="min-h-screen w-full flex items-center justify-center bg-gradient-to-b from-[#f0f9ff] to-white px-4 py-12">
+  <h1 class="sr-only">Recuperación de clave | Assist Web</h1>
+
+  <div class="w-full max-w-md">
+    <!-- Logo -->
+    <div class="flex items-center justify-center gap-2 mb-8">
+      <img ngSrc="/images/logo_assist.webp" alt="" class="h-9 w-auto object-contain" height="91" width="130"/>
+      <div class="leading-tight">
+        <p class="font-[Manrope] font-bold text-[#4d4d4f] tracking-wide text-sm">ASSIST</p>
+        <p class="text-[9px] tracking-[0.2em] text-gray-400">SOFTWARE</p>
+      </div>
+    </div>
+
+    @if (response) {
+      <!-- Estado: formulario -->
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-xl shadow-gray-200/50 p-8 sm:p-10">
+        <div class="flex flex-col items-center text-center">
+          <div class="flex items-center justify-center w-14 h-14 rounded-full bg-[#00acec] mb-5">
+            <i class="pi pi-lock text-white text-xl"></i>
+          </div>
+          <h2 class="font-[Manrope] text-xl font-bold text-[#4d4d4f] mb-1.5">Recuperar contraseña</h2>
+          <p class="text-sm text-gray-500 mb-7">Ingresá tu nombre de usuario para restablecer tu contraseña</p>
+
+          <form [formGroup]="resendForm" (ngSubmit)="onSubmit()" novalidate class="w-full text-left">
+            <label for="username" class="block text-sm font-medium text-[#4d4d4f] mb-1.5">Usuario</label>
+            <div class="relative mb-1.5">
+              <i class="pi pi-user absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+              <input
+                id="username"
+                type="text"
+                formControlName="usuario"
+                autocomplete="off"
+                placeholder="Nombre de usuario"
+                class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 text-sm text-[#4d4d4f]
+                       placeholder:text-gray-400 outline-none transition
+                       focus:border-[#00acec] focus:ring-4 focus:ring-[#00acec]/15"
+              />
+            </div>
+            @if (resendForm.get('usuario')?.invalid && (resendForm.get('usuario')?.touched || resendForm.get('usuario')?.dirty)) {
+              <p class="text-red-500 text-xs mb-4">El nombre de usuario es requerido</p>
+            } @else {
+              <div class="mb-4"></div>
+            }
+
+            <div class="flex gap-3 mt-2">
+              <button
+                type="button"
+                [routerLink]="['/auth']"
+                class="flex-1 py-2.5 rounded-lg font-semibold text-sm text-[#4d4d4f]
+                       border border-gray-200 hover:bg-gray-50 transition
+                       flex items-center justify-center gap-2"
+              >
+                <i class="pi pi-times text-xs"></i>
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                [disabled]="loading"
+                class="flex-1 py-2.5 rounded-lg font-semibold text-sm text-white
+                       bg-[#00acec] hover:bg-[#0090c9] active:bg-[#00739e]
+                       disabled:opacity-60 disabled:cursor-not-allowed
+                       transition flex items-center justify-center gap-2"
+              >
+                @if (loading) {
+                  <svg class="animate-spin h-4 w-4" viewBox="0 0 24 24" fill="none">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"/>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v4a4 4 0 00-4 4H4z"/>
+                  </svg>
+                } @else {
+                  <i class="pi pi-send text-xs"></i>
+                }
+                Enviar
+              </button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+    } @else if (serviceResponse.success) {
+      <!-- Estado: éxito -->
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-xl shadow-gray-200/50 p-8 sm:p-10">
+        <div class="flex flex-col items-center text-center">
+          <div class="flex items-center justify-center w-14 h-14 rounded-full bg-emerald-500 mb-5">
+            <i class="pi pi-check text-white text-xl"></i>
+          </div>
+          <h2 class="font-[Manrope] text-xl font-bold text-[#4d4d4f] mb-1.5">Éxito</h2>
+          <p class="text-sm text-gray-500 mb-7">{{ serviceResponse.message }} Verificá tu correo.</p>
+          <button
+            type="button"
+            [routerLink]="['/auth']"
+            class="w-full py-2.5 rounded-lg font-semibold text-sm text-[#4d4d4f]
+                   border border-gray-200 hover:bg-gray-50 transition"
+          >
+            Regresar
+          </button>
+        </div>
+      </div>
+
+    } @else {
+      <!-- Estado: error -->
+      <div class="bg-white rounded-2xl border border-gray-100 shadow-xl shadow-gray-200/50 p-8 sm:p-10">
+        <div class="flex flex-col items-center text-center">
+          <div class="flex items-center justify-center w-14 h-14 rounded-full bg-red-500 mb-5">
+            <i class="pi pi-times text-white text-xl"></i>
+          </div>
+          <h2 class="font-[Manrope] text-xl font-bold text-[#4d4d4f] mb-1.5">Error</h2>
+          <p class="text-sm text-gray-500 mb-7">{{ serviceResponse.message }} Revisá tus datos y probá nuevamente.</p>
+          <button
+            type="button"
+            [routerLink]="['/auth/login']"
+            class="w-full py-2.5 rounded-lg font-semibold text-sm text-[#4d4d4f]
+                   border border-gray-200 hover:bg-gray-50 transition"
+          >
+            Regresar
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</div>
