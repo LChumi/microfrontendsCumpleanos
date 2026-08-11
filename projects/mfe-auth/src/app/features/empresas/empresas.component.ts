@@ -1,5 +1,4 @@
 import {Component, inject} from '@angular/core';
-import {Router} from '@angular/router';
 import {getSessionItem, setSessionItem} from '../../../../../shell/src/app/core/utils/storage-utils';
 import {AccesoService} from '../../core/services/acceso.service';
 import {Empresa} from '../../core/models/empresa';
@@ -17,7 +16,6 @@ import {NgOptimizedImage} from '@angular/common';
 export class EmpresasComponent {
 
   private menuService = inject(AccesoService)
-  private router = inject(Router)
 
   listasEmpresa: Empresa[] = []
 
@@ -47,8 +45,9 @@ export class EmpresasComponent {
     }
   }
 
+  //navegar fuera del router del remote usando Location
   goToInicio() {
-    this.router.navigate(['/inicio', 'dashboard']).then(() => {})
+    window.location.href = '/erp/dashboard'
   }
 
 }
