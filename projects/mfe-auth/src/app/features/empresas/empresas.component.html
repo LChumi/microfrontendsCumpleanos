@@ -4,13 +4,13 @@
   <div class="w-full max-w-lg">
 
     <!-- Logo -->
-    <div class="flex items-center justify-center gap-3 mb-7">
+    <div class="flex items-center justify-center gap-3 mb-4">
       <img
         ngSrc="/images/logo_assist.webp"
         alt="Assist"
         width="130"
         height="91"
-        class="h-16 w-auto object-contain"
+        class="h-14 w-auto object-contain"
       />
 
       <div class="leading-none">
@@ -39,7 +39,7 @@
         </p>
 
         <!-- Empresas -->
-        <div class="w-full max-w-sm flex flex-col gap-2.5">
+        <div class="w-full max-w-md flex flex-col gap-2.5">
           @for (empresa of listasEmpresa; track $index) {
             <button
               type="button"
