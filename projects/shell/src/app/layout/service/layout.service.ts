@@ -35,9 +35,6 @@ export class LayoutService {
   private configUpdate = new Subject<AppConfig>();
 
   private overlayOpen = new Subject<any>();
-
-  configUpdate$ = this.configUpdate.asObservable();
-
   overlayOpen$ = this.overlayOpen.asObservable();
 
   private platformId = inject(PLATFORM_ID);

@@ -1,0 +1,36 @@
+// libs/styles/_variables.scss
+$gutter: 1rem;
+
+// Primary (Indigo — default)
+$primaryColor: #6366f1;
+$primaryLightColor: #c7d2fe;
+$primaryDarkColor: #4f46e5;
+$primaryDarkerColor: #4338ca;
+$primaryTextColor: #ffffff;
+$primary500: #6366f1;
+
+$highlightBg: #eef2ff;
+$highlightTextColor: $primaryDarkerColor;
+
+// Surfaces
+$surfaceGround: #f8f9fa;
+$surfaceCard: #ffffff;
+$surfaceBorder: #dee2e6;
+$surfaceHover: #e9ecef;
+
+// Text
+$text900: #111827;
+$text700: #374151;
+$text500: #6b7280;
+
+// Paleta completa de temas (para tu selector de colores)
+$themeColors: (
+  indigo: #6366F1,
+  blue: #3B82F6,
+  purple: #8B5CF6,
+  teal: #14B8A6,
+  cyan: #06b6d4,
+  green: #10b981,
+  orange: #f59e0b,
+  pink: #d946ef,
+);

@@ -1,1 +1,16 @@
 /* You can add global styles to this file, and also import other style files */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import 'variables';
+@import 'mixins';
+@import 'colors';
+
+/* Layout visual del tema comprado */
+@import "../public/layout/styles/layout/layout.scss";
+
+/* Estilos propios */
+@import "../public/styles/flags/flags.css";
+@import "../public/styles/badges.scss";
+@import "../public/styles/code.scss";

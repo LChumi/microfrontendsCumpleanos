@@ -32,12 +32,24 @@
 							}
 						],
 						"styles": [
-							"projects/shell/src/styles.scss"
+							"projects/shell/src/styles.scss",
+              "node_modules/primeng/resources/primeng.min.css",
+              "node_modules/primeflex/primeflex.css",
+              "node_modules/primeicons/primeicons.css",
+              "node_modules/quill/dist/quill.core.css",
+              "node_modules/quill/dist/quill.snow.css"
 						],
 						"scripts": [],
 						"main": "projects/shell/src/main.ts",
 						"extraWebpackConfig": "projects/shell/webpack.config.js",
-						"commonChunk": false
+						"commonChunk": false,
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "libs/styles",
+                "projects/shell/public/layout/styles/theme/theme-base",
+                "projects/shell/public/layout/styles/layout"
+              ]
+            }
 					},
 					"configurations": {
 						"production": {
@@ -143,12 +155,20 @@
 							}
 						],
 						"styles": [
-							"projects/mfe-auth/src/styles.scss"
+							"projects/mfe-auth/src/styles.scss",
+              "node_modules/primeng/resources/primeng.min.css",
+              "node_modules/primeflex/primeflex.css",
+              "node_modules/primeicons/primeicons.css"
 						],
 						"scripts": [],
 						"main": "projects/mfe-auth/src/main.ts",
 						"extraWebpackConfig": "projects/mfe-auth/webpack.config.js",
-						"commonChunk": false
+						"commonChunk": false,
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "libs/styles"
+              ]
+            }
 					},
 					"configurations": {
 						"production": {
@@ -170,7 +190,13 @@
 						"development": {
 							"optimization": false,
 							"extractLicenses": false,
-							"sourceMap": true
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "projects/mfe-auth/src/environments/environment.ts",
+                  "with": "projects/mfe-auth/src/environments/environment.development.ts"
+                }
+              ]
 						}
 					},
 					"defaultConfiguration": "production"

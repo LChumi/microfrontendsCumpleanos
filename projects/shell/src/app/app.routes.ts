@@ -22,7 +22,7 @@ export const routes: Routes = [
       {
         path: 'contabilidad',
         loadChildren: () =>
-          loadRemoteModule('mfe-erp-contabilidad', './routes').then(m => m.routes)
+          loadRemoteModule('mfe-auth', './routes').then(m => m.routes)
       }
     ]
   }
