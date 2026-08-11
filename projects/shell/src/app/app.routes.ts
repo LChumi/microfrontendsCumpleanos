@@ -27,5 +27,6 @@ export const routes: Routes = [
           loadRemoteModule('mfe-auth', './routes').then(m => m.routes)
       }
     ]
-  }
+  },
+  {path: '**', redirectTo: 'auth', pathMatch: "full"}
 ];
