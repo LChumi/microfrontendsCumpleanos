@@ -4,6 +4,9 @@ module.exports = {
     "./src/**/*.{html,ts}",
     "./projects/**/*.{html,ts}"
   ],
+  corePlugins: {
+    preflight: false,
+  },
   theme: {
     extend: {},
   },
