@@ -9,6 +9,7 @@ import {LayoutService} from '../../service/layout.service';
 import {BreadcrumbComponent} from '../breadcrumb/breadcrumb.component';
 import {ProfileSidebarComponent} from '../profile-sidebar/profile-sidebar.component';
 import {ConfigComponent} from '../../config/config.component';
+import {FavoriteComponent} from '../favorite/favorite.component';
 
 @Component({
   selector: 'app-layout',
@@ -20,7 +21,8 @@ import {ConfigComponent} from '../../config/config.component';
     RouterOutlet,
     NgClass,
     ProfileSidebarComponent,
-    ConfigComponent
+    ConfigComponent,
+    FavoriteComponent,
   ],
   templateUrl: './layout.component.html',
 })
