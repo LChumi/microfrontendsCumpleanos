@@ -33,23 +33,23 @@
 						],
 						"styles": [
 							"projects/shell/src/styles.scss",
-              "node_modules/primeng/resources/primeng.min.css",
-              "node_modules/primeflex/primeflex.css",
-              "node_modules/primeicons/primeicons.css",
-              "node_modules/quill/dist/quill.core.css",
-              "node_modules/quill/dist/quill.snow.css"
+							"node_modules/primeng/resources/primeng.min.css",
+							"node_modules/primeflex/primeflex.css",
+							"node_modules/primeicons/primeicons.css",
+							"node_modules/quill/dist/quill.core.css",
+							"node_modules/quill/dist/quill.snow.css"
 						],
 						"scripts": [],
 						"main": "projects/shell/src/main.ts",
 						"extraWebpackConfig": "projects/shell/webpack.config.js",
 						"commonChunk": false,
-            "stylePreprocessorOptions": {
-              "includePaths": [
-                "libs/styles",
-                "projects/shell/public/layout/styles/theme/theme-base",
-                "projects/shell/public/layout/styles/layout"
-              ]
-            }
+						"stylePreprocessorOptions": {
+							"includePaths": [
+								"libs/styles",
+								"projects/shell/public/layout/styles/theme/theme-base",
+								"projects/shell/public/layout/styles/layout"
+							]
+						}
 					},
 					"configurations": {
 						"production": {
@@ -156,19 +156,19 @@
 						],
 						"styles": [
 							"projects/mfe-auth/src/styles.scss",
-              "node_modules/primeng/resources/primeng.min.css",
-              "node_modules/primeflex/primeflex.css",
-              "node_modules/primeicons/primeicons.css"
+							"node_modules/primeng/resources/primeng.min.css",
+							"node_modules/primeflex/primeflex.css",
+							"node_modules/primeicons/primeicons.css"
 						],
 						"scripts": [],
 						"main": "projects/mfe-auth/src/main.ts",
 						"extraWebpackConfig": "projects/mfe-auth/webpack.config.js",
 						"commonChunk": false,
-            "stylePreprocessorOptions": {
-              "includePaths": [
-                "libs/styles"
-              ]
-            }
+						"stylePreprocessorOptions": {
+							"includePaths": [
+								"libs/styles"
+							]
+						}
 					},
 					"configurations": {
 						"production": {
@@ -190,13 +190,13 @@
 						"development": {
 							"optimization": false,
 							"extractLicenses": false,
-              "sourceMap": true,
-              "fileReplacements": [
-                {
-                  "replace": "projects/mfe-auth/src/environments/environment.ts",
-                  "with": "projects/mfe-auth/src/environments/environment.development.ts"
-                }
-              ]
+							"sourceMap": true,
+							"fileReplacements": [
+								{
+									"replace": "projects/mfe-auth/src/environments/environment.ts",
+									"with": "projects/mfe-auth/src/environments/environment.development.ts"
+								}
+							]
 						}
 					},
 					"defaultConfiguration": "production"
@@ -244,101 +244,111 @@
 					}
 				}
 			}
-    },
-    "mfe-contabilidad": {
-      "projectType": "application",
-      "schematics": {
-        "@schematics/angular:component": {
-          "style": "scss"
-        }
-      },
-      "root": "projects/mfe-contabilidad",
-      "sourceRoot": "projects/mfe-contabilidad/src",
-      "prefix": "app",
-      "architect": {
-        "build": {
-          "builder": "@angular-devkit/build-angular:application",
-          "options": {
-            "outputPath": "dist/mfe-contabilidad",
-            "index": "projects/mfe-contabilidad/src/index.html",
-            "browser": "projects/mfe-contabilidad/src/main.ts",
-            "polyfills": [
-              "zone.js"
-            ],
-            "tsConfig": "projects/mfe-contabilidad/tsconfig.app.json",
-            "inlineStyleLanguage": "scss",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "projects/mfe-contabilidad/public"
-              }
-            ],
-            "styles": [
-              "projects/mfe-contabilidad/src/styles.scss"
-            ],
-            "scripts": []
-          },
-          "configurations": {
-            "production": {
-              "budgets": [
-                {
-                  "type": "initial",
-                  "maximumWarning": "500kB",
-                  "maximumError": "1MB"
-                },
-                {
-                  "type": "anyComponentStyle",
-                  "maximumWarning": "2kB",
-                  "maximumError": "4kB"
-                }
-              ],
-              "outputHashing": "all"
-            },
-            "development": {
-              "optimization": false,
-              "extractLicenses": false,
-              "sourceMap": true
-            }
-          },
-          "defaultConfiguration": "production"
-        },
-        "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
-          "configurations": {
-            "production": {
-              "buildTarget": "mfe-contabilidad:build:production"
-            },
-            "development": {
-              "buildTarget": "mfe-contabilidad:build:development"
-            }
-          },
-          "defaultConfiguration": "development"
-        },
-        "extract-i18n": {
-          "builder": "@angular-devkit/build-angular:extract-i18n"
-        },
-        "test": {
-          "builder": "@angular-devkit/build-angular:karma",
-          "options": {
-            "polyfills": [
-              "zone.js",
-              "zone.js/testing"
-            ],
-            "tsConfig": "projects/mfe-contabilidad/tsconfig.spec.json",
-            "inlineStyleLanguage": "scss",
-            "assets": [
-              {
-                "glob": "**/*",
-                "input": "projects/mfe-contabilidad/public"
-              }
-            ],
-            "styles": [
-              "projects/mfe-contabilidad/src/styles.scss"
-            ],
-            "scripts": []
-          }
-        }
-      }
-    }
+		},
+		"mfe-contabilidad": {
+			"projectType": "application",
+			"schematics": {
+				"@schematics/angular:component": {
+					"style": "scss"
+				}
+			},
+			"root": "projects/mfe-contabilidad",
+			"sourceRoot": "projects/mfe-contabilidad/src",
+			"prefix": "app",
+			"architect": {
+				"build": {
+					"builder": "ngx-build-plus:browser",
+					"options": {
+						"outputPath": "dist/mfe-contabilidad",
+						"index": "projects/mfe-contabilidad/src/index.html",
+						"polyfills": [
+							"zone.js"
+						],
+						"tsConfig": "projects/mfe-contabilidad/tsconfig.app.json",
+						"inlineStyleLanguage": "scss",
+						"assets": [
+							{
+								"glob": "**/*",
+								"input": "projects/mfe-contabilidad/public",
+								"output": "."
+							}
+						],
+						"styles": [
+							"projects/mfe-contabilidad/src/styles.scss"
+						],
+						"scripts": [],
+						"main": "projects/mfe-contabilidad/src/main.ts",
+						"extraWebpackConfig": "projects/mfe-contabilidad/webpack.config.js",
+						"commonChunk": false
+					},
+					"configurations": {
+						"production": {
+							"budgets": [
+								{
+									"type": "initial",
+									"maximumWarning": "500kB",
+									"maximumError": "1MB"
+								},
+								{
+									"type": "anyComponentStyle",
+									"maximumWarning": "2kB",
+									"maximumError": "4kB"
+								}
+							],
+							"outputHashing": "all",
+							"extraWebpackConfig": "projects/mfe-contabilidad/webpack.prod.config.js"
+						},
+						"development": {
+							"optimization": false,
+							"extractLicenses": false,
+							"sourceMap": true
+						}
+					},
+					"defaultConfiguration": "production"
+				},
+				"serve": {
+					"builder": "ngx-build-plus:dev-server",
+					"configurations": {
+						"production": {
+							"buildTarget": "mfe-contabilidad:build:production",
+							"extraWebpackConfig": "projects/mfe-contabilidad/webpack.prod.config.js"
+						},
+						"development": {
+							"buildTarget": "mfe-contabilidad:build:development"
+						}
+					},
+					"defaultConfiguration": "development",
+					"options": {
+						"port": 4202,
+						"publicHost": "http://localhost:4202",
+						"extraWebpackConfig": "projects/mfe-contabilidad/webpack.config.js"
+					}
+				},
+				"extract-i18n": {
+					"builder": "@angular-devkit/build-angular:extract-i18n"
+				},
+				"test": {
+					"builder": "@angular-devkit/build-angular:karma",
+					"options": {
+						"polyfills": [
+							"zone.js",
+							"zone.js/testing"
+						],
+						"tsConfig": "projects/mfe-contabilidad/tsconfig.spec.json",
+						"inlineStyleLanguage": "scss",
+						"assets": [
+							{
+								"glob": "**/*",
+								"input": "projects/mfe-contabilidad/public"
+							}
+						],
+						"styles": [
+							"projects/mfe-contabilidad/src/styles.scss"
+						],
+						"scripts": []
+					}
+				}
+			}
+		}
 	}
 }
