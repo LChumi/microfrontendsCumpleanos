@@ -1,8 +1,8 @@
 import {Component, inject} from '@angular/core';
-import {getSessionItem, setSessionItem} from '../../../../../shell/src/app/core/utils/storage-utils';
 import {AccesoService} from '../../core/services/acceso.service';
 import {Empresa} from '../../core/models/empresa';
 import {NgOptimizedImage} from '@angular/common';
+import {getSessionItem, setSessionItem} from '../../core/utils/storage.utils';
 
 @Component({
   selector: 'app-empresa.ts',

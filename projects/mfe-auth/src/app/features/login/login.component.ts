@@ -2,13 +2,13 @@ import {Component, inject, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Router, RouterLink} from '@angular/router';
 import {MessageService} from 'primeng/api';
-import {getSessionItem, setSessionItem} from '../../../../../shell/src/app/core/utils/storage-utils';
 import {ErrorResponse} from '../../core/error/error-response';
 import {AuthService} from '../../core/services/auth.service';
 import {AuthenticationRequest} from '../../core/models/autentication-resquest';
 import {CheckboxModule} from 'primeng/checkbox';
 import {InputTextModule} from 'primeng/inputtext';
 import {NgOptimizedImage} from '@angular/common';
+import {getSessionItem, setSessionItem} from '../../core/utils/storage.utils';
 
 @Component({
   selector: 'app-login',
