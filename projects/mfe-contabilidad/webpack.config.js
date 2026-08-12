@@ -4,8 +4,10 @@ module.exports = withModuleFederationPlugin({
 
   name: 'mfe-contabilidad',
 
+  filename: 'remoteEntry.js',
+
   exposes: {
-    './Component': './projects/mfe-contabilidad/src/app/app.component.ts',
+    './routes': './projects/mfe-contabilidad/src/app/app.routes.ts',
   },
 
   shared: {
