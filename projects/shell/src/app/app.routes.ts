@@ -23,8 +23,9 @@ export const routes: Routes = [
     children: [
       {
         path: 'contabilidad',
+        data: {breadcrumb: 'Contabilidad'},
         loadChildren: () =>
-          loadRemoteModule('mfe-auth', './routes').then(m => m.routes)
+          loadRemoteModule('mfe-contabilidad', './routes').then(m => m.routes)
       }
     ]
   },
