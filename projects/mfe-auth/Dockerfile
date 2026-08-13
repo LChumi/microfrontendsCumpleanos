@@ -10,7 +10,7 @@ RUN npx ng build mfe-auth --configuration production
 
 FROM nginx:alpine
 
-COPY --from=build /app/dist/mfe-auth/browser /usr/share/nginx/html
+COPY --from=build /app/dist/mfe-auth /usr/share/nginx/html
 COPY projects/mfe-auth/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80

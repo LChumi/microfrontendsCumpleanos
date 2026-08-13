@@ -6,11 +6,11 @@ RUN npm ci
 
 COPY . .
 
-RUN npx ng build mfe-auth --configuration production
+RUN npx ng build mfe-contabilidad --configuration production
 
 FROM nginx:alpine
 
-COPY --from=build /app/dist/mfe-contabilidad/browser /usr/share/nginx/html
+COPY --from=build /app/dist/mfe-contabilidad /usr/share/nginx/html
 COPY projects/mfe-contabilidad/nginx.conf /etc/nginx/conf.d/default.conf
 
 EXPOSE 80
