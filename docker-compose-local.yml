@@ -1,0 +1,39 @@
+version: '3.8'
+
+services:
+  nginx2:
+    image: nginx:alpine
+    container_name: nginx2
+    ports:
+      - "8080:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+    depends_on:
+      - shell
+      - mfe-auth
+      - mfe-contabilidad
+    networks:
+      - microfrontends
+
+  # SHELL - SIN PORTS, solo red interna
+  shell:
+    image: ghcr.io/lchumi/mfe-shell:latest
+    container_name: shell
+    networks:
+      - microfrontends
+
+  mfe-auth:
+    image: ghcr.io/lchumi/mfe-auth:latest
+    container_name: mfe-auth
+    networks:
+      - microfrontends
+
+  mfe-contabilidad:
+    image: ghcr.io/lchumi/mfe-contabilidad:latest
+    container_name: mfe-contabilidad
+    networks:
+      - microfrontends
+
+networks:
+  microfrontends:
+    driver: bridge

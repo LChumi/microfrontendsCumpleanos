@@ -1,0 +1,4 @@
+{
+  "mfe-auth": "http://192.168.110.55:4201/remoteEntry.js",
+  "mfe-contabilidad": "http://192.168.110.55:4202/remoteEntry.js"
+}
