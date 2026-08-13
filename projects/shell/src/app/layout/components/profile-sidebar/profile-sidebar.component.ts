@@ -1,7 +1,6 @@
 import {Component, inject} from '@angular/core';
 import {SidebarModule} from "primeng/sidebar";
 import {BadgeModule} from "primeng/badge";
-import {Router} from "@angular/router";
 import {LayoutService} from '../../service/layout.service';
 import {clearSessionItems, getSessionItem} from '../../../core/utils/storage-utils';
 
@@ -19,7 +18,6 @@ export class ProfileSidebarComponent {
   nombre: any;
   username: any;
   private layoutService = inject(LayoutService)
-  private router = inject(Router);
 
   constructor() {
     this.nombre = getSessionItem('nombre');
@@ -37,6 +35,6 @@ export class ProfileSidebarComponent {
   signOut(): void {
     clearSessionItems();
     this.visible = false;
-    this.router.navigate(['/auth', 'login']).then(r => {});
+    window.location.href='/auth/login'
   }
 }
