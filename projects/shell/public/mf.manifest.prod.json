@@ -1,0 +1,4 @@
+{
+  "mfe-auth": "https://assist.cumpleanos.com.ec/auth/remoteEntry.js",
+  "mfe-contabilidad": "https://assist.cumpleanos.com.ec/erp/contabilidad/remoteEntry.js"
+}
