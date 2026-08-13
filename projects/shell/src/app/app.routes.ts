@@ -1,7 +1,7 @@
 import {Routes} from '@angular/router';
 import {LayoutComponent} from './layout/components/layout/layout.component';
-import {loadRemoteModule} from '@angular-architects/module-federation';
 import {authGuard} from './guards/auth.guard';
+import {loadRemoteModuleSafe} from './core/utils/load-remote-module-safe';
 
 export const routes: Routes = [
   {
@@ -14,7 +14,7 @@ export const routes: Routes = [
   {
     path: 'auth',
     loadChildren: () =>
-      loadRemoteModule('mfe-auth', './routes').then(m => m.routes)
+      loadRemoteModuleSafe('mfe-auth', './routes').then(m => m.routes)
   },
   {
     path: 'erp',
@@ -25,7 +25,7 @@ export const routes: Routes = [
         path: 'contabilidad',
         data: {breadcrumb: 'Contabilidad'},
         loadChildren: () =>
-          loadRemoteModule('mfe-contabilidad', './routes').then(m => m.routes)
+          loadRemoteModuleSafe('mfe-contabilidad', './routes').then(m => m.routes)
       }
     ]
   },
