@@ -273,15 +273,15 @@
 						],
 						"styles": [
 							"projects/mfe-contabilidad/src/styles.scss",
-              "node_modules/primeng/resources/primeng.min.css",
-              "node_modules/primeflex/primeflex.css",
-              "node_modules/primeicons/primeicons.css"
+							"node_modules/primeng/resources/primeng.min.css",
+							"node_modules/primeflex/primeflex.css",
+							"node_modules/primeicons/primeicons.css"
 						],
-            "stylePreprocessorOptions": {
-              "includePaths": [
-                "libs/styles"
-              ]
-            },
+						"stylePreprocessorOptions": {
+							"includePaths": [
+								"libs/styles"
+							]
+						},
 						"scripts": [],
 						"main": "projects/mfe-contabilidad/src/main.ts",
 						"extraWebpackConfig": "projects/mfe-contabilidad/webpack.config.js",
@@ -307,13 +307,13 @@
 						"development": {
 							"optimization": false,
 							"extractLicenses": false,
-              "sourceMap": true,
-              "fileReplacements": [
-                {
-                  "replace": "projects/mfe-contabilidad/src/environments/environment.ts",
-                  "with": "projects/mfe-contabilidad/src/environments/environment.development.ts"
-                }
-              ]
+							"sourceMap": true,
+							"fileReplacements": [
+								{
+									"replace": "projects/mfe-contabilidad/src/environments/environment.ts",
+									"with": "projects/mfe-contabilidad/src/environments/environment.development.ts"
+								}
+							]
 						}
 					},
 					"defaultConfiguration": "production"
@@ -356,6 +356,117 @@
 						],
 						"styles": [
 							"projects/mfe-contabilidad/src/styles.scss"
+						],
+						"scripts": []
+					}
+				}
+			}
+		},
+		"mfe-dashboard": {
+			"projectType": "application",
+			"schematics": {
+				"@schematics/angular:component": {
+					"style": "scss"
+				}
+			},
+			"root": "projects/mfe-dashboard",
+			"sourceRoot": "projects/mfe-dashboard/src",
+			"prefix": "app",
+			"architect": {
+				"build": {
+					"builder": "ngx-build-plus:browser",
+					"options": {
+						"outputPath": "dist/mfe-dashboard",
+						"index": "projects/mfe-dashboard/src/index.html",
+						"polyfills": [
+							"zone.js"
+						],
+						"tsConfig": "projects/mfe-dashboard/tsconfig.app.json",
+						"inlineStyleLanguage": "scss",
+						"assets": [
+							{
+								"glob": "**/*",
+								"input": "projects/mfe-dashboard/public",
+								"output": "."
+							}
+						],
+						"styles": [
+							"projects/mfe-dashboard/src/styles.scss"
+						],
+						"scripts": [],
+						"main": "projects/mfe-dashboard/src/main.ts",
+						"extraWebpackConfig": "projects/mfe-dashboard/webpack.config.js",
+						"commonChunk": false
+					},
+					"configurations": {
+						"production": {
+							"budgets": [
+								{
+									"type": "initial",
+									"maximumWarning": "500kB",
+									"maximumError": "1MB"
+								},
+								{
+									"type": "anyComponentStyle",
+									"maximumWarning": "2kB",
+									"maximumError": "4kB"
+								}
+							],
+							"outputHashing": "all",
+							"extraWebpackConfig": "projects/mfe-dashboard/webpack.prod.config.js"
+						},
+						"development": {
+							"optimization": false,
+							"extractLicenses": false,
+              "sourceMap": true,
+              "fileReplacements": [
+                {
+                  "replace": "projects/mfe-dashboard/src/environments/environment.ts",
+                  "with": "projects/mfe-dashboard/src/environments/environment.development.ts"
+                }
+              ]
+						}
+					},
+					"defaultConfiguration": "production"
+				},
+				"serve": {
+					"builder": "ngx-build-plus:dev-server",
+					"configurations": {
+						"production": {
+							"buildTarget": "mfe-dashboard:build:production",
+							"extraWebpackConfig": "projects/mfe-dashboard/webpack.prod.config.js"
+						},
+						"development": {
+							"buildTarget": "mfe-dashboard:build:development"
+						}
+					},
+					"defaultConfiguration": "development",
+					"options": {
+						"port": 4203,
+						"publicHost": "http://localhost:4203",
+						"extraWebpackConfig": "projects/mfe-dashboard/webpack.config.js"
+					}
+				},
+				"extract-i18n": {
+					"builder": "@angular-devkit/build-angular:extract-i18n"
+				},
+				"test": {
+					"builder": "@angular-devkit/build-angular:karma",
+					"options": {
+						"polyfills": [
+							"zone.js",
+							"zone.js/testing"
+						],
+						"tsConfig": "projects/mfe-dashboard/tsconfig.spec.json",
+						"inlineStyleLanguage": "scss",
+						"assets": [
+							{
+								"glob": "**/*",
+								"input": "projects/mfe-dashboard/public"
+							}
+						],
+						"styles": [
+							"projects/mfe-dashboard/src/styles.scss"
 						],
 						"scripts": []
 					}
