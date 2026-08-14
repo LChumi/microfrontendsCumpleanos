@@ -22,6 +22,11 @@ export const routes: Routes = [
     canActivate: [authGuard],
     children: [
       {
+        path: 'dashboard',
+        loadChildren: () =>
+          loadRemoteModuleSafe('mfe-dashboard', './routes').then(m => m.routes)
+      },
+      {
         path: 'contabilidad',
         data: {breadcrumb: 'Contabilidad'},
         loadChildren: () =>

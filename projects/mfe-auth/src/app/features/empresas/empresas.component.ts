@@ -20,11 +20,6 @@ export class EmpresasComponent {
   listasEmpresa: Empresa[] = []
 
   ngOnInit(): void {
-    /*this.seoHelper.setupPageSeo({
-      title: 'Seleccion Empresa | Assist Web',
-      description: 'Lista de empresa.ts asignadas al usuario en el sistema assist',
-      schemaTitle: 'ContentPage'
-    });*/
 
     const usrIdString = getSessionItem('usrId')
     if (usrIdString) {
