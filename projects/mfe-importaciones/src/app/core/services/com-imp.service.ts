@@ -9,7 +9,7 @@ import {ComImpV1} from '../dto/com-imp-v1';
 })
 export class ComImpService {
 
-  private readonly url = environment.apiUrl;
+  private readonly url = `${environment.apiUrl}/assist`;
   private http = inject(HttpClient)
 
   getImportacionPen(empresa : number): Observable<ComImpV1[]>{

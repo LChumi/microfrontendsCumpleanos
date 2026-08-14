@@ -66,7 +66,7 @@
     }
 
     <!-- Vista lista -->
-    @if (layout === 'list' && favoritos?.length) {
+    @if (layout === 'list' && favoritos.length) {
       <div class="flex flex-col divide-y divide-slate-100 border border-slate-100 rounded-xl overflow-hidden">
         @for (favorito of favoritos; track $index) {
           <div
@@ -88,7 +88,7 @@
     }
 
     <!-- Vista grid -->
-    @if (layout === 'grid' && favoritos?.length) {
+    @if (layout === 'grid' && favoritos.length) {
       <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
         @for (favorito of favoritos; track $index) {
           <div

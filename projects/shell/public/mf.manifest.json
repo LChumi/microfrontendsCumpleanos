@@ -1,5 +1,6 @@
 {
   "mfe-auth": "http://localhost:4201/remoteEntry.js",
   "mfe-contabilidad": "http://localhost:4202/remoteEntry.js",
-  "mfe-dashboard": "http://localhost:4203/remoteEntry.js"
+  "mfe-dashboard": "http://localhost:4203/remoteEntry.js",
+  "mfe-importaciones": "http://localhost:4204/remoteEntry.js"
 }
