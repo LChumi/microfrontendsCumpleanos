@@ -6,6 +6,7 @@ import {loadRemoteModuleSafe} from './core/utils/load-remote-module-safe';
 export const routes: Routes = [
   {
     path: '',
+    title: 'Pagina Inicio | Assist Web',
     loadComponent: () =>
       import('./home/home.component').then(m =>
         m.HomeComponent

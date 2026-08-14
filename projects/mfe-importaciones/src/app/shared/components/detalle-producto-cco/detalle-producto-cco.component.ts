@@ -1,21 +1,27 @@
 import {Component, inject, Input, OnInit} from '@angular/core';
-import {ComprobanteDetalleService} from '../../../../core/services/comprobante-detalle.service';
-import {CompraDetalleProductoDto} from '../../../../core/dto/compra-detalle-producto.dto';
-import {getSessionItem} from '../../../../core/utils/storage.utils';
-import {DfacturaDto} from '../../../../core/dto/dfactura.dto';
+import {DecimalPipe} from '@angular/common';
+import {PrimeTemplate} from 'primeng/api';
 import {ProgressSpinnerModule} from 'primeng/progressspinner';
 import {SkeletonModule} from 'primeng/skeleton';
 import {TableModule} from 'primeng/table';
-import {DecimalPipe} from '@angular/common';
+import {
+  ComprobanteDetalleService
+} from '../../../../../../mfe-contabilidad/src/app/core/services/comprobante-detalle.service';
+import {
+  CompraDetalleProductoDto
+} from '../../../../../../mfe-contabilidad/src/app/core/dto/compra-detalle-producto.dto';
+import {getSessionItem} from '../../../../../../mfe-contabilidad/src/app/core/utils/storage.utils';
+import {DfacturaDto} from '../../../../../../mfe-contabilidad/src/app/core/dto/dfactura.dto';
 
 @Component({
   selector: 'app-detalle-producto-cco',
   standalone: true,
   imports: [
+    DecimalPipe,
+    PrimeTemplate,
     ProgressSpinnerModule,
     SkeletonModule,
-    TableModule,
-    DecimalPipe
+    TableModule
   ],
   templateUrl: './detalle-producto-cco.component.html',
   styles: ``
