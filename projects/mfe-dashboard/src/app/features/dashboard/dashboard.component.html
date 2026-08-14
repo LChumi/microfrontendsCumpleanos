@@ -2,7 +2,14 @@
   <!-- Encabezado de bienvenida -->
   <div class="flex flex-col sm:flex-row items-center gap-4 mb-8">
     @if (imageUsr) {
-      <img [src]="imageUsr" class="w-16 h-16 rounded-full object-cover flex-shrink-0 ring-2 ring-primary-100" alt="profileUser">
+      <img [src]="imageUsr"
+           class="w-16 h-16 rounded-full object-cover flex-shrink-0 ring-2 ring-primary-100"
+           alt="profileUser">
+    } @else {
+      <!-- Avatar con iniciales -->
+      <div class="w-16 h-16 flex items-center justify-center rounded-full bg-primary-200 text-slate-800 font-bold text-xl ring-2 ring-primary-100">
+        {{ getInitials(nombre) }}
+      </div>
     }
     <div class="flex flex-col items-center sm:items-start">
       <h1 class="text-slate-800 font-bold text-2xl uppercase tracking-wide">

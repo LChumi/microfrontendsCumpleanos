@@ -77,4 +77,12 @@ export class DashboardComponent {
       }
     })
   }
+
+  getInitials(nombre: string): string {
+    if (!nombre) return '';
+    const partes = nombre.trim().split(' ');
+    const iniciales = partes.map(p => p.charAt(0).toUpperCase());
+    return iniciales.slice(0, 2).join(''); // Ej: Luis Chumi → LC
+  }
+
 }
