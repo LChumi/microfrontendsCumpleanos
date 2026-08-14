@@ -4,8 +4,10 @@ module.exports = withModuleFederationPlugin({
 
   name: 'mfe-inventarios',
 
+  filename: 'remoteEntry.js',
+
   exposes: {
-    './Component': './projects/mfe-inventarios/src/app/app.component.ts',
+    './routes': './projects/mfe-inventarios/src/app/app.routes.ts',
   },
 
   shared: {
