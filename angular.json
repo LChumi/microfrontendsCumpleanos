@@ -640,13 +640,13 @@
 						"development": {
 							"optimization": false,
 							"extractLicenses": false,
-              "sourceMap": true,
-              "fileReplacements": [
-                {
-                  "replace": "projects/mfe-inventarios/src/environments/environment.ts",
-                  "with": "projects/mfe-inventarios/src/environments/environment.development.ts"
-                }
-              ]
+							"sourceMap": true,
+							"fileReplacements": [
+								{
+									"replace": "projects/mfe-inventarios/src/environments/environment.ts",
+									"with": "projects/mfe-inventarios/src/environments/environment.development.ts"
+								}
+							]
 						}
 					},
 					"defaultConfiguration": "production"
@@ -689,6 +689,111 @@
 						],
 						"styles": [
 							"projects/mfe-inventarios/src/styles.scss"
+						],
+						"scripts": []
+					}
+				}
+			}
+		},
+		"mfe-system-administrador": {
+			"projectType": "application",
+			"schematics": {
+				"@schematics/angular:component": {
+					"style": "scss"
+				}
+			},
+			"root": "projects/mfe-system-administrador",
+			"sourceRoot": "projects/mfe-system-administrador/src",
+			"prefix": "app",
+			"architect": {
+				"build": {
+					"builder": "ngx-build-plus:browser",
+					"options": {
+						"outputPath": "dist/mfe-system-administrador",
+						"index": "projects/mfe-system-administrador/src/index.html",
+						"polyfills": [
+							"zone.js"
+						],
+						"tsConfig": "projects/mfe-system-administrador/tsconfig.app.json",
+						"inlineStyleLanguage": "scss",
+						"assets": [
+							{
+								"glob": "**/*",
+								"input": "projects/mfe-system-administrador/public",
+								"output": "."
+							}
+						],
+						"styles": [
+							"projects/mfe-system-administrador/src/styles.scss"
+						],
+						"scripts": [],
+						"main": "projects/mfe-system-administrador/src/main.ts",
+						"extraWebpackConfig": "projects/mfe-system-administrador/webpack.config.js",
+						"commonChunk": false
+					},
+					"configurations": {
+						"production": {
+							"budgets": [
+								{
+									"type": "initial",
+									"maximumWarning": "500kB",
+									"maximumError": "1MB"
+								},
+								{
+									"type": "anyComponentStyle",
+									"maximumWarning": "2kB",
+									"maximumError": "4kB"
+								}
+							],
+							"outputHashing": "all",
+							"extraWebpackConfig": "projects/mfe-system-administrador/webpack.prod.config.js"
+						},
+						"development": {
+							"optimization": false,
+							"extractLicenses": false,
+							"sourceMap": true
+						}
+					},
+					"defaultConfiguration": "production"
+				},
+				"serve": {
+					"builder": "ngx-build-plus:dev-server",
+					"configurations": {
+						"production": {
+							"buildTarget": "mfe-system-administrador:build:production",
+							"extraWebpackConfig": "projects/mfe-system-administrador/webpack.prod.config.js"
+						},
+						"development": {
+							"buildTarget": "mfe-system-administrador:build:development"
+						}
+					},
+					"defaultConfiguration": "development",
+					"options": {
+						"port": 4206,
+						"publicHost": "http://localhost:4206",
+						"extraWebpackConfig": "projects/mfe-system-administrador/webpack.config.js"
+					}
+				},
+				"extract-i18n": {
+					"builder": "@angular-devkit/build-angular:extract-i18n"
+				},
+				"test": {
+					"builder": "@angular-devkit/build-angular:karma",
+					"options": {
+						"polyfills": [
+							"zone.js",
+							"zone.js/testing"
+						],
+						"tsConfig": "projects/mfe-system-administrador/tsconfig.spec.json",
+						"inlineStyleLanguage": "scss",
+						"assets": [
+							{
+								"glob": "**/*",
+								"input": "projects/mfe-system-administrador/public"
+							}
+						],
+						"styles": [
+							"projects/mfe-system-administrador/src/styles.scss"
 						],
 						"scripts": []
 					}
