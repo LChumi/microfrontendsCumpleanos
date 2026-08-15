@@ -4,28 +4,28 @@
 
     <!-- Header -->
     <div
-      class="flex flex-column align-items-start md:flex-row md:align-items-center md:justify-content-between border-bottom-1 surface-border pb-5 min-w-max">
+      class="flex flex-col items-start md:flex-row md:items-center md:justify-between border-b border-[var(--surface-border)] pb-5 min-w-max">
       @if (pedido) {
-        <div class="flex flex-column">
+        <div class="flex flex-col">
           <svg width="48" height="50" viewBox="0 0 48 50" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path fill-rule="evenodd" clip-rule="evenodd"
                   d="M33.1548 9.65956L23.9913 4.86169L5.54723 14.5106L0.924465 12.0851L23.9913 0L37.801 7.23403L33.1548 9.65956ZM23.9931 19.3085L42.4255 9.65955L47.0717 12.0851L23.9931 24.1595L10.1952 16.9361L14.8297 14.5106L23.9931 19.3085ZM4.6345 25.8937L0 23.4681V37.9149L23.0669 50V45.1489L4.6345 35.4894V25.8937ZM18.4324 28.2658L0 18.6169V13.7658L23.0669 25.8403V40.2977L18.4324 37.8615V28.2658ZM38.7301 23.468V18.6169L24.9205 25.8403V49.9999L29.555 47.5743V28.2659L38.7301 23.468ZM43.3546 35.4892V16.1914L48.0008 13.7659V37.9148L34.1912 45.1488V40.2977L43.3546 35.4892Z"
                   fill="var(--primary-color)"/>
           </svg>
-          <div class="my-3 text-4xl font-bold text-900">Pedido {{ pedido.comprobante }}</div>
+          <div class="my-3 text-4xl font-bold text-gray-900">Pedido {{ pedido.comprobante }}</div>
           <span class="mb-2"
                 style="white-space:nowrap; overflow:hidden; text-overflow:ellipsis; display:block; max-width:250px;">{{ pedido.cliente }}</span>
           <span>{{ pedido.ciudad }}</span>
-          <span class="ml-3 text-sm text-500">Hoja: {{ pedido.hoja }}</span>
+          <span class="ml-3 text-sm text-gray-500">Hoja: {{ pedido.hoja }}</span>
         </div>
-        <div class="flex flex-column mt-5 md:mt-0">
+        <div class="flex flex-col mt-5 md:mt-0">
           <div class="text-2xl font-semibold text-left md:text-right mb-3">{{ pedido.bodSolicita || '' }}</div>
-          <div class="flex flex-column">
-            <div class="flex justify-content-between align-items-center mb-2">
+          <div class="flex flex-col">
+            <div class="flex justify-between items-center mb-2">
               <span class="font-semibold mr-6">FECHA PEDIDO:</span>
               <span>{{ pedido.fechaPedido | date:'mediumDate' }}</span>
             </div>
-            <div class="flex justify-content-between align-items-center">
+            <div class="flex justify-between items-center">
               <span class="font-semibold mr-6">RESPONSABLE</span>
               <span>{{ pedido.responsable }}</span>
             </div>
@@ -43,8 +43,8 @@
         styleClass="p-datatable-sm">
 
         <ng-template pTemplate="header">
-          <tr class="surface-100">
-            <th class="w-3rem text-center font-semibold">#</th>
+          <tr class="bg-[var(--surface-100)]">
+            <th class="w-12 text-center font-semibold">#</th>
             <th class="font-semibold">Producto</th>
             <th class="text-center font-semibold">CxB</th>
             <th class="text-center font-semibold">U. Unidad</th>
@@ -53,7 +53,7 @@
             <th class="text-center font-semibold">Stock</th>
             <th class="text-center font-semibold">Pedida</th>
             <th class="text-center font-semibold">Despachada</th>
-            <th class="text-center font-semibold w-8rem">Acciones</th>
+            <th class="text-center font-semibold w-32">Acciones</th>
           </tr>
         </ng-template>
 
@@ -63,22 +63,22 @@
 
           <tr>
             <td class="text-center">
-              <span class="text-500 font-medium">
+              <span class="text-gray-500 font-medium">
                   {{ producto.secuencia }}
               </span>
             </td>
 
             <td>
-              <div class="flex align-items-center gap-3">
+              <div class="flex items-center gap-3">
                 <p-image
                   [src]="getUrlImage(producto.proId)"
                   [preview]="true"
                   width="56"
-                  styleClass="border-round-lg overflow-hidden">
+                  styleClass="rounded-lg overflow-hidden">
                 </p-image>
-                <div class="flex flex-column gap-1">
-                  <span class="font-bold text-900 text-lg">{{ producto.proNombre }}</span>
-                  <span class="text-600 text-sm">{{ producto.proId }}·{{ producto.proId1 }}</span>
+                <div class="flex flex-col gap-1">
+                  <span class="font-bold text-gray-900 text-lg">{{ producto.proNombre }}</span>
+                  <span class="text-gray-600 text-sm">{{ producto.proId }}·{{ producto.proId1 }}</span>
                   @if (producto.observacion) {
                     <div>
                       <p-tag
@@ -121,7 +121,7 @@
                   buttonLayout="horizontal"
                   decrementButtonClass="p-button-secondary"
                   incrementButtonClass="p-button-secondary"
-                  inputStyleClass="text-center w-5rem"
+                  inputStyleClass="text-center w-20"
                   (onBlur)="agregarCantidad(producto)"
                   [min]="0">
                 </p-inputNumber>
@@ -129,7 +129,7 @@
             </td>
 
             <td>
-              <div class="flex justify-content-center gap-2">
+              <div class="flex justify-center gap-2">
                 @if (!producto.editando && producto.canapr > 0) {
                   <p-button
                     (click)="toggleEditar(producto)"
@@ -167,29 +167,29 @@
 
     </div>
 
-    <div class="md:hidden flex flex-column gap-4 mt-4">
+    <div class="md:hidden flex flex-col gap-4 mt-4">
 
       @for (producto of productos(); track $index) {
 
-        <div class="surface-card border-1 surface-border border-round-xl shadow-2 p-3">
+        <div class="bg-[var(--surface-card)] border border-[var(--surface-border)] rounded-xl shadow-md p-3">
 
           <!-- Header -->
-          <div class="flex gap-3 align-items-start">
+          <div class="flex gap-3 items-start">
 
             <p-image
               [src]="getUrlImage(producto.proId)"
               [preview]="true"
               width="72"
-              styleClass="border-round-lg overflow-hidden flex-shrink-0">
+              styleClass="rounded-lg overflow-hidden flex-shrink-0">
             </p-image>
 
-            <div class="flex flex-column flex-1 gap-2 min-w-0">
-              <div class="flex justify-content-between align-items-start gap-2">
+            <div class="flex flex-col flex-1 gap-2 min-w-0">
+              <div class="flex justify-between items-start gap-2">
                 <div class="flex-1 min-w-0">
-                  <div class="font-bold text-900 text-lg line-height-3">
+                  <div class="font-bold text-gray-900 text-lg leading-normal">
                     {{ producto.proNombre }}
                   </div>
-                  <div class="text-600 text-sm">
+                  <div class="text-gray-600 text-sm">
                     {{ producto.proId }} · {{ producto.proId1 }}
                   </div>
                 </div>
@@ -211,41 +211,41 @@
           </div>
           <p-divider></p-divider>
           <!-- Datos -->
-          <div class="grid text-sm">
-            <div class="col-6">
-              <div class="text-500 mb-2">CxB</div>
+          <div class="grid grid-cols-12 gap-2 text-sm">
+            <div class="col-span-6">
+              <div class="text-gray-500 mb-2">CxB</div>
               <div class="font-semibold">
                 {{ producto.cxb }}
               </div>
             </div>
-            <div class="col-6">
-              <div class="text-500 mb-2">Precio</div>
+            <div class="col-span-6">
+              <div class="text-gray-500 mb-2">Precio</div>
               <div class="font-bold text-primary">
                 {{ producto.proPrecio2 | currency }}
               </div>
             </div>
-            <div class="col-6">
-              <div class="text-500 mb-2">U. Unidad</div>
+            <div class="col-span-6">
+              <div class="text-gray-500 mb-2">U. Unidad</div>
               <div class="font-semibold">
                 {{ producto.ubiUni }}
               </div>
             </div>
-            <div class="col-6">
-              <div class="text-500 mb-2">U. Bulto</div>
+            <div class="col-span-6">
+              <div class="text-gray-500 mb-2">U. Bulto</div>
               <div class="font-semibold">
                 {{ producto.ubiBlt }}
               </div>
             </div>
 
-            <div class="col-6">
-              <div class="text-500 mb-2">Stock</div>
+            <div class="col-span-6">
+              <div class="text-gray-500 mb-2">Stock</div>
               <p-tag
                 [severity]="producto.stock > 0 ? 'success' : 'danger'"
                 [value]="producto.stock > 0 ? producto.stock + ' disp.' : 'Sin stock'">
               </p-tag>
             </div>
-            <div class="col-6">
-              <div class="text-500 mb-2">Pedida</div>
+            <div class="col-span-6">
+              <div class="text-gray-500 mb-2">Pedida</div>
               <div class="font-bold">
                 {{ producto.cdigitada }}
               </div>
@@ -254,8 +254,8 @@
 
           <p-divider></p-divider>
           <!-- Cantidad -->
-          <div class="flex flex-column gap-2">
-            <div class="text-500 text-sm">
+          <div class="flex flex-col gap-2">
+            <div class="text-gray-500 text-sm">
               Cantidad despachada
             </div>
             @if (producto.canapr && !producto.editando) {
@@ -267,7 +267,7 @@
                 buttonLayout="horizontal"
                 decrementButtonClass="p-button-secondary"
                 incrementButtonClass="p-button-secondary"
-                inputStyleClass="text-center w-5rem"
+                inputStyleClass="text-center w-20"
                 (onBlur)="agregarCantidad(producto)"
                 [min]="0">
               </p-inputNumber>
@@ -275,7 +275,7 @@
           </div>
           <p-divider></p-divider>
           <!-- Botones -->
-          <div class="flex justify-content-end gap-2">
+          <div class="flex justify-end gap-2">
             @if (!producto.editando && producto.canapr > 0) {
               <p-button
                 (click)="toggleEditar(producto)"
