@@ -38,6 +38,12 @@ export const routes: Routes = [
         data: {breadcrumb: 'Importaciones'},
         loadChildren: () =>
           loadRemoteModuleSafe('mfe-importaciones', './routes').then(m => m.routes)
+      },
+      {
+        path: 'inventarios',
+        data: {breadcrumb: 'Inventarios'},
+        loadChildren: () =>
+          loadRemoteModuleSafe('mfe-inventarios', './routes').then(m => m.routes)
       }
     ]
   },
