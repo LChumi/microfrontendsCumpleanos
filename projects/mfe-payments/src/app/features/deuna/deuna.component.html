@@ -1,0 +1,142 @@
+<div
+  class="flex min-h-screen w-full flex-col items-center justify-center bg-cover bg-center px-4"
+  style="background-image: url('images/background/fondoDeuna.webp');"
+>
+
+  @if (imageBase64) {
+
+    <!-- QR -->
+    <div class="mb-5 rounded-xl bg-white/50 p-5 shadow-lg backdrop-blur-sm">
+      <img
+        [ngSrc]="imageBase64"
+        alt="Código QR"
+        class="h-auto w-[450px] max-w-full rounded-lg object-contain"
+        fill/>
+    </div>
+
+    <!-- Progress -->
+    <div class="w-full max-w-[600px]">
+      <div class="h-2 w-full overflow-hidden rounded-full bg-slate-200">
+        <div
+          class="h-full rounded-full bg-blue-600 transition-all duration-500"
+          [style.width.%]="value"
+        ></div>
+      </div>
+    </div>
+
+  }
+
+</div>
+
+
+<!-- Dialog -->
+@if (showDialog) {
+
+  <div
+    class="fixed inset-0 z-[1000] flex items-center justify-center bg-black/50 p-4"
+    role="dialog"
+    aria-modal="true"
+  >
+
+    <div class="w-full max-w-lg rounded-xl bg-white shadow-2xl">
+
+      <!-- Header -->
+      <div
+        class="flex items-center gap-3 border-b border-slate-200 px-6 py-4"
+      >
+
+        @if (dialogType === 'success') {
+          <div
+            class="flex h-10 w-10 shrink-0 items-center justify-center
+                   rounded-full bg-green-100 text-lg font-bold text-green-600"
+          >
+            ✓
+          </div>
+        } @else {
+          <div
+            class="flex h-10 w-10 shrink-0 items-center justify-center
+                   rounded-full bg-amber-100 text-lg font-bold text-amber-600"
+          >
+            !
+          </div>
+        }
+
+        <h2 class="text-lg font-semibold text-slate-800">
+          {{ dialogTitle }}
+        </h2>
+
+      </div>
+
+      <!-- Content -->
+      <div class="px-6 py-5">
+        <p class="m-0 text-slate-600">
+          {{ dialogMessage }}
+        </p>
+      </div>
+
+      <!-- Footer -->
+      <div
+        class="flex justify-end border-t border-slate-200 px-6 py-4"
+      >
+        <button
+          type="button"
+          (click)="acceptDialog()"
+          class="rounded-lg bg-blue-600 px-5 py-2.5 text-sm font-medium
+                 text-white transition hover:bg-blue-700
+                 focus:outline-none focus:ring-2 focus:ring-blue-500
+                 focus:ring-offset-2"
+        >
+          Ok
+        </button>
+      </div>
+
+    </div>
+
+  </div>
+
+}
+
+
+<!-- Toast -->
+@if (showToast) {
+
+  <div
+    class="fixed right-5 top-5 z-[1100] w-full max-w-sm rounded-lg
+           border border-amber-200 bg-white p-4 shadow-xl"
+    role="alert"
+  >
+
+    <div class="flex gap-3">
+
+      <div
+        class="flex h-8 w-8 shrink-0 items-center justify-center
+               rounded-full bg-amber-100 font-bold text-amber-600"
+      >
+        !
+      </div>
+
+      <div class="min-w-0">
+        <p class="m-0 font-semibold text-slate-800">
+          {{ toastSummary }}
+        </p>
+
+        <p class="mt-1 mb-0 text-sm text-slate-500">
+          {{ toastDetail }}
+        </p>
+      </div>
+
+      <button
+        type="button"
+        (click)="showToast = false"
+        class="ml-auto h-6 w-6 shrink-0 text-lg text-slate-400
+               hover:text-slate-600"
+        aria-label="Cerrar"
+      >
+        ×
+      </button>
+
+    </div>
+
+  </div>
+
+}
