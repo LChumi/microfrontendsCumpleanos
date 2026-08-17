@@ -34,6 +34,36 @@ services:
     networks:
       - microfrontends
 
+  mfe-dashboard:
+    image: ghcr.io/lchumi/mfe-dashboard:latest
+    container_name: mfe-dashboard
+    networks:
+      - microfrontends
+
+  mfe-importaciones:
+    image: ghcr.io/lchumi/mfe-importaciones:latest
+    container_name: mfe-importaciones
+    networks:
+      - microfrontends
+
+  mfe-inventarios:
+    image: ghcr.io/lchumi/mfe-inventarios:latest
+    container_name: mfe-inventarios
+    networks:
+      - microfrontends
+
+  mfe-system-administrador:
+    image: ghcr.io/lchumi/mfe-system-administrador:latest
+    container_name: mfe-system-administrador
+    networks:
+      - microfrontends
+
+  mfe-payments:
+    image: ghcr.io/lchumi/mfe-payments:latest
+    container_name: mfe-payments
+    networks:
+      - microfrontends
+
 networks:
   microfrontends:
     driver: bridge
