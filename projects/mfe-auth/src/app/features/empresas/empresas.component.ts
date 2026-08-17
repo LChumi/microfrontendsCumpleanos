@@ -42,7 +42,7 @@ export class EmpresasComponent {
 
   //navegar fuera del router del remote usando Location
   goToInicio() {
-    window.location.href = '/erp/dashboard'
+    window.location.href = '/erp/dashboard/inicio'
   }
 
 }

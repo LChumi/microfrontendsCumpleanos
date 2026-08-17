@@ -1,108 +1,70 @@
-<div class="max-w-6xl mx-auto px-4 py-6">
+<div class="w-full h-full p-6">
   <!-- Encabezado de bienvenida -->
   <div class="flex flex-col sm:flex-row items-center gap-4 mb-8">
     @if (imageUsr) {
       <img [src]="imageUsr"
-           class="w-16 h-16 rounded-full object-cover flex-shrink-0 ring-2 ring-primary-100"
+           class="w-16 h-16 rounded-full object-cover flex-shrink-0 ring-2 ring-primary-200"
            alt="profileUser">
     } @else {
-      <!-- Avatar con iniciales -->
-      <div class="w-16 h-16 flex items-center justify-center rounded-full bg-primary-200 text-slate-800 font-bold text-xl ring-2 ring-primary-100">
+      <div class="w-16 h-16 flex items-center justify-center rounded-full bg-primary-200 text-primary-700 font-bold text-xl ring-2 ring-primary-100">
         {{ getInitials(nombre) }}
       </div>
     }
     <div class="flex flex-col items-center sm:items-start">
-      <h1 class="text-slate-800 font-bold text-2xl uppercase tracking-wide">
+      <h1 class="text-primary-800 font-bold text-2xl uppercase tracking-wide m-0">
         Bienvenido {{ nombre || '' }}
       </h1>
-      <p class="text-slate-500 m-0">{{ fecha }} {{ hora }}</p>
+      <p class="text-primary-500 m-0 text-sm">{{ fecha }} {{ hora }}</p>
     </div>
   </div>
 
   <!-- Favoritos -->
   <div>
     <div class="flex items-center justify-between mb-4">
-      <h5 class="text-lg font-semibold text-slate-700">Favoritos</h5>
+      <h5 class="text-lg font-semibold text-primary-700 m-0">Favoritos</h5>
 
-      <div class="flex gap-2">
+      <div class="flex gap-1 p-1 rounded-lg">
         <button
           type="button"
-          class="w-9 h-9 flex items-center justify-center rounded-lg border transition-colors"
-          [class.bg-primary-600]="layout === 'list'"
-          [class.text-white]="layout === 'list'"
-          [class.border-primary-600]="layout === 'list'"
-          [class.bg-white]="layout !== 'list'"
-          [class.text-slate-500]="layout !== 'list'"
-          [class.border-slate-200]="layout !== 'list'"
-          aria-label="Vista de lista"
-          (click)="layout = 'list'"
-        >
-          <i class="pi pi-bars" aria-hidden="true"></i>
-        </button>
-
-        <button
-          type="button"
-          class="w-9 h-9 flex items-center justify-center rounded-lg border transition-colors"
-          [class.bg-primary-600]="layout === 'grid'"
-          [class.text-white]="layout === 'grid'"
-          [class.border-primary-600]="layout === 'grid'"
-          [class.bg-white]="layout !== 'grid'"
-          [class.text-slate-500]="layout !== 'grid'"
-          [class.border-slate-200]="layout !== 'grid'"
+          class="w-10 h-10 flex items-center justify-center rounded-md transition-colors"
+          [class.bg-white]="layout === 'grid'"
+          [class.shadow-sm]="layout === 'grid'"
+          [class.text-primary-800]="layout === 'grid'"
+          [class.text-primary-400]="layout !== 'grid'"
           aria-label="Vista de cuadrícula"
           (click)="layout = 'grid'"
         >
-          <i class="pi pi-th-large" aria-hidden="true"></i>
+          <svg class="w-10 h-10 text-primary-400 flex-shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+            <path fill-rule="evenodd" d="M4.857 3A1.857 1.857 0 0 0 3 4.857v4.286C3 10.169 3.831 11 4.857 11h4.286A1.857 1.857 0 0 0 11 9.143V4.857A1.857 1.857 0 0 0 9.143 3H4.857Zm10 0A1.857 1.857 0 0 0 13 4.857v4.286c0 1.026.831 1.857 1.857 1.857h4.286A1.857 1.857 0 0 0 21 9.143V4.857A1.857 1.857 0 0 0 19.143 3h-4.286Zm-10 10A1.857 1.857 0 0 0 3 14.857v4.286C3 20.169 3.831 21 4.857 21h4.286A1.857 1.857 0 0 0 11 19.143v-4.286A1.857 1.857 0 0 0 9.143 13H4.857Zm10 0A1.857 1.857 0 0 0 13 14.857v4.286c0 1.026.831 1.857 1.857 1.857h4.286A1.857 1.857 0 0 0 21 19.143v-4.286A1.857 1.857 0 0 0 19.143 13h-4.286Z" clip-rule="evenodd"/>
+          </svg>
+
         </button>
       </div>
     </div>
 
     <!-- Estado vacío -->
     @if (!favoritos || favoritos.length === 0) {
-      <div class="flex flex-col items-center justify-center py-16 text-center border border-dashed border-slate-200 rounded-xl">
-        <i class="pi pi-star text-3xl text-slate-300 mb-3" aria-hidden="true"></i>
-        <p class="text-slate-400 m-0">No tienes páginas agregadas a favoritos</p>
+      <div class="flex flex-col items-center justify-center py-16 text-center border border-dashed border-primary-200 rounded-xl">
+        <svg class="w-8 h-8 text-primary-300 mb-3 flex-shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 24 24">
+          <path d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39 3.468-2.938c1.353-1.146.633-3.336-1.142-3.477l-4.552-.36-1.754-4.17Z"/>
+        </svg>
+        <p class="text-primary-400 m-0">No tienes páginas agregadas a favoritos</p>
       </div>
     }
 
-    <!-- Vista lista -->
-    @if (layout === 'list' && favoritos.length) {
-      <div class="flex flex-col divide-y divide-slate-100 border border-slate-100 rounded-xl overflow-hidden">
-        @for (favorito of favoritos; track $index) {
-          <div
-            class="flex flex-col md:flex-row items-center gap-3 p-4 w-full cursor-pointer hover:bg-slate-50 transition-colors"
-            routerLink="{{favorito.programa.path}}"
-            routerLinkActive="bg-primary-50"
-          >
-            <div class="flex-1 flex flex-col items-center md:items-start text-center md:text-left">
-              <span class="font-bold text-lg text-slate-700">{{ favorito.programa.nombre }}</span>
-            </div>
-            <div class="flex items-center">
-              <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="w-5 h-5 text-primary-500" fill="currentColor" viewBox="0 0 24 24">
-                <path d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39 3.468-2.938c1.353-1.146.633-3.336-1.142-3.477l-4.552-.36-1.754-4.17Z"/>
-              </svg>
-            </div>
-          </div>
-        }
-      </div>
-    }
+    <div class="!grid grid-cols-1 md:!grid-cols-3 gap-3 sm:gap-4">
+      @for (favorito of favoritos; track $index) {
+        <div class="w-full min-w-0 h-28 sm:h-36 flex flex-col items-center justify-center text-center gap-2 p-3 sm:p-5 bg-white border border-primary-200 rounded-xl cursor-pointer transition-all hover:shadow-md hover:border-primary-300 overflow-hidden"
+             routerLink="{{favorito.programa.path}}"
+             routerLinkActive="border-primary-400 bg-primary-50"
+             [title]="favorito.programa.nombre">
+          <svg class="w-8 h-8 text-primary-500 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39-1.754-4.17Z"/>
+          </svg>
+          <span class="w-full min-w-0 px-1 font-semibold text-slate-700 text-sm truncate">{{ favorito.programa.nombre }}</span>
+        </div>
+      }
+    </div>
 
-    <!-- Vista grid -->
-    @if (layout === 'grid' && favoritos.length) {
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-        @for (favorito of favoritos; track $index) {
-          <div
-            class="flex flex-col items-center text-center p-5 border border-slate-100 rounded-xl cursor-pointer hover:shadow-md hover:border-primary-200 transition-all"
-            routerLink="{{favorito.programa.path}}"
-            routerLinkActive="border-primary-500 bg-primary-50"
-          >
-            <svg aria-hidden="true" xmlns="http://www.w3.org/2000/svg" class="w-8 h-8 text-primary-500 mb-3" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M13.849 4.22c-.684-1.626-3.014-1.626-3.698 0L8.397 8.387l-4.552.361c-1.775.14-2.495 2.331-1.142 3.477l3.468 2.937-1.06 4.392c-.413 1.713 1.472 3.067 2.992 2.149L12 19.35l3.897 2.354c1.52.918 3.405-.436 2.992-2.15l-1.06-4.39 3.468-2.938c1.353-1.146.633-3.336-1.142-3.477l-4.552-.36-1.754-4.17Z"/>
-            </svg>
-            <span class="font-semibold text-slate-700">{{ favorito.programa.nombre }}</span>
-          </div>
-        }
-      </div>
-    }
   </div>
 </div>
