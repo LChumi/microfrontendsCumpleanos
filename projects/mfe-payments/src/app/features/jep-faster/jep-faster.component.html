@@ -59,26 +59,41 @@
 <!-- Toast -->
 @if (showToast) {
   <div
-    class="fixed right-5 top-5 z-[1100] w-full max-w-sm rounded-lg border border-amber-200 bg-white p-4 shadow-xl" role="alert">
+    class="fixed right-5 top-5 z-[1100] w-full max-w-sm rounded-lg border border-amber-200
+         bg-white p-4 shadow-xl"
+    role="alert"
+  >
     <div class="flex gap-3">
-      <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-amber-100 text-amber-600">!</div>
+      <!-- Icono -->
+      <div
+        class="flex h-8 w-8 shrink-0 items-center justify-center rounded-full
+             bg-amber-100 text-amber-600 font-bold"
+      >
+        !
+      </div>
+
+      <!-- Texto -->
       <div class="min-w-0">
         <p class="m-0 font-semibold text-slate-800">
           {{ toastSummary }}
         </p>
-        <p class="mt-1 mb-0 text-sm text-slate-500">
-          {{ toastDetail }}
+        <p class="mt-1 mb-0 text-sm font-bold text-slate-700">
+          Cierre la ventana por favor
         </p>
       </div>
 
+      <!-- Botón de cierre -->
       <button
         type="button"
-        (click)="closeDialog()"
-        class="ml-auto h-6 w-6 shrink-0 text-slate-400 hover:text-slate-600"
+        (click)="showToast = false"
+        class="ml-auto flex h-6 w-6 items-center justify-center rounded-full
+             text-slate-400 hover:text-slate-600 hover:bg-slate-100
+             focus:outline-none focus:ring-2 focus:ring-slate-400 focus:ring-offset-1"
         aria-label="Cerrar"
       >
         ×
       </button>
     </div>
   </div>
+
 }
