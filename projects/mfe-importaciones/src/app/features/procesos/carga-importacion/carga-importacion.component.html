@@ -1,162 +1,284 @@
 <div class="bg-white rounded-lg shadow-sm p-4">
-  <div class="grid">
+  <div class="col-span-12">
+    <span class="text-slate-900 text-2xl block mb-4">
+      Ingreso de Importaciones
+    </span>
 
-    <div class="col-span-12">
-      <span class="text-slate-900 text-2xl gap-2 mb-4">Ingreso de Importaciones</span>
+    @if (imporSelected) {
 
-      <!-- Sección vincular orden - versión mejorada -->
-      @if (imporSelected) {
-        <div class="bg-white rounded-lg p-4 mt-3 max-w-[580px]">
+      <div class="bg-white rounded-lg p-4 mt-3 w-full max-w-[580px]">
 
-          <div class="flex items-center gap-2 mb-3">
-            <i class="pi pi-link text-primary"></i>
-            <span class="text-slate-600 font-medium text-sm uppercase tracking-[0.03em]">
-              Seleccione la orden de la importación
+        <div class="flex items-center gap-2 mb-3">
+          <i class="pi pi-link text-primary"></i>
+          <span class="text-slate-600 font-medium text-sm uppercase tracking-[0.03em]">
+            Seleccione la orden de la importación
+          </span>
+        </div>
+
+        @if (loadingOrder) {
+
+          <div class="flex items-center gap-3 py-3">
+            <p-progressSpinner
+              strokeWidth="4"
+              fill="transparent"
+              animationDuration=".5s"
+              [style]="{ width: '32px', height: '32px' }">
+            </p-progressSpinner>
+
+            <span class="text-slate-600 text-sm">
+              Cargando órdenes...
             </span>
           </div>
 
-          @if (loadingOrder) {
-            <div class="flex items-center gap-3 py-3">
-              <p-progressSpinner
-                strokeWidth="4"
-                fill="transparent"
-                animationDuration=".5s"
-                [style]="{ width: '32px', height: '32px' }">
-              </p-progressSpinner>
-              <span class="text-slate-600 text-sm">Cargando órdenes...</span>
-            </div>
-          } @else {
-            <div class="flex flex-col gap-3">
+        } @else {
 
-              <p-multiSelect
-                [options]="listaOredenes"
-                [(ngModel)]="ordenesCco"
-                placeholder="Seleccione las órdenes a vincular"
-                optionLabel="concepto"
-                optionValue="ccoCodigo"
-                class="w-full"
-                display="chip"
-                [showClear]="true"
-                [filter]="true"
-                >
+          <div class="flex flex-col gap-3">
 
-                <ng-template let-order pTemplate="item">
-                  <div class="flex items-center gap-2 py-1">
-                    <i class="pi pi-box text-primary text-sm"></i>
-                    <span class="text-sm">{{ order.concepto }}</span>
-                  </div>
-                </ng-template>
+            <p-multiSelect
+              [options]="listaOredenes"
+              [(ngModel)]="ordenesCco"
+              placeholder="Seleccione las órdenes a vincular"
+              optionLabel="concepto"
+              optionValue="ccoCodigo"
+              class="w-full"
+              display="chip"
+              [showClear]="true"
+              [filter]="true">
 
-              </p-multiSelect>
-
-              <div class="flex items-center justify-between flex-wrap gap-2">
-                <button
-                  pButton
-                  pRipple
-                  type="button"
-                  icon="pi pi-check"
-                  label="Agregar órdenes"
-                  class="p-button-sm"
-                  [disabled]="!ordenesCco.length"
-                  (click)="agregarOrdenes()">
-                </button>
-
-                @if (ordenesCco.length) {
-                  <span class="text-slate-500 text-sm">
-                    <i class="pi pi-info-circle mr-1"></i>
-                    {{ ordenesCco.length }} orden{{ ordenesCco.length > 1 ? 'es' : '' }} seleccionada{{ ordenesCco.length > 1 ? 's' : '' }}
+              <ng-template let-order pTemplate="item">
+                <div class="flex items-center gap-2 py-1">
+                  <i class="pi pi-box text-primary text-sm"></i>
+                  <span class="text-sm">
+                    {{ order.concepto }}
                   </span>
-                }
-              </div>
+                </div>
+              </ng-template>
+
+            </p-multiSelect>
+
+            <div class="flex items-center justify-between flex-wrap gap-2">
+
+              <button
+                pButton
+                pRipple
+                type="button"
+                icon="pi pi-check"
+                label="Agregar órdenes"
+                class="p-button-sm"
+                [disabled]="!ordenesCco.length"
+                (click)="agregarOrdenes()">
+              </button>
+
+              @if (ordenesCco.length) {
+                <span class="text-slate-500 text-sm">
+                  <i class="pi pi-info-circle mr-1"></i>
+                  {{ ordenesCco.length }}
+                  orden{{ ordenesCco.length > 1 ? 'es' : '' }}
+                  seleccionada{{ ordenesCco.length > 1 ? 's' : '' }}
+                </span>
+              }
 
             </div>
-          }
-        </div>
-      }
-      @else {
-        <div class="mt-4">
-          <p-table
-            #im
-            [value]="listImportaciones"
-            [paginator]="true"
-            [rows]="10"
-            [showCurrentPageReport]="true"
-            [rowsPerPageOptions]="[10, 25, 50]"
-            [globalFilterFields]="['dspComprobante','periodo','concepto','cliNombre','impObservaciones','estado']"
-            styleClass="p-datatable-sm p-datatable-gridlines"
-            currentPageReportTemplate="Viendo {first} a {last} de {totalRecords} registros"
-            responsiveLayout="scroll">
 
-            <ng-template pTemplate="caption">
-              <div class="flex items-center justify-between flex-wrap gap-2">
-                <span class="text-slate-900 font-medium">
-                  <i class="pi pi-list mr-2 text-primary"></i>Listado de importaciones
+          </div>
+        }
+
+      </div>
+
+    } @else {
+
+      <!-- TABLA -->
+      <div class="mt-4 w-full overflow-x-auto">
+
+        <p-table
+          #im
+          [value]="listImportaciones"
+          [paginator]="true"
+          [rows]="10"
+          [showCurrentPageReport]="true"
+          [rowsPerPageOptions]="[10, 25, 50]"
+          [globalFilterFields]="[
+            'dspComprobante',
+            'periodo',
+            'concepto',
+            'cliNombre',
+            'impObservaciones',
+            'estado'
+          ]"
+          styleClass="p-datatable-sm p-datatable-gridlines"
+          currentPageReportTemplate="Viendo {first} a {last} de {totalRecords} registros"
+          responsiveLayout="scroll">
+
+          <!-- CAPTION -->
+
+          <ng-template pTemplate="caption">
+
+            <div class="flex items-center justify-between gap-3 flex-wrap">
+
+              <span class="text-slate-900 font-medium">
+                <i class="pi pi-list mr-2 text-primary"></i>
+                Listado de importaciones
+              </span>
+
+              <span class="p-input-icon-left w-full sm:w-auto">
+                <i class="pi pi-search"></i>
+
+                <input
+                  pInputText
+                  type="text"
+                  (input)="onGlobalFilter(im, $event)"
+                  placeholder="Búsqueda global..."
+                  class="p-inputtext-sm w-full sm:w-56" />
+
+              </span>
+
+            </div>
+
+          </ng-template>
+
+          <!-- HEADER -->
+
+          <ng-template pTemplate="header">
+            <tr>
+
+              <th
+                pSortableColumn="dspComprobante"
+                class="whitespace-nowrap"
+                style="min-width: 150px">
+                Comprobante
+                <p-sortIcon field="dspComprobante"></p-sortIcon>
+              </th>
+
+              <th
+                pSortableColumn="periodo"
+                class="whitespace-nowrap"
+                style="min-width: 100px">
+                Periodo
+                <p-sortIcon field="periodo"></p-sortIcon>
+              </th>
+
+              <th
+                pSortableColumn="fecha"
+                class="whitespace-nowrap"
+                style="min-width: 120px">
+                Fecha
+                <p-sortIcon field="fecha"></p-sortIcon>
+              </th>
+
+              <th
+                class="whitespace-nowrap"
+                style="min-width: 220px">
+                Concepto
+              </th>
+
+              <th
+                class="whitespace-nowrap"
+                style="min-width: 220px">
+                Observaciones
+              </th>
+
+              <th
+                pSortableColumn="estado"
+                class="whitespace-nowrap"
+                style="min-width: 120px">
+                Estado
+                <p-sortIcon field="estado"></p-sortIcon>
+              </th>
+
+              <th
+                class="whitespace-nowrap"
+                style="min-width: 120px">
+                Id Proveedor
+              </th>
+
+              <th
+                class="whitespace-nowrap"
+                style="min-width: 200px">
+                Proveedor
+              </th>
+
+            </tr>
+          </ng-template>
+
+          <!-- BODY -->
+
+          <ng-template pTemplate="body" let-doc>
+
+            <tr
+              (click)="selectedImp(doc)"
+              class="cursor-pointer">
+
+              <td class="whitespace-nowrap">
+                <span class="font-medium text-primary">
+                  {{ doc.dspComprobante }}
                 </span>
-                <span class="p-input-icon-left">
-                  <i class="pi pi-search"></i>
-                  <input
-                    pInputText
-                    type="text"
-                    (input)="onGlobalFilter(im, $event)"
-                    placeholder="Búsqueda global…"
-                    class="p-inputtext-sm w-56" />
-                </span>
-              </div>
-            </ng-template>
+              </td>
 
-            <ng-template pTemplate="header">
-              <tr>
-                <th pSortableColumn="dspComprobante" style="min-width:130px">
-                  Comprobante <p-sortIcon field="dspComprobante" />
-                </th>
-                <th pSortableColumn="periodo" style="min-width:100px">
-                  Periodo <p-sortIcon field="periodo" />
-                </th>
-                <th pSortableColumn="fecha" style="min-width:110px">
-                  Fecha <p-sortIcon field="fecha" />
-                </th>
-                <th style="min-width:160px">Concepto</th>
-                <th style="min-width:160px">Observaciones</th>
-                <th pSortableColumn="estado" style="min-width:110px">
-                  Estado <p-sortIcon field="estado" />
-                </th>
-                <th style="min-width:100px">Id Proveedor</th>
-                <th style="min-width:160px">Proveedor</th>
-              </tr>
-            </ng-template>
+              <td class="whitespace-nowrap">
+                {{ doc.periodo }}
+              </td>
 
-            <ng-template pTemplate="body" let-doc>
-              <tr (click)="selectedImp(doc)" class="cursor-pointer">
-                <td>
-                  <span class="font-medium text-primary">{{ doc.dspComprobante }}</span>
-                </td>
-                <td>{{ doc.periodo }}</td>
-                <td class="text-slate-600">{{ doc.fecha | date: 'dd/MM/yyyy' }}</td>
-                <td>{{ doc.concepto }}</td>
-                <td class="text-slate-600">{{ doc.impObservaciones }}</td>
-                <td>
-                  <p-tag
-                    [value]="doc.estado"
-                    [severity]="doc.estado === 'Activo' ? 'success' : 'warning'">
-                  </p-tag>
-                </td>
-                <td class="text-slate-500">{{ doc.cliId }}</td>
-                <td class="font-medium">{{ doc.cliNombre }}</td>
-              </tr>
-            </ng-template>
+              <td class="whitespace-nowrap text-slate-600">
+                {{ doc.fecha | date: 'dd/MM/yyyy' }}
+              </td>
 
-            <ng-template pTemplate="emptymessage">
-              <tr>
-                <td colspan="8" class="text-center py-5 text-slate-500">
-                  <i class="pi pi-inbox text-4xl mb-3 block"></i>
-                  No se encontraron importaciones
-                </td>
-              </tr>
-            </ng-template>
+              <td>
+                <div class="max-w-[300px] truncate" [title]="doc.concepto">
+                  {{ doc.concepto }}
+                </div>
+              </td>
 
-          </p-table>
-        </div>
-      }
-    </div>
+              <td>
+                <div
+                  class="max-w-[300px] truncate text-slate-600"
+                  [title]="doc.impObservaciones">
+
+                  {{ doc.impObservaciones }}
+
+                </div>
+              </td>
+
+              <td class="whitespace-nowrap">
+
+                <p-tag
+                  [value]="doc.estado"
+                  [severity]="doc.estado === 'Activo' ? 'success' : 'warning'">
+                </p-tag>
+
+              </td>
+
+              <td class="whitespace-nowrap text-slate-500">
+                {{ doc.cliId }}
+              </td>
+
+              <td>
+                <div
+                  class="max-w-[250px] truncate font-medium"
+                  [title]="doc.cliNombre">
+
+                  {{ doc.cliNombre }}
+
+                </div>
+              </td>
+
+            </tr>
+
+          </ng-template>
+
+          <!-- EMPTY -->
+
+          <ng-template pTemplate="emptymessage">
+            <tr>
+              <td colspan="8" class="text-center py-5 text-slate-500">
+                <i class="pi pi-inbox text-4xl mb-3 block"></i>
+                No se encontraron importaciones
+              </td>
+            </tr>
+          </ng-template>
+
+        </p-table>
+
+      </div>
+    }
   </div>
 </div>

@@ -1,24 +1,21 @@
 <div class="card">
-  <div class="grid grid-nogutter">
-    <div class="col-12">
-      <span class="text-900 text-2xl gap-2 mb-4">Orden Compra</span>
+  <div class="grid grid-cols-12 gap-4">
+    <div class="col-span-12">
+      <span class="text-900 text-2xl mb-4 block">Orden Compra</span>
 
       @if (!sciSelected) {
-        <div class="col-12 lg:col-6">
-          <div class="flex align-items-center gap-2">
-          <span>
-            <label for="sciSearch" class="p-sr-only">Solicitud</label>
-            <input id="sciSearch" type="text" pInputText placeholder="Buscar Tramite" autocomplete="off"
-                   pTooltip="Ingrese el numero de tramite a buscar" [(ngModel)]="solicitud"
-                   (keydown.enter)="buscarSCI($event)">
-          </span>
-            <button pButton pRipple type="button" label="Buscar" icon="pi pi-search" pTooltip="Click para buscar"
-                    (click)="buscarSCI($event)"></button>
+        <div class="col-span-12 lg:col-span-6">
+          <div class="flex items-center gap-2">
+            <span class="flex-1">
+              <label for="sciSearch" class="p-sr-only">Solicitud</label>
+              <input id="sciSearch" type="text" pInputText placeholder="Buscar Tramite" autocomplete="off" pTooltip="Ingrese el numero de tramite a buscar" [(ngModel)]="solicitud" (keydown.enter)="buscarSCI($event)" class="w-full">
+            </span>
+            <button pButton pRipple type="button" label="Buscar" icon="pi pi-search" pTooltip="Click para buscar" (click)="buscarSCI($event)"></button>
           </div>
         </div>
       } @else {
-        <div class="surface-card grid grid-nogutter border-round shadow-2 mb-6">
-          <div class="col-12 flex p-2 surface-100 border-round-top">
+        <div class="surface-card grid grid-cols-12 border-round shadow-2 mb-6">
+          <div class="col-span-12 flex p-2 surface-100 border-round-top">
             <div class="p-2 flex-auto text-center md:text-left">
               <span class="text-700 block">Solicitud</span>
               <span class="text-900 font-medium block mt-2">{{ sciSelected.comprobante }}</span>
@@ -30,20 +27,24 @@
             </div>
           </div>
         </div>
-        <span class="text-700 block gap-2 mb-2">Seleccione una bodega</span>
-        <div class="grid">
-          <app-seleccion-bodegas></app-seleccion-bodegas>
-          <div class="col-12 mb-2 lg:col-4 lg:mb-0">
-            <button pButton pRipple [label]="getButtonLabel()" icon="pi pi-check-circle"
-                    class="p-button-outlined"></button>
+
+        <span class="text-700 block mb-3">Seleccione una bodega</span>
+
+        <div class="grid grid-cols-12 gap-4 items-end mb-4">
+          <div class="col-span-12 lg:col-span-8">
+            <app-seleccion-bodegas></app-seleccion-bodegas>
+          </div>
+
+          <div class="col-span-12 lg:col-span-4">
+            <button pButton pRipple [label]="getButtonLabel()" icon="pi pi-check-circle" class="p-button-outlined w-full"></button>
           </div>
         </div>
-        <div class="flex items-center gap-4 mb-4">
-          <label for="observacion" class="font-semibold w-24">Descripcion</label>
-          <input pInputText id="observacion" class="flex-auto" autocomplete="off" [(ngModel)]="observacion"/>
+
+        <div class="flex flex-col md:flex-row md:items-center gap-2 md:gap-4 mb-4">
+          <label for="observacion" class="font-semibold md:w-24">Descripcion</label>
+          <input pInputText id="observacion" class="flex-1 w-full" autocomplete="off" [(ngModel)]="observacion"/>
         </div>
       }
-
     </div>
   </div>
 </div>

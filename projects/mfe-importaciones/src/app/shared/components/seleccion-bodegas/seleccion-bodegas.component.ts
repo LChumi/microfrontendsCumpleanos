@@ -3,11 +3,16 @@ import {UsrDto} from '../../../core/dto/usr.dto';
 import {SeleccionService} from '../../../core/services/seleccion.service';
 import {getSessionItem} from '../../../core/utils/storage.utils';
 import {UsrBodService} from '../../../core/services/usr-bod.service';
+import {DropdownModule} from 'primeng/dropdown';
+import {FormsModule} from '@angular/forms';
 
 @Component({
   selector: 'app-seleccion-bodegas',
   standalone: true,
-  imports: [],
+  imports: [
+    DropdownModule,
+    FormsModule
+  ],
   templateUrl: './seleccion-bodegas.component.html',
   styles: ``
 })

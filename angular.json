@@ -34,7 +34,6 @@
 						"styles": [
 							"projects/shell/src/styles.scss",
 							"node_modules/primeng/resources/primeng.min.css",
-							"node_modules/primeflex/primeflex.css",
 							"node_modules/primeicons/primeicons.css"
 						],
 						"scripts": [],
@@ -153,10 +152,7 @@
 							}
 						],
 						"styles": [
-							"projects/mfe-auth/src/styles.scss",
-							"node_modules/primeng/resources/primeng.min.css",
-							"node_modules/primeflex/primeflex.css",
-							"node_modules/primeicons/primeicons.css"
+							"projects/mfe-auth/src/styles.scss"
 						],
 						"scripts": [],
 						"main": "projects/mfe-auth/src/main.ts",
@@ -272,10 +268,7 @@
 							}
 						],
 						"styles": [
-							"projects/mfe-contabilidad/src/styles.scss",
-							"node_modules/primeng/resources/primeng.min.css",
-							"node_modules/primeflex/primeflex.css",
-							"node_modules/primeicons/primeicons.css"
+							"projects/mfe-contabilidad/src/styles.scss"
 						],
 						"stylePreprocessorOptions": {
 							"includePaths": [

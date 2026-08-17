@@ -1,16 +1,14 @@
-<p-sidebar [(visible)]="visible" position="right" [transitionOptions]="'.3s cubic-bezier(0, 0, 0.2, 1)'"
-           styleClass="layout-profile-sidebar w-full sm:w-25rem">
-  <div class="flex flex-column mx-auto md:mx-0">
+<p-sidebar [(visible)]="visible" position="right" [transitionOptions]="'.3s cubic-bezier(0, 0, 0.2, 1)'" styleClass="layout-profile-sidebar w-full sm:w-25rem">
+  <div class="flex flex-col mx-auto md:mx-0">
     <span class="mb-2 font-semibold">Bienvenido</span>
     <span class="text-color-secondary font-medium mb-5">{{ nombre }}</span>
 
     <ul class="list-none m-0 p-0">
       <li>
-        <a
-          class="cursor-pointer flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150">
-                    <span>
-                        <i class="pi pi-user text-xl text-primary"></i>
-                    </span>
+        <a class="flex surface-border mb-3 p-3 items-center border  surface-border rounded hover:surface-hover transition-colors duration-150">
+          <span>
+            <i class="pi pi-user text-xl text-primary"></i>
+          </span>
           <div class="ml-3">
             <span class="mb-2 font-semibold">{{ username }}</span>
             <p class="text-color-secondary m-0"></p>
@@ -19,18 +17,17 @@
       </li>
       <li>
         <a
-          class="cursor-pointer flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150"
-          (click)="signOut()">
-                    <span>
-                        <i class="pi pi-power-off text-xl text-primary"></i>
-                    </span>
+          class="cursor-pointer flex items-center mb-3 p-3 border border-gray-300 rounded-lg hover:bg-gray-100 hover:border-gray-400 transition-colors duration-150"
+          (click)="signOut()"
+        >
+          <span><i class="pi pi-power-off text-xl text-primary"></i></span>
           <div class="ml-3">
-            <span class="mb-2 font-semibold">Cerrar Sesion</span>
-            <p class="text-color-secondary m-0">Salir de la aplicacion</p>
+            <span class="mb-1 font-semibold">Cerrar Sesión</span>
+            <p class="text-gray-500 m-0 text-sm">Salir de la aplicación</p>
           </div>
         </a>
+
       </li>
     </ul>
   </div>
-
 </p-sidebar>

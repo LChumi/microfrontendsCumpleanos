@@ -9,7 +9,7 @@ import {HttpClient} from '@angular/common/http';
 })
 export class UsrBodService {
 
-  private url = `${environment.apiUrl}/assist`
+  private url = `${environment.apiUrl}/models`
   private http = inject(HttpClient)
 
   listBodegas(usrId: number, empresa: number): Observable<UsrDto[]> {

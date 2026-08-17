@@ -10,11 +10,20 @@ import {AlmacenService} from '../../../core/services/almacen.service';
 import {PuntoventaService} from '../../../core/services/puntoventa.service';
 import {SeleccionService} from '../../../core/services/seleccion.service';
 import {MessageService} from 'primeng/api';
+import {CalendarModule} from 'primeng/calendar';
+import {FormsModule} from '@angular/forms';
+import {PaginatorModule} from 'primeng/paginator';
+import {DialogModule} from 'primeng/dialog';
 
 @Component({
   selector: 'app-seleccion-comprobante',
   standalone: true,
-  imports: [],
+  imports: [
+    CalendarModule,
+    FormsModule,
+    PaginatorModule,
+    DialogModule
+  ],
   templateUrl: './seleccion-comprobante.component.html',
   styles: ``
 })

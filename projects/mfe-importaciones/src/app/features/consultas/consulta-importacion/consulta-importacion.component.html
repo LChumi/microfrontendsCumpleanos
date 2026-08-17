@@ -1,103 +1,113 @@
 <div class="card">
-  <div class="card">
-    <div class="grid p-fluid" (keydown.enter)="find()">
-      <div class="grid formgrid">
-        <div class="col-12 mb-2 lg:col-4 lg:mb-0">
-          <label for="nroComprobante" class="text-900 font-semibold">NroComprobante</label>
-          <span class="p-input-icon-left">
-            <i class="pi pi-bookmark"></i>
-            <input id="nroComprobante" pInputText type="text" placeholder="NroComprobante" [(ngModel)]="nroComprobante">
-          </span>
+  <div class="grid p-fluid" (keydown.enter)="find()">
+    <div class="col-12">
+      <div class="grid grid-cols-12 gap-4">
+
+        <div class="col-span-12 lg:col-span-4">
+          <label for="nroComprobante" class="block text-900 font-semibold mb-2">Nro. Comprobante</label>
+          <input id="nroComprobante" pInputText type="text" placeholder="Nro. Comprobante"
+                 [(ngModel)]="nroComprobante" class="w-full">
         </div>
 
-        <div class="col-12 mb-2 lg:col-4 lg:mb-0">
-          <label for="observacion" class="text-900 font-semibold">Observación</label>
-          <span class="p-input-icon-left">
-            <i class="pi pi-bookmark"></i>
-            <input id="observacion" pInputText type="text" placeholder="observacion" [(ngModel)]="observacion">
-          </span>
+        <div class="col-span-12 lg:col-span-4">
+          <label for="observacion" class="block text-900 font-semibold mb-2">Observación</label>
+          <input id="observacion" pInputText type="text" placeholder="Observación"
+                 [(ngModel)]="observacion" class="w-full">
         </div>
 
-        <div class="col-12 mb-2 lg:col-4 lg:mb-0">
-          <label for="proveedor" class="text-900 font-semibold">Proveedor</label>
-          <button pButton pRipple [label]="getButtonLabel()" id="proveedor" icon="pi pi-search"
-                  class="p-button-outlined p-button-secondary"
-                  (click)="abrirModal()"></button>
+        <div class="col-span-12 lg:col-span-4">
+          <label for="proveedor" class="block text-900 font-semibold mb-2">Proveedor</label>
+          <button pButton pRipple type="button"
+                  [label]="getButtonLabel()"
+                  id="proveedor"
+                  icon="pi pi-search"
+                  class="p-button-outlined p-button-secondary w-full"
+                  (click)="abrirModal()">
+          </button>
         </div>
 
-        <div class="col-12 mb-2 lg:col-4 lg:mb-0">
-          <label for="fecha" class="text-900 font-semibold">Fecha</label>
-          <span class="p-input-icon-left">
-            <p-calendar id="fecha" dateFormat="dd-mm-yy" placeholder="Fecha" [required]="true" inputId="fecha"
-                        showIcon [(ngModel)]="fecha"></p-calendar>
-          </span>
+        <div class="col-span-12 md:col-span-6 lg:col-span-3">
+          <label for="fecha" class="block text-900 font-semibold mb-2">Fecha</label>
+          <p-calendar
+            id="fecha"
+            dateFormat="dd-mm-yy"
+            placeholder="Fecha"
+            [required]="true"
+            showIcon
+            [(ngModel)]="fecha"
+            styleClass="w-full">
+          </p-calendar>
         </div>
 
-        <div class="col-12 mb-2 lg:col-4 lg:mb-0">
-          <label for="estado" class="text-900 font-semibold">Estado</label>
-          <span class="p-input-icon-left">
-          <p-dropdown id="estado" placeholder="Estado" [options]="estados" [(ngModel)]="estado"
-                      optionLabel="name"></p-dropdown>
-        </span>
+        <div class="col-span-12 md:col-span-6 lg:col-span-3">
+          <label for="estado" class="block text-900 font-semibold mb-2">Estado</label>
+          <p-dropdown
+            id="estado"
+            placeholder="Estado"
+            [options]="estados"
+            [(ngModel)]="estado"
+            optionLabel="name"
+            styleClass="w-full">
+          </p-dropdown>
         </div>
+
       </div>
     </div>
-
-    <!--Tabla de contenidos -->
-    <div>
-      <p-table
-        styleClass="p-datatble-gridlines"
-        [value]="impProdTrancitos"
-        dataKey="id"
-        [rows]="10"
-        [rowsPerPageOptions]="[10,20,30]"
-        [loading]="loading"
-        [rowHover]="true"
-        [paginator]="true"
-        [responsiveLayout]="'scroll'"
-        class="my-3 p-p3"
-      >
-        <!--Encabezado de la tabla -->
-        <ng-template pTemplate="header">
-          <tr>
-            <th pSortableColumn="nroComprobante" class="p-text-center">NroComprobante</th>
-            <th pSortableColumn="fecha">Fecha</th>
-            <th pSortableColumn="proId">Barra</th>
-            <th pSortableColumn="proId1">Item</th>
-            <th pSortableColumn="proNombre">Producto</th>
-            <th pSortableColumn="observacion">Observacion</th>
-            <th pSortableColumn="cantPedida">Cant. Pedida</th>
-            <th pSortableColumn="canLlegada">Cant. Llegada</th>
-            <th pSortableColumn="fob">FOB</th>
-            <th pSortableColumn="fobTotal">FOB Total Pedido</th>
-            <th pSortableColumn="fobTotal">FOB Total Aprobado</th>
-            <th pSortableColumn="estado">Estado</th>
-            <th pSortableColumn="tipoDoc">Tipo Documento</th>
-          </tr>
-        </ng-template>
-
-        <!--Cuerpo de la tabla -->
-        <ng-template pTemplate="body" let-documento>
-          <tr>
-            <td class="p-text-center p-col-1 p-col-fixed" style="width:15%; min-width: 15rem;">{{ documento.nroComprobante }}</td>
-            <td class="p-text-center p-col-1 p-col-fixed" style="width:15%; min-width: 10rem;">{{ documento.fecha }}</td>
-            <td class="p-text-center p-col-1 p-col-fixed">{{ documento.proId }}</td>
-            <td class="p-text-center p-col-1 p-col-fixed" style="width:20%; min-width: 20rem;">{{ documento.proId1 }}</td>
-            <td class="p-text-center p-col-1 p-col-fixed" style="width:30%; min-width: 30rem;">{{ documento.proNombre }}</td>
-            <td class="p-text-center p-col-1 p-col-fixed" style="width:25%; min-width: 25rem;">{{ documento.observacion }}</td>
-            <td class="p-text-center p-col-1 p-col-fixed">{{ documento.cantPedida }}</td>
-            <td class="p-text-center p-col-1 p-col-fixed">{{ documento.cantLlegada }}</td>
-            <td class="p-text-center p-col-1 p-col-fixed">{{ documento.fob }}</td>
-            <td class="p-text-center p-col-1 p-col-fixed">{{ documento.fobTotalPedido }}</td>
-            <td class="p-text-center p-col-1 p-col-fixed">{{ documento.fobTotalAprobado }}</td>
-            <td class="p-text-center p-col-1 p-col-fixed" style="width:15%; min-width: 15rem;">{{ documento.estado }}</td>
-            <td class="p-text-center p-col-1 p-col-fixed">{{ documento.tipoDoc }}</td>
-          </tr>
-        </ng-template>
-
-      </p-table>
-    </div>
-    <app-modal-cliente [tipoCliente]="'Proveedor'" [(visible)]="modalVisible"></app-modal-cliente>
   </div>
 
+  <div class="mt-4 overflow-x-auto">
+    <p-table
+      styleClass="p-datatable-gridlines"
+      [value]="impProdTrancitos"
+      dataKey="id"
+      [rows]="10"
+      [rowsPerPageOptions]="[10,20,30]"
+      [loading]="loading"
+      [rowHover]="true"
+      [paginator]="true"
+      responsiveLayout="scroll">
+
+      <ng-template pTemplate="header">
+        <tr>
+          <th>Nro. Comprobante</th>
+          <th>Fecha</th>
+          <th>Barra</th>
+          <th>Item</th>
+          <th>Producto</th>
+          <th>Observación</th>
+          <th>Cant. Pedida</th>
+          <th>Cant. Llegada</th>
+          <th>FOB</th>
+          <th>FOB Total Pedido</th>
+          <th>FOB Total Aprobado</th>
+          <th>Estado</th>
+          <th>Tipo Documento</th>
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-documento>
+        <tr>
+          <td class="whitespace-nowrap">{{ documento.nroComprobante }}</td>
+          <td class="whitespace-nowrap">{{ documento.fecha }}</td>
+          <td class="whitespace-nowrap">{{ documento.proId }}</td>
+          <td class="whitespace-nowrap">{{ documento.proId1 }}</td>
+          <td class="min-w-[250px]">{{ documento.proNombre }}</td>
+          <td class="min-w-[220px]">{{ documento.observacion }}</td>
+          <td class="text-right whitespace-nowrap">{{ documento.cantPedida }}</td>
+          <td class="text-right whitespace-nowrap">{{ documento.cantLlegada }}</td>
+          <td class="text-right whitespace-nowrap">{{ documento.fob }}</td>
+          <td class="text-right whitespace-nowrap">{{ documento.fobTotalPedido }}</td>
+          <td class="text-right whitespace-nowrap">{{ documento.fobTotalAprobado }}</td>
+          <td class="whitespace-nowrap">{{ documento.estado }}</td>
+          <td class="whitespace-nowrap">{{ documento.tipoDoc }}</td>
+        </tr>
+      </ng-template>
+
+    </p-table>
+  </div>
+
+  <app-modal-cliente
+    [tipoCliente]="'Proveedor'"
+    [(visible)]="modalVisible">
+  </app-modal-cliente>
 </div>

@@ -1,1 +1,135 @@
-<p>seleccion-comprobante works!</p>
+<p-dialog #dd [(visible)]="visible" (visibleChange)=" visible = $event" [modal]="true" [style]="{ width: '600px', maxWidth: '90vw' }" [breakpoints]="{ '960px': '90vw', '640px': '100vw' }" [closable]="true" (onHide)="close()">
+
+  <ng-template pTemplate="header">
+    <span class="text-900 font-semibold text-xl">Seleccion de comprobante</span>
+  </ng-template>
+
+  <ng-template pTemplate="content">
+    <!-- Encabezado Documento-->
+    <div class="grid grid-cols-12">
+      @if (dTipoDoc.length > 0) {
+        <div class="col-span-8">
+          <div class="text-900 font-semibold mb-2">Documento</div>
+          <p class="flex items-center m-0">
+            <i class="pi pi-book text-700 mr-2"></i>
+            <span>{{ dTipoDoc[0].nombreTipoDoc }}</span>
+          </p>
+        </div>
+        <div class="col-span-2">
+          <div class="text-900 font-semibold mb-2">Modulo</div>
+          <p class="flex items-center m-0">
+            <i class="pi pi-book mr-2"></i>
+            <span>{{ dTipoDoc[0].modulo }}</span>
+          </p>
+        </div>
+      }
+    </div>
+
+    <!-- Inputs -->
+    <div class="grid grid-cols-12 gap-4 p-fluid">
+      <!-- Dropdown de Sigla -->
+      <div class="col-span-12 md:col-span-6">
+        <label for="sigla" class="text-900 font-semibold block mb-2">Sigla</label>
+        <span class="p-input-icon-left">
+          <i class="pi pi-circle"></i>
+          <p-dropdown inputId="sigla" [appendTo]="dd" [options]="dTipoDoc" [(ngModel)]="dTipoDocSelected" optionLabel="ctiId">
+            <ng-template pTemplate="selectedItem">
+              <div class="flex items-center">
+                <div class="shrink-0 w-4 h-4 mr-2 rounded-full" [style.background-color]="'#5676e1'"></div>
+                <div>{{ dTipoDocSelected.ctiId }}</div>
+              </div>
+            </ng-template>
+            <ng-template let-doc pTemplate="item">
+              <div class="flex items-center">
+                <div class="shrink-0 w-4 h-4 mr-2 rounded-full" [style.background-color]="'#5676e1'"></div>
+                <div>{{ doc.ctiId }}</div>
+              </div>
+            </ng-template>
+          </p-dropdown>
+        </span>
+      </div>
+
+      @if (dTipoDocSelected) {
+        <div class="col-span-12 md:col-span-6 py-4">
+          <p class="flex items-center m-0">
+            <span>{{ dTipoDocSelected.nombreCtipocom }}</span>
+          </p>
+        </div>
+      }
+
+      <!-- Dropdown Almacen -->
+      <div class="col-span-12 md:col-span-6">
+        <label for="almacen" class="text-900 font-semibold block mb-2">Almacen</label>
+        <span class="p-input-icon-left">
+          <i class="pi pi-circle"></i>
+          <p-dropdown inputId="almacen" [appendTo]="dd" [options]="almacenes" [(ngModel)]="almacenSelected" optionLabel="almId" (onChange)="onAlmacenChange($event)">
+            <ng-template pTemplate="selectedItem">
+              <div class="flex items-center">
+                <div class="shrink-0 w-4 h-4 mr-2 rounded-full" [style.background-color]="'#5676e1'"></div>
+                <div>{{ almacenSelected.almId }}</div>
+              </div>
+            </ng-template>
+            <ng-template let-alm pTemplate="item">
+              <div class="flex items-center">
+                <div class="shrink-0 w-4 h-4 mr-2 rounded-full" [style.background-color]="'#5676e1'"></div>
+                <div>{{ alm.almId }}</div>
+              </div>
+            </ng-template>
+          </p-dropdown>
+        </span>
+      </div>
+
+      @if (dTipoDocSelected) {
+        <div class="col-span-12 md:col-span-6 py-4">
+          <p class="flex items-center m-0">
+            <span>{{ almacenSelected.nombre }}</span>
+          </p>
+        </div>
+      }
+
+      <!-- Dropdown Punto Venta -->
+      <div class="col-span-12 md:col-span-6">
+        <label for="pventa" class="text-900 font-semibold block mb-2">Punto Venta</label>
+        <span class="p-input-icon-left">
+          <i class="pi pi-circle"></i>
+          <p-dropdown inputId="pventa" [appendTo]="dd" [options]="pventas" [(ngModel)]="pventasSelected" optionLabel="pveId">
+            <ng-template pTemplate="selectedItem">
+              <div class="flex items-center">
+                <div class="shrink-0 w-4 h-4 mr-2 rounded-full" [style.background-color]="'#5676e1'"></div>
+                <div>{{ pventasSelected.pveId }}</div>
+              </div>
+            </ng-template>
+            <ng-template let-pventa pTemplate="item">
+              <div class="flex items-center">
+                <div class="shrink-0 w-4 h-4 mr-2 rounded-full" [style.background-color]="'#5676e1'"></div>
+                <div>{{ pventa.pveId }}</div>
+              </div>
+            </ng-template>
+          </p-dropdown>
+        </span>
+      </div>
+
+      @if (dTipoDocSelected) {
+        <div class="col-span-12 md:col-span-6 py-4">
+          <p class="flex items-center m-0">
+            <span>{{ pventasSelected.nombre }}</span>
+          </p>
+        </div>
+      }
+    </div>
+
+    <!-- Fecha -->
+    <div class="field text-center">
+      <label for="fecha" class="text-900 font-semibold mr-2">Fecha</label>
+      <p-calendar [appendTo]="dd" dateFormat="yy-mm-dd" [required]="true" inputId="fecha" [(ngModel)]="fecha"></p-calendar>
+    </div>
+  </ng-template>
+
+  <!-- Botones en el pie -->
+  <ng-template pTemplate="footer">
+    <div class="flex justify-center gap-2">
+      <button type="button" pButton label="Aceptar" icon="pi pi-check" class="p-button-info" (click)="saveDocumento()"></button>
+      <button type="button" pButton label="Cancelar" icon="pi pi-times" class="p-button-secondary" (click)="close()"></button>
+    </div>
+  </ng-template>
+</p-dialog>
