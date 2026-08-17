@@ -3,14 +3,11 @@ import { ActivatedRoute } from "@angular/router";
 import {interval, Subscription} from 'rxjs';
 import {parameterIsNumeric} from '../../utils/params-utils';
 import {DeunaService} from '../../core/services/deuna.service';
-import {NgOptimizedImage} from '@angular/common';
 
 @Component({
   selector: 'app-deuna',
   standalone: true,
-  imports: [
-    NgOptimizedImage
-  ],
+  imports: [],
   templateUrl: './deuna.component.html',
   styles: ``
 })

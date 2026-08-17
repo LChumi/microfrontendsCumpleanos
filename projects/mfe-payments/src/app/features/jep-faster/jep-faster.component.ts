@@ -2,22 +2,11 @@ import {Component, inject, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {parameterIsNumeric} from '../../utils/params-utils';
 import {JepFasterService} from '../../core/services/jep-faster.service';
-import {ImageModule} from 'primeng/image';
-import {ProgressBarModule} from 'primeng/progressbar';
-import {ConfirmDialogModule} from 'primeng/confirmdialog';
-import {ToastModule} from 'primeng/toast';
-import {NgOptimizedImage} from '@angular/common';
 
 @Component({
   selector: 'app-jep-faster',
   standalone: true,
-  imports: [
-    ImageModule,
-    ProgressBarModule,
-    ConfirmDialogModule,
-    ToastModule,
-    NgOptimizedImage
-  ],
+  imports: [],
   templateUrl: './jep-faster.component.html',
   styles: ``
 })

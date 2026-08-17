@@ -1,15 +1,15 @@
 <div
   class="flex min-h-screen w-full flex-col items-center justify-center bg-cover bg-center px-4"
-  style="background-image: url('images/background/fondoJep.webp');"
+  style="background-image: url('/images/background/fondoJep.webp');"
 >
 
   @if (imageBase64) {
     <div class="mb-5 rounded-xl bg-white/50 p-5 shadow-lg backdrop-blur-sm">
       <img
-        [ngSrc]="imageBase64"
+        [src]="imageBase64"
         alt="Código QR"
         class="h-auto w-[450px] max-w-full rounded-lg object-contain"
-        fill/>
+        />
     </div>
 
     <div class="w-full max-w-[600px]">

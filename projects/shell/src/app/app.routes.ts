@@ -53,5 +53,10 @@ export const routes: Routes = [
       }
     ]
   },
+  {
+    path: 'payments',
+    loadChildren: () =>
+      loadRemoteModuleSafe('mfe-payments', './routes').then(m => m.routes)
+  },
   {path: '**', redirectTo: 'auth', pathMatch: "full"}
 ];
