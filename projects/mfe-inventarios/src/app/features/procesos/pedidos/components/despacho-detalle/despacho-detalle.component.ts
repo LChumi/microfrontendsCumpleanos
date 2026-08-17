@@ -32,7 +32,7 @@ import {PedidoHojaService} from '../../../../../core/services/pedido-hoja.servic
     TooltipModule,
     TableModule,
     ConfirmDialogModule,
-    DatePipe
+    DatePipe,
   ],
   templateUrl: './despacho-detalle.component.html',
   styles: ``

@@ -1,0 +1,12 @@
+@if (showScrollTop()) {
+  <button
+    type="button"
+    (click)="scrollToTop()"
+    class="fixed bottom-5 right-5 z-50 flex h-10 w-10 items-center justify-center rounded-full bg-blue-600 text-white shadow-lg transition hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-400"
+    aria-label="Volver arriba"
+  >
+    <svg class="w-6 h-6 text-gray-800 dark:text-white" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+      <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m5 15 7-7 7 7"/>
+    </svg>
+  </button>
+}
