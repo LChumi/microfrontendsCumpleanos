@@ -10,6 +10,11 @@ services:
       - shell
       - mfe-auth
       - mfe-contabilidad
+      - mfe-dashboard
+      - mfe-importaciones
+      - mfe-inventarios
+      - mfe-system-administrador
+      - mfe-payments
     networks:
       - microfrontends
 
