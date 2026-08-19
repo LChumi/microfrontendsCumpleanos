@@ -4,6 +4,6 @@
   "mfe-dashboard": "https://assist.cumpleanos.com.ec/erp/dashboard/remoteEntry.js",
   "mfe-importaciones": "https://assist.cumpleanos.com.ec/erp/importaciones/remoteEntry.js",
   "mfe-inventarios": "https://assist.cumpleanos.com.ec/erp/inventarios/remoteEntry.js",
-  "mfe-system-administrador": "https://assist.cumpleanos.com.ec/erp/system-administrador/remoteEntry.js",
-  "mfe-payments": "https://assist.cumpleanos.com.ec/erp/payments/remoteEntry.js"
+  "mfe-system-administrador": "https://assist.cumpleanos.com.ec/erp/system-administrator/remoteEntry.js",
+  "mfe-payments": "https://assist.cumpleanos.com.ec/payments/remoteEntry.js"
 }
