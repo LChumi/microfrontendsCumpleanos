@@ -46,7 +46,7 @@ export const routes: Routes = [
           loadRemoteModuleSafe('mfe-inventarios', './routes').then(m => m.routes)
       },
       {
-        path: 'system-administrator',
+        path: 'system-administrador',
         data: {breadcrumb: 'Administracion Sistema'},
         loadChildren: () =>
           loadRemoteModuleSafe("mfe-system-administrador", "./routes").then(m => m.routes)
