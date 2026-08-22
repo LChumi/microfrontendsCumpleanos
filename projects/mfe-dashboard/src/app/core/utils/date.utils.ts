@@ -14,3 +14,16 @@ export function getCurrentTime(): string {
   const formattedHours = (hours % 12 || 12).toString().padStart(2, '0'); // Convierte 0 a 12
   return `${formattedHours}:${minutes} ${ampm}`;
 }
+
+
+export function getGreeting(): string {
+  const hours = new Date().getHours();
+
+  if (hours >= 5 && hours < 12) {
+    return 'BUENOS DIAS';
+  } else if (hours >= 12 && hours < 18) {
+    return 'BUENAS TARDES';
+  } else {
+    return 'BUENAS NOCHES';
+  }
+}

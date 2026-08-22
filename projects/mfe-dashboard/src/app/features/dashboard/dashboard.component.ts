@@ -3,7 +3,7 @@ import {UsuarioFavorito} from '../../core/models/usuario-favorito';
 import {FavoriteService} from '../../core/services/favorite.service';
 import {AccesoService} from '../../core/services/acceso.service';
 import {getSessionItem, setSessionItem} from '../../core/utils/storage.utils';
-import {getCurrentDateNow, getCurrentTime} from '../../core/utils/date.utils';
+import {getCurrentDateNow, getCurrentTime, getGreeting} from '../../core/utils/date.utils';
 import {DataViewModule} from 'primeng/dataview';
 import {RouterLink, RouterLinkActive} from '@angular/router';
 
@@ -23,6 +23,7 @@ export class DashboardComponent {
   imageUsr: any
   fecha: any;
   hora: any;
+  saludo = ''
   favoritos: UsuarioFavorito[] = [];
   layout: any = 'grid';
 
@@ -50,7 +51,7 @@ export class DashboardComponent {
   getDate() {
     this.fecha = getCurrentDateNow();
     this.hora = getCurrentTime();
-
+    this.saludo = getGreeting()
   }
 
   getNameLastName() {

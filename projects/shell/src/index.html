@@ -7,10 +7,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="icon" type="image/x-icon" href="/favicon.ico">
 
-  <!-- Preloader CSS (debe cargarse antes que Angular) -->
   <link rel="stylesheet" type="text/css" href="/layout/styles/layout/preloading.css">
 
-  <!-- Theme link (el LayoutService lo cambia en runtime) -->
   <link id="theme-link" rel="stylesheet" type="text/css" href="/layout/styles/theme/theme-light/indigo/theme.css">
 
   <!-- SEO / Metadatos -->
@@ -24,7 +22,6 @@
   <meta name="contact" content="mailto:luischumi.9@gmail.com">
   <link rel="author" type="text/plain" href="/humans.txt">
   <meta name="robots" content="index, follow"/>
-  <link rel="canonical" href="https://assist.cumpleanos.com.ec"/>
 
   <!-- Open Graph -->
   <meta property="og:title" content="Assist Web | Cumpleanos">
@@ -46,6 +43,35 @@
   <meta name="twitter:title" content="Assist Web | Cumpleanos">
   <meta name="twitter:description" content="Gestion de procesos Importador Cumpleanos">
   <meta name="twitter:image" content="https://assist.cumpleanos.com.ec/favicon.ico">
+
+  <!-- Canonical -->
+  <link rel="canonical" href="https://assist.cumpleanos.com.ec"/>
+
+  <!-- Schema  -->
+  <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@graph": [
+        {
+          "@type": "Organization",
+          "@id": "https://assist.cumpleanos.com.ec/#organization",
+          "name": "Assist Web Cumpleanos",
+          "url": "https://assist.cumpleanos.com.ec",
+          "logo": {
+            "@type": "ImageObject",
+            "url": "https://assist.cumpleanos.com.ec/favicon.ico"
+          }
+        },
+        {
+          "@type": "WebSite",
+          "@id": "https://assist.cumpleanos.com.ec/#website",
+          "url": "https://assist.cumpleanos.com.ec",
+          "name": "Assist Web Cumpleaños",
+          "publisher": {"@id": "https://assist.cumpleanos.com.ec/#organization"}
+        }
+      ]
+    }
+  </script>
 
   <!-- Analytics -->
   <script src="https://analytics.ahrefs.com/analytics.js" data-key="+c/fc64bSl1cLWjOUzRmcw" async></script>
