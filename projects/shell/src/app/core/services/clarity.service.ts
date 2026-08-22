@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {NavigationEnd, Router} from '@angular/router';
-import { filter, take } from "rxjs";
+import {filter, take} from "rxjs";
 import clarity from '@microsoft/clarity'
 
 @Injectable({
