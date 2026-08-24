@@ -5,5 +5,6 @@
   "mfe-importaciones": "http://localhost:4204/remoteEntry.js",
   "mfe-inventarios": "http://localhost:4205/remoteEntry.js",
   "mfe-system-administrador": "http://localhost:4206/remoteEntry.js",
-  "mfe-payments": "http://localhost:4207/remoteEntry.js"
+  "mfe-payments": "http://localhost:4207/remoteEntry.js",
+  "mfe-pedidos": "http://localhost:4208/remoteEntry.js"
 }
