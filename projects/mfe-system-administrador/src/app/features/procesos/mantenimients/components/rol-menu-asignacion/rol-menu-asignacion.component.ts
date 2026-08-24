@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit} from '@angular/core';
 import {Button} from 'primeng/button';
 import {TableModule} from 'primeng/table';
 import {DialogModule} from 'primeng/dialog';
@@ -11,6 +11,8 @@ import {RolW} from '../../../../../core/models/rol-w';
 import {MenuW} from '../../../../../core/models/menu-w';
 import {RolMenuService} from '../../../../../core/services/rol-menu.service';
 import {RolMenu} from '../../../../../core/models/rol-menu';
+import {MenuSyncService} from '../../../../../core/services/menu-sync.service';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-rol-menu-asignacion',
@@ -25,12 +27,14 @@ import {RolMenu} from '../../../../../core/models/rol-menu';
   templateUrl: './rol-menu-asignacion.component.html',
   styles: ``
 })
-export class RolMenuAsignacionComponent implements  OnInit{
+export class RolMenuAsignacionComponent implements  OnInit, OnDestroy{
 
   private service = inject(RolMenuService);
   private rolService = inject(RolWService);
   private menuService = inject(MenuWService);
   private messageService = inject(MessageService);
+  private menuSync = inject(MenuSyncService);
+  private sub = new Subscription();
 
   relaciones: RolMenu[] = [];
   roles: RolW[] = [];
@@ -41,12 +45,22 @@ export class RolMenuAsignacionComponent implements  OnInit{
 
   ngOnInit() {
     this.getAll();
-    this.rolService.getAll().subscribe({next: data => this.roles = data});
-    this.menuService.getAll().subscribe({next: data => this.menus = data});
+    this.sub.add(this.menuSync.rolCreado.subscribe(() => this.cargarRoles()));
+    this.sub.add(this.menuSync.menuCreado.subscribe(() => this.cargarMenus()));
   }
 
   getAll() {
     this.service.getAll().subscribe({next: data => this.relaciones = data});
+    this.cargarRoles();
+    this.cargarMenus();
+  }
+
+  cargarRoles(){
+    this.rolService.getAll().subscribe({next: data => this.roles = data});
+  }
+
+  cargarMenus(){
+    this.menuService.getAll().subscribe({next: data => this.menus = data});
   }
 
   openNew() {
@@ -82,5 +96,9 @@ export class RolMenuAsignacionComponent implements  OnInit{
         });
       }
     });
+  }
+
+  ngOnDestroy() {
+    this.sub.unsubscribe()
   }
 }

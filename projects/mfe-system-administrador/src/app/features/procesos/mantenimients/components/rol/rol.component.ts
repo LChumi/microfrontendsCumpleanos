@@ -7,6 +7,7 @@ import {RolWService} from '../../../../../core/services/rol-w.service';
 import {RolW} from '../../../../../core/models/rol-w';
 import {FormsModule} from '@angular/forms';
 import {InputTextModule} from 'primeng/inputtext';
+import {MenuSyncService} from '../../../../../core/services/menu-sync.service';
 
 @Component({
   selector: 'app-rol',
@@ -25,6 +26,7 @@ export class RolComponent implements OnInit {
 
   private rolwService = inject(RolWService);
   private messageService = inject(MessageService);
+  private menuSync = inject(MenuSyncService)
 
   roles: RolW[] = [];
   dialogVisible = false;
@@ -59,6 +61,7 @@ export class RolComponent implements OnInit {
         this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Guardado correctamente'});
         this.dialogVisible = false;
         this.getAll();
+        this.menuSync.notificarRolCreado();
       },
       error: err => {
         this.messageService.add({

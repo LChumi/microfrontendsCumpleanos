@@ -8,6 +8,7 @@ import {InputTextModule} from 'primeng/inputtext';
 import {ProgramaW} from '../../../../../core/models/programa-w';
 import {ProgramaWService} from '../../../../../core/services/programa-w.service';
 import {MessageService} from 'primeng/api';
+import {MenuSyncService} from '../../../../../core/services/menu-sync.service';
 
 @Component({
   selector: 'app-programa',
@@ -27,6 +28,7 @@ export class ProgramaComponent implements OnInit {
 
   private service = inject(ProgramaWService);
   private messageService = inject(MessageService);
+  private menuSync = inject(MenuSyncService)
 
   programas: ProgramaW[] = []
   dialogVisible = false;
@@ -68,6 +70,7 @@ export class ProgramaComponent implements OnInit {
           this.messageService.add({severity: 'success', summary: 'Éxito', detail: 'Guardado correctamente'});
           this.dialogVisible = false;
           this.getAll();
+          this.menuSync.notificarProgramaCreado();
         }
       });
     } else {

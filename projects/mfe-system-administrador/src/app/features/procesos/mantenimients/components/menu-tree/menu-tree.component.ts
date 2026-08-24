@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, inject, OnDestroy, OnInit} from '@angular/core';
 import {ConfirmationService, MessageService, TreeNode} from "primeng/api";
 import {MenuWService} from '../../../../../core/services/menu-w.service';
 import {ProgramaWService} from '../../../../../core/services/programa-w.service';
@@ -14,6 +14,8 @@ import {TreeSelectModule} from 'primeng/treeselect';
 import {InputNumberModule} from 'primeng/inputnumber';
 import {ToggleButtonModule} from 'primeng/togglebutton';
 import {TooltipModule} from 'primeng/tooltip';
+import {MenuSyncService} from '../../../../../core/services/menu-sync.service';
+import {Subscription} from 'rxjs';
 
 @Component({
   selector: 'app-menu-tree',
@@ -32,12 +34,14 @@ import {TooltipModule} from 'primeng/tooltip';
   templateUrl: './menu-tree.component.html',
   styles: ``
 })
-export class MenuTreeComponent implements OnInit {
+export class MenuTreeComponent implements OnInit, OnDestroy {
 
   private menuService = inject(MenuWService);
   private programaService = inject(ProgramaWService);
   private messageService = inject(MessageService);
   private confirmationService = inject(ConfirmationService);
+  private menuSync = inject(MenuSyncService);
+  private subs = new Subscription();
 
   icons: PrimeIcon[] = PRIME_ICONS;
   treeData: TreeNode[] = [];
@@ -56,6 +60,7 @@ export class MenuTreeComponent implements OnInit {
   ngOnInit() {
     this.getMenus();
     this.getProgramas();
+    this.subs.add(this.menuSync.progrmamCreado.subscribe(() => this.getProgramas()))
   }
 
   // Árbol podado: si estás editando, quita el nodo actual y todos sus descendientes
@@ -205,6 +210,7 @@ export class MenuTreeComponent implements OnInit {
         });
         this.dialogVisible = false;
         this.getMenus();
+        this.menuSync.notificarMenuCreado();
       },
       error: err => {
         this.messageService.add({
@@ -279,5 +285,9 @@ export class MenuTreeComponent implements OnInit {
       }
     }
     return null;
+  }
+
+  ngOnDestroy() {
+    this.subs.unsubscribe()
   }
 }
