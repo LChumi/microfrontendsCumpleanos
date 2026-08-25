@@ -66,9 +66,20 @@ export class MenuTreeComponent implements OnInit, OnDestroy {
   // Árbol podado: si estás editando, quita el nodo actual y todos sus descendientes
   // para que no puedas elegirte a ti mismo (o a un hijo tuyo) como padre.
   get treeDataPadre(): TreeNode[] {
-    if (!this.isEditMode || this.menuForm.id == null) return this.treeData;
-    const excluidos = this.getDescendantIds(this.menuForm.id);
-    return this.pruneTree(this.treeData, excluidos);
+    const excluidos = this.isEditMode && this.menuForm.id != null
+      ? this.getDescendantIds(this.menuForm.id)
+      : new Set<any>();
+    const pruned = this.pruneTree(this.treeData, excluidos);
+    return this.makeAllSelectable(pruned);
+  }
+
+  private makeAllSelectable(nodes: TreeNode[]): TreeNode[] {
+    return nodes.map(n => ({
+      ...n,
+      selectable: true,
+      expanded: true,
+      children: n.children?.length ? this.makeAllSelectable(n.children) : []
+    }));
   }
 
   getMenus() {
@@ -145,7 +156,7 @@ export class MenuTreeComponent implements OnInit, OnDestroy {
         },
         leaf: isMenuItem,        // si es menuitem, no debería tener hijos (opcional forzarlo)
         children: [],
-        selectable: isMenuItem   // solo los que navegan son "seleccionables"
+        selectable: isMenuItem,   // solo los que navegan son "seleccionables"
       });
     });
 
