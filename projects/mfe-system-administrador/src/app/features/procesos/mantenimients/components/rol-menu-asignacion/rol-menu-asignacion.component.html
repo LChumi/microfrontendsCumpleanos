@@ -30,7 +30,30 @@
     </div>
     <div class="flex flex-col gap-2">
       <label class="text-sm font-semibold text-gray-700">Menú</label>
-      <p-dropdown [options]="menus" [(ngModel)]="form.menuW" optionLabel="nombre" [filter]="true" filterBy="nombre" appendTo="body" styleClass="w-full" placeholder="Seleccione un menú"></p-dropdown>
+      <p-dropdown
+        [options]="menus"
+        [(ngModel)]="form.menuW"
+        optionLabel="nombre"
+        [filter]="true"
+        filterBy="nombre"
+        appendTo="body"
+        styleClass="w-full"
+        placeholder="Seleccione un menú">
+
+        <ng-template let-menu pTemplate="item">
+          <div class="flex flex-col">
+            <span>{{ menu.nombre }}</span>
+            <small class="text-color-secondary">{{ rutaPorId.get(menu.id) }}</small>
+          </div>
+        </ng-template>
+
+        <ng-template let-selected pTemplate="selectedItem">
+          @if (selected) {
+            <span>{{ rutaPorId.get(selected.id) }}</span>
+          }
+        </ng-template>
+
+      </p-dropdown>
     </div>
   </div>
   <ng-template pTemplate="footer">

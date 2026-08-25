@@ -27,7 +27,7 @@ import {Subscription} from 'rxjs';
   templateUrl: './rol-menu-asignacion.component.html',
   styles: ``
 })
-export class RolMenuAsignacionComponent implements  OnInit, OnDestroy{
+export class RolMenuAsignacionComponent implements OnInit, OnDestroy {
 
   private service = inject(RolMenuService);
   private rolService = inject(RolWService);
@@ -39,6 +39,8 @@ export class RolMenuAsignacionComponent implements  OnInit, OnDestroy{
   relaciones: RolMenu[] = [];
   roles: RolW[] = [];
   menus: MenuW[] = [];
+  rutaPorId = new Map<any, string>();
+
   dialogVisible = false;
   isEditMode = false;
   form: Partial<RolMenu> = {};
@@ -60,7 +62,36 @@ export class RolMenuAsignacionComponent implements  OnInit, OnDestroy{
   }
 
   cargarMenus(){
-    this.menuService.getAll().subscribe({next: data => this.menus = data});
+    this.menuService.getAll().subscribe({
+      next: data => {
+        this.menus = data;
+        this.rutaPorId = this.construirRutas(data);
+      }
+    });
+  }
+
+  // Arma "ABUELO > PADRE > NOMBRE" para cada menú, caminando por "reporta"
+  private construirRutas(menus: MenuW[]): Map<any, string> {
+    const porId = new Map(menus.map(m => [m.id, m]));
+    const cache = new Map<any, string>();
+
+    const rutaDe = (m: MenuW, visitados = new Set<any>()): string => {
+      if (cache.has(m.id)) return cache.get(m.id)!;
+      if (visitados.has(m.id)) return m.nombre; // por si hay un ciclo mal formado
+      visitados.add(m.id);
+
+      if (m.reporta == null) {
+        cache.set(m.id, m.nombre);
+        return m.nombre;
+      }
+      const padre = porId.get(m.reporta);
+      const ruta = padre ? `${rutaDe(padre, visitados)} > ${m.nombre}` : m.nombre;
+      cache.set(m.id, ruta);
+      return ruta;
+    };
+
+    menus.forEach(m => rutaDe(m));
+    return cache;
   }
 
   openNew() {
