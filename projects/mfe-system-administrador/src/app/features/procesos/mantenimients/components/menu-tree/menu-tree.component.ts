@@ -123,7 +123,7 @@ export class MenuTreeComponent implements OnInit, OnDestroy {
     const menu: MenuW = node.data.raw;
     this.isEditMode = true;
     this.esMenuItem = !!menu.programa;
-    this.menuForm = { ...menu };
+    this.menuForm = { ...menu, inactivo: false };
     this.reportaNode = menu.reporta != null
       ? this.findNodeById(this.treeData, menu.reporta)
       : null;
@@ -152,6 +152,7 @@ export class MenuTreeComponent implements OnInit, OnDestroy {
           mnwId: m.mnwId,
           path: m.programa?.path ?? null,
           isMenuItem,
+          inactivo:m.inactivo,
           raw: m
         },
         leaf: isMenuItem,        // si es menuitem, no debería tener hijos (opcional forzarlo)

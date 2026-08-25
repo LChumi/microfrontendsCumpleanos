@@ -7,11 +7,16 @@
 
 <p-tree [value]="treeData" selectionMode="single" (onNodeSelect)="onNodeSelect($event)" [style]="{ width: '100%' }">
   <ng-template let-node pTemplate="default">
-    <div class="flex justify-between items-center w-full">
+    <div class="flex justify-between items-center w-full" [class.opacity-50]="node.data.inactivo">
       <span>
-        <span [class.font-bold]="!node.data.isMenuItem">{{ node.label }}</span>
+        <span [class.font-bold]="!node.data.isMenuItem" [class.line-through]="node.data.inactivo">{{ node.label }}</span>
         @if (node.data.isMenuItem) {
           <span class="text-color-secondary text-sm ml-2">({{ node.data.path }})</span>
+        }
+        @if (node.data.inactivo) {
+          <span class="ml-2 text-xs text-orange-600 font-semibold">
+            (Inactivo)
+          </span>
         }
       </span>
       <span>
