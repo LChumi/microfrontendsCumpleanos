@@ -1,28 +1,28 @@
-import {Component, inject, OnDestroy, OnInit} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import { ActivatedRoute } from "@angular/router";
-import {interval, Subscription} from 'rxjs';
 import {parameterIsNumeric} from '../../utils/params-utils';
 import {DeunaService} from '../../core/services/deuna.service';
+import {AlertDialogComponent} from '../../shared/components/alert-dialog/alert-dialog.component';
+import {ToastComponent} from '../../shared/components/toast/toast.component';
 
 @Component({
   selector: 'app-deuna',
   standalone: true,
-  imports: [],
+  imports: [
+    AlertDialogComponent,
+    ToastComponent
+  ],
   templateUrl: './deuna.component.html',
   styles: ``
 })
-export class DeunaComponent implements OnInit, OnDestroy {
+export class DeunaComponent implements OnInit {
 
   private readonly route = inject(ActivatedRoute);
   private readonly deunaService = inject(DeunaService);
 
-  private subscription: Subscription | null = null;
-
   protected usrLiquida: any;
   protected empresa: any;
   protected imageBase64: string | null = null;
-
-  protected value = 0;
 
   protected showDialog = false;
   protected dialogTitle = '';
@@ -46,9 +46,6 @@ export class DeunaComponent implements OnInit, OnDestroy {
     });
   }
 
-  ngOnDestroy(): void {
-    this.subscription?.unsubscribe();
-  }
 
   private verificarPago(): void {
     this.deunaService.verificarPago(this.usrLiquida!, this.empresa).subscribe({
@@ -83,34 +80,12 @@ export class DeunaComponent implements OnInit, OnDestroy {
   }
 
   private validarQr(): void {
-    this.value = 0;
-
-    const intervalTime = 2000;
-    const maxTime = 36000;
-    const steps = maxTime / intervalTime;
-    const increment = 100 / steps;
-
-    this.subscription?.unsubscribe();
-
-    this.subscription = interval(intervalTime).subscribe(() => {
-      this.value = Math.min(this.value + increment, 100);
-
-      if (this.value >= 100) {
-        this.subscription?.unsubscribe();
-        this.subscription = null;
-      }
-    });
-
     this.deunaService.validarPago(
       this.usrLiquida!,
       this.empresa
     ).subscribe({
       next: data => {
         if (/APPROVED/.test(data.status)) {
-          this.value = 100;
-          this.subscription?.unsubscribe();
-          this.subscription = null;
-
           this.confirm();
           this.cleanData();
         }

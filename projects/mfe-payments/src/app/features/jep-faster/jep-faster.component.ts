@@ -2,11 +2,16 @@ import {Component, inject, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {parameterIsNumeric} from '../../utils/params-utils';
 import {JepFasterService} from '../../core/services/jep-faster.service';
+import {AlertDialogComponent} from '../../shared/components/alert-dialog/alert-dialog.component';
+import {ToastComponent} from '../../shared/components/toast/toast.component';
 
 @Component({
   selector: 'app-jep-faster',
   standalone: true,
-  imports: [],
+  imports: [
+    AlertDialogComponent,
+    ToastComponent
+  ],
   templateUrl: './jep-faster.component.html',
   styles: ``
 })
