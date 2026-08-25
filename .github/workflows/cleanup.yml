@@ -20,7 +20,7 @@ jobs:
           - "mfe-contabilidad"
           - "mfe-dashboard"
           - "mfe-importaciones"
-          - "mfe-inventario"
+          - "mfe-inventarios"
           - "mfe-payments"
           - "mfe-pedidos"
           - "mfe-system-administrador"
