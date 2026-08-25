@@ -20,7 +20,7 @@ services:
 
   # SHELL - SIN PORTS, solo red interna
   shell:
-    image: ghcr.io/lchumi/mfe-shell:latest
+    image: ghcr.io/lchumi/shell:latest
     container_name: shell
     networks:
       - microfrontends
@@ -64,6 +64,12 @@ services:
   mfe-payments:
     image: ghcr.io/lchumi/mfe-payments:latest
     container_name: mfe-payments
+    networks:
+      - microfrontends
+
+  mfe-pedidos:
+    image: ghcr.io/lchumi/mfe-pedidos:latest
+    container_name: mfe-pedidos
     networks:
       - microfrontends
 
