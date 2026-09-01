@@ -47,7 +47,8 @@
                 type="button"
                 [routerLink]="['/auth']"
                 class="flex-1 py-2.5 rounded-lg font-semibold text-sm text-[#4d4d4f]
-                       border border-gray-200 hover:bg-gray-50 transition
+                       appearance-none border-gray-400 p-0 shadow-none
+                       border-0 hover:bg-gray-50 transition
                        flex items-center justify-center gap-2"
               >
                 <i class="pi pi-times text-xs"></i>
@@ -57,6 +58,7 @@
                 type="submit"
                 [disabled]="loading"
                 class="flex-1 py-2.5 rounded-lg font-semibold text-sm text-white
+                       appearance-none p-0 shadow-none border-0
                        bg-[#00acec] hover:bg-[#0090c9] active:bg-[#00739e]
                        disabled:opacity-60 disabled:cursor-not-allowed
                        transition flex items-center justify-center gap-2"
