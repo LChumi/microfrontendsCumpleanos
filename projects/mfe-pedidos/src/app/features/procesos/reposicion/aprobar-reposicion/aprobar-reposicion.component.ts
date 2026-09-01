@@ -3,14 +3,15 @@ import {BodegaSelectComponent} from '../components/bodega-select/bodega-select.c
 import {BodegaWebV} from '../../../../core/dto/bodega-web-v';
 import {CreposicionService} from '../../../../core/services/creposicion.service';
 import {Creposicion} from '../../../../core/models/creposicion';
-import {DatePipe} from '@angular/common';
+import {DatePipe, NgClass} from '@angular/common';
 
 @Component({
   selector: 'app-aprobar-reposicion',
   standalone: true,
   imports: [
     BodegaSelectComponent,
-    DatePipe
+    DatePipe,
+    NgClass
   ],
   templateUrl: './aprobar-reposicion.component.html',
   styles: ``
