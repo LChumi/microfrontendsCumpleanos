@@ -9,8 +9,8 @@ import {BodegaWebV} from '../dto/bodega-web-v';
 })
 export class BodegaWebVService {
 
-  private url = `${environment.apiUrl}/pedidos`
-  private http = inject(HttpClient)
+  private readonly url = `${environment.apiUrl}/pedidos`
+  private readonly http = inject(HttpClient)
 
   listarBodegas(usuario: number, empresa: number):Observable<BodegaWebV[]>{
     return this.http.get<BodegaWebV[]>(`${this.url}/bodegawebv/${usuario}/${empresa}/bodegas`)
