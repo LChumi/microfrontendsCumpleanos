@@ -1,0 +1,34 @@
+export interface BodegaWebV {
+  BOD_USUARIO:        number;
+  BOD_EMPRESA:        number;
+  BOD_CODIGO:         number;
+  BOD_ID:             string;
+  BOD_NOMBRE:         string;
+  BOD_CONSIGNA:       number;
+  BOD_UBICACION:      null;
+  BOD_CIUDAD:         number;
+  BOD_ZONA:           number;
+  BOD_INACTIVO:       number;
+  BOD_IMPRESORA:      null;
+  CREA_USR:           string;
+  CREA_FECHA:         any;
+  MOD_USR:            string;
+  MOD_FECHA:          any;
+  BOD_LIQUIDACION:    number;
+  BOD_PROBLEMAS:      number;
+  BOD_EMPLEADO:       null;
+  BOD_CUSTODIO:       null;
+  BOD_DIRECTO:        null;
+  BOD_ALMACEN:        number;
+  BOD_FECHA_INICIO:   null;
+  BOD_FECHA_FINAL:    null;
+  BOD_PROMOCION:      null;
+  BOD_CENTRO:         number;
+  BOD_VER_CAL:        null;
+  BOD_TIPO:           number;
+  BOD_PROVEEDOR:      null;
+  BOD_COMPRA:         null;
+  BOD_MAYORISTA:      number;
+  BOD_BODEGA_WEB:     null;
+  BOD_BODEGA_WEB_DEF: null;
+}
