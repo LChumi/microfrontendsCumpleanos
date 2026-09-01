@@ -11,15 +11,15 @@ import {ServiceResponse} from '../dto/service-response';
 })
 export class GestionPedidosService {
 
-  private url = `${environment.apiUrl}/assist`
+  private url = `${environment.apiUrl}/pedidos`
   private http = inject(HttpClient)
 
   getPendientes(usuario:string, estado:number):Observable<FacDespedidowebV[]> {
-    return this.http.get<FacDespedidowebV[]>(`${this.url}/pedidos/pendientes/${usuario}/${estado}`)
+    return this.http.get<FacDespedidowebV[]>(`${this.url}/pendientes/${usuario}/${estado}`)
   }
 
   getProductos(empresa: number, cco: any, hoja?: number): Observable<FacDesprodWebV[]> {
-    let url = `${this.url}/pedidos/despacho/productos/${empresa}/${cco}`;
+    let url = `${this.url}/despacho/productos/${empresa}/${cco}`;
     if (hoja) {
       url += `?hoja=${hoja}`;
     }
@@ -27,6 +27,6 @@ export class GestionPedidosService {
   }
 
   addCantidad(producto:FacDesprodWebV):Observable<ServiceResponse>{
-    return this.http.post<ServiceResponse>(`${this.url}/pedidos/despacho/add-cantidad`, producto)
+    return this.http.post<ServiceResponse>(`${this.url}/despacho/add-cantidad`, producto)
   }
 }
