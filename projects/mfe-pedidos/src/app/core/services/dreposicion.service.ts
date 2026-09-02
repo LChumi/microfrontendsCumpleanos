@@ -1,0 +1,28 @@
+import {inject, Injectable} from '@angular/core';
+import {environment} from '../../../environments/environment';
+import {HttpClient} from '@angular/common/http';
+import {Observable} from 'rxjs';
+import {ProductoReposicionDto} from '../dto/producto-reposicion.dto';
+import {EmpresaCodigosRequest} from '../dto/empresa-codigos-request';
+
+@Injectable({
+  providedIn: 'root'
+})
+export class DreposicionService {
+
+  private readonly url = `${environment.apiUrl}/pedidos`
+  private readonly http = inject(HttpClient)
+
+  getProductsByCreposicion(creposicion: any): Observable<ProductoReposicionDto[]>{
+    return this.http.get<ProductoReposicionDto[]>(`${this.url}/dreposicion/productos-reposicion/${creposicion}`)
+  }
+
+  getProductsByUsrLiquida(usrLiquida: any): Observable<ProductoReposicionDto[]>{
+    return this.http.get<ProductoReposicionDto[]>(`${this.url}/dreposicion/productos-reposicion/${usrLiquida}/liquida`)
+  }
+
+  generateUsrLiquidaAndList(request: EmpresaCodigosRequest): Observable<ProductoReposicionDto[]>{
+    return this.http.post<ProductoReposicionDto[]>(`${this.url}/dreposicion/productos-reposicion/usrliquida`, request)
+  }
+
+}
