@@ -1,4 +1,4 @@
 export interface EmpresaCodigosRequest {
-  empresa: number;
+  empresa: any;
   codigos: number[];
 }

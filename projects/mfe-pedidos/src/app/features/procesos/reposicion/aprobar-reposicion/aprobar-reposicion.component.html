@@ -58,7 +58,7 @@
               <div class="mt-0.5 text-xs text-slate-400">{{ p.fecha | date:'HH:mm' }}</div>
             </td>
             <td class="px-4 py-3 text-sm text-slate-600">{{ p.usuario }}</td>
-            <td class="px-4 py-3 text-sm font-medium text-slate-600">{{ p.gondola.gonId || '-'}}</td>
+            <td class="px-4 py-3 text-sm font-medium text-slate-600">{{ p.gondola?.gonId || '-'}}</td>
             <td class="max-w-xs px-4 py-3 text-sm text-slate-500">
               <div class="flex items-center gap-2">
                 <span class="truncate">{{ p.observacion || '—' }}</span>
@@ -120,7 +120,7 @@
           </div>
           <div>
             <span class="block text-[11px] font-medium uppercase tracking-wide text-slate-400">Góndola</span>
-            <span class="mt-0.5 block font-medium text-slate-600">{{ p.gondola.gonId || '—' }}</span>
+            <span class="mt-0.5 block font-medium text-slate-600">{{ p.gondola?.gonId || '—' }}</span>
           </div>
         </div>
 

@@ -14,7 +14,7 @@ export interface Creposicion {
   urgente:     number;
   usrLiquida:  any;
   usuario:     string;
-  gondola:     Gondola;
+  gondola:     Gondola | null;
 }
 
 export interface ID {

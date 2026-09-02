@@ -4,6 +4,10 @@ import {BodegaWebV} from '../../../../core/dto/bodega-web-v';
 import {CreposicionService} from '../../../../core/services/creposicion.service';
 import {Creposicion} from '../../../../core/models/creposicion';
 import {DatePipe, NgClass} from '@angular/common';
+import {Router} from '@angular/router';
+import {EmpresaCodigosRequest} from '../../../../core/dto/empresa-codigos-request';
+import {getSessionItem} from '../../../../core/utils/storage.utils';
+import {DreposicionService} from '../../../../core/services/dreposicion.service';
 
 @Component({
   selector: 'app-aprobar-reposicion',
@@ -19,6 +23,9 @@ import {DatePipe, NgClass} from '@angular/common';
 export class AprobarReposicionComponent {
 
   private readonly creposicionService = inject(CreposicionService)
+  private readonly dreposicionService = inject(DreposicionService)
+  private readonly router = inject(Router)
+  private readonly empresa = getSessionItem("empresa");
 
   pedidos = signal<Creposicion[]>([])
   seleccionados = signal<Set<number>>(new Set())
@@ -74,9 +81,27 @@ export class AprobarReposicionComponent {
   }
 
   aprobarSeleccionados(): void {
-    const ids = this.pedidosSeleccionados();
-    // this.creposicionService.aprobar(ids).subscribe(...)
-    console.log('Aprobar', ids);
+    const selecccionados = this.pedidosSeleccionados();
+    if (!selecccionados.length) return;
+
+    const usrLiquida = this.obtenerUsrLiquidaReutilizable(selecccionados);
+
+    if (usrLiquida !== null){
+      this.router.navigate(['procesos/reposicion/aprobacion', usrLiquida]).then(() => {} );
+    } else {
+      if (!this.empresa) return;
+      const request: EmpresaCodigosRequest = {
+        empresa: this.empresa,
+        codigos: selecccionados.map(p => p.id.codigo),
+      };
+      console.log(request)
+      /*this.dreposicionService.generateUsrLiquida(request).subscribe({
+        next: value => {
+          this.router.navigate(['procesos/reposicion/aprobacion', value]).then(() => {} );
+        }
+      })*/
+    }
+
   }
 
   anularSeleccionados(): void {
@@ -91,6 +116,42 @@ export class AprobarReposicionComponent {
 
   verDetalle(p: Creposicion){
     console.log(p)
+  }
+
+  private obtenerUsrLiquidaReutilizable(seleccionados: Creposicion[]): number | null {
+
+    // Si alguno no tiene usrLiquida,
+    // no se puede reutilizar una existente.
+    if (seleccionados.some(p => !p.usrLiquida)) {
+      return null;
+    }
+
+    const usrLiquidas = new Set(
+      seleccionados.map(p => p.usrLiquida)
+    );
+
+    // Hay diferentes usrLiquida entre seleccionados.
+    if (usrLiquidas.size !== 1) {
+      return null;
+    }
+
+    const usrLiquida = [...usrLiquidas][0];
+
+    // Todas las reposiciones que pertenecen
+    // a esa liquidación deben estar seleccionadas.
+    const deLaLiquidacion = this.pedidos().filter(
+      p => p.usrLiquida === usrLiquida
+    );
+
+    const seleccionadosIds = new Set(
+      seleccionados.map(p => p.id.codigo)
+    );
+
+    const todosSeleccionados = deLaLiquidacion.every(
+      p => seleccionadosIds.has(p.id.codigo)
+    );
+
+    return todosSeleccionados ? usrLiquida : null;
   }
 
 }

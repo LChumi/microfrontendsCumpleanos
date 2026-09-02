@@ -21,8 +21,8 @@ export class DreposicionService {
     return this.http.get<ProductoReposicionDto[]>(`${this.url}/dreposicion/productos-reposicion/${usrLiquida}/liquida`)
   }
 
-  generateUsrLiquidaAndList(request: EmpresaCodigosRequest): Observable<ProductoReposicionDto[]>{
-    return this.http.post<ProductoReposicionDto[]>(`${this.url}/dreposicion/productos-reposicion/usrliquida`, request)
+  generateUsrLiquida(request: EmpresaCodigosRequest): Observable<number>{
+    return this.http.post<number>(`${this.url}/dreposicion/productos-reposicion/usrliquida`, request)
   }
 
 }
