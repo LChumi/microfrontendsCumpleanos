@@ -25,16 +25,18 @@ export class AprobarReposicionComponent {
   private readonly creposicionService = inject(CreposicionService)
   private readonly dreposicionService = inject(DreposicionService)
   private readonly router = inject(Router)
-  private readonly empresa = getSessionItem("empresa");
+  private readonly empresa = getSessionItem("empresa")!;
 
   pedidos = signal<Creposicion[]>([])
   seleccionados = signal<Set<number>>(new Set())
   loading = false;
-  bodega: string = ''
+
+  bodega: any;
+  almacen: any;
 
   onBodegaSeleccionada(bodega: BodegaWebV): void {
-    console.log(bodega)
-    this.bodega= bodega.nombre
+    this.bodega= bodega.codigo
+    this.almacen= bodega.almacen
     this.listarPedidos(bodega.codigo)
   }
 
@@ -81,23 +83,22 @@ export class AprobarReposicionComponent {
   }
 
   aprobarSeleccionados(): void {
-    const selecccionados = this.pedidosSeleccionados();
-    if (!selecccionados.length) return;
+    const seleccionados = this.pedidosSeleccionados();
+    if (!seleccionados.length) return;
 
-    const usrLiquida = this.obtenerUsrLiquidaReutilizable(selecccionados);
+    const usrLiquida = this.obtenerUsrLiquidaReutilizable(seleccionados);
 
     if (usrLiquida !== null){
-      this.router.navigate(['procesos/reposicion/aprobacion', usrLiquida]).then(() => {} );
+      this.router.navigate(['procesos/reposicion/aprobacion', usrLiquida, this.bodega, this.almacen ]).then(() => {} );
     } else {
-      if (!this.empresa) return;
       const request: EmpresaCodigosRequest = {
         empresa: this.empresa,
-        codigos: selecccionados.map(p => p.id.codigo),
+        codigos: seleccionados.map(p => p.id.codigo),
       };
       console.log(request)
       /*this.dreposicionService.generateUsrLiquida(request).subscribe({
         next: value => {
-          this.router.navigate(['procesos/reposicion/aprobacion', value]).then(() => {} );
+          this.router.navigate(['procesos/reposicion/aprobacion', value, this.bodega, this.almacen ]).then(() => {} );
         }
       })*/
     }

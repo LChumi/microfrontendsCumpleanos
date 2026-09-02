@@ -3,6 +3,8 @@ export interface ProductoReposicionDto {
   empresa:        number;
   creposicion:    number
   codigoProducto: number;
+  barra:          string;
+  item:           string;
   descripcion:    string;
   observacion:    string;
   usuario:        string;

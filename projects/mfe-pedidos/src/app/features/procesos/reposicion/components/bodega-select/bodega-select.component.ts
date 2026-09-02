@@ -12,8 +12,8 @@ import {BodegaWebV} from '../../../../../core/dto/bodega-web-v';
 })
 export class BodegaSelectComponent implements OnInit{
 
-  private readonly empresa =  getSessionItem("empresa");
-  private readonly usuarioId = getSessionItem("usrId");
+  private readonly empresa =  getSessionItem("empresa")!;
+  private readonly usuarioId = getSessionItem("usrId")!;
   private readonly bodegaService = inject(BodegaWebVService)
   private readonly elementRef = inject(ElementRef)
 

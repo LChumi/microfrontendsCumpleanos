@@ -1,5 +1,5 @@
 export interface PrePedidoRequestDto {
-  empresa:    number;
+  empresa:    any;
   bodega:     number;
   almacen:    number;
   usrLiquida: number;

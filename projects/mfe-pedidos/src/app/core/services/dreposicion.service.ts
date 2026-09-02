@@ -25,4 +25,8 @@ export class DreposicionService {
     return this.http.post<number>(`${this.url}/dreposicion/productos-reposicion/usrliquida`, request)
   }
 
+  deleteProductoReposicion(codigo , empresa): Observable<void>{
+    return this.http.delete<void>(`${this.url}/dreposicion/productos-reposicion/${codigo}/${empresa}`)
+  }
+
 }
