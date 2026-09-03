@@ -125,11 +125,15 @@
             <td class="px-4 py-3 text-center text-sm text-slate-600">{{ p.stock }}</td>
 
             <!-- Min / Max apilados -->
-            <td class="px-4 py-3 text-center" [formGroup]="itemForm(i)">
-              <div class="text-xs text-slate-600">
-                <div>Min: <span class="font-semibold">{{ itemForm(i).value.min }}</span></div>
-                <div>Max: <span class="font-semibold">{{ itemForm(i).value.max }}</span></div>
-              </div>
+            <td class="px-4 py-3 text-center min-w-[90px]" [formGroup]="itemForm(i)">
+              @if (esNuevoMinMax(p.id)) {
+                <span class="text-xs italic text-slate-400">Sin definir</span>
+              } @else {
+                <div class="text-xs text-slate-600 justify-center gap-4">
+                  <div>Min: <span class="font-semibold">{{ itemForm(i).value.min }}</span></div>
+                  <div>Max: <span class="font-semibold">{{ itemForm(i).value.max }}</span></div>
+                </div>
+              }
             </td>
 
             <td class="px-4 py-3 text-center text-sm text-slate-600">{{ p.transito }}</td>
