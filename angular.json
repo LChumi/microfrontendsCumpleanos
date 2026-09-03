@@ -1020,6 +1020,39 @@
 					}
 				}
 			}
-		}
+    },
+    "shared-notifications": {
+      "projectType": "library",
+      "root": "projects/shared-notifications",
+      "sourceRoot": "projects/shared-notifications/src",
+      "prefix": "lib",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:ng-packagr",
+          "options": {
+            "project": "projects/shared-notifications/ng-package.json"
+          },
+          "configurations": {
+            "production": {
+              "tsConfig": "projects/shared-notifications/tsconfig.lib.prod.json"
+            },
+            "development": {
+              "tsConfig": "projects/shared-notifications/tsconfig.lib.json"
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "test": {
+          "builder": "@angular-devkit/build-angular:karma",
+          "options": {
+            "tsConfig": "projects/shared-notifications/tsconfig.spec.json",
+            "polyfills": [
+              "zone.js",
+              "zone.js/testing"
+            ]
+          }
+        }
+      }
+    }
 	}
 }
