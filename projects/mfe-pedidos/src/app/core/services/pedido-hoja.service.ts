@@ -10,10 +10,10 @@ import {ServiceResponse} from '../dto/service-response';
 })
 export class PedidoHojaService {
 
-  private url = `${environment.apiUrl}/models`
-  private http = inject(HttpClient)
+  private readonly url = `${environment.apiUrl}/pedidos`
+  private readonly http = inject(HttpClient)
 
   updateHojaEstado(id:PedidoHojaId, estado:number): Observable<ServiceResponse>{
-    return this.http.put<ServiceResponse>(`${this.url}/pedido-hoja/${estado}`, id)
+    return this.http.put<ServiceResponse>(`${this.url}/hoja/${estado}`, id)
   }
 }
