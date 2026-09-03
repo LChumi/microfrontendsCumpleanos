@@ -44,6 +44,7 @@ export class DreposicionAprobacionComponent implements OnInit{
   tieneMinMaxOriginal = signal<Map<number, boolean>>(new Map())
   minMaxAbierto = signal(false);
   minMaxIndexActual = signal<number | null>(null);
+  confirmandoEliminarId = signal<number | null>(null);
 
   minMaxForm = this.fb.group({
     min: [0, Validators.required],
@@ -60,10 +61,10 @@ export class DreposicionAprobacionComponent implements OnInit{
 
   ngOnInit() {
     const usrLiquida = this.route.snapshot.paramMap.get('usrLiquida')!;
-    const codigo = this.route.snapshot.paramMap.get('codigo')!;
+    const bodega = this.route.snapshot.paramMap.get('bodega')!;
     const almacen = this.route.snapshot.paramMap.get('almacen')!;
     this.usrLiquida = usrLiquida
-    this.bodega= codigo
+    this.bodega= bodega
     this.almacen = almacen
     this.cargar(usrLiquida)
   }
@@ -243,6 +244,19 @@ export class DreposicionAprobacionComponent implements OnInit{
   productoActualMinMax(): ProductoReposicionDto | null {
     const index = this.minMaxIndexActual();
     return index != null ? this.productos()[index]: null;
+  }
+
+  confirmarEliminar(id: number){
+    this.confirmandoEliminarId.set(id);
+  }
+
+  cancelarEliminar(){
+    this.confirmandoEliminarId.set(null);
+  }
+
+  eliminarConfirmado(i: number){
+    this.confirmandoEliminarId.set(null);
+    this.eliminarItem(i);
   }
 
   eliminarItem(index: number){
