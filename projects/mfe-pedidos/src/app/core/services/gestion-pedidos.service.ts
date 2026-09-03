@@ -11,8 +11,8 @@ import {ServiceResponse} from '../dto/service-response';
 })
 export class GestionPedidosService {
 
-  private url = `${environment.apiUrl}/pedidos`
-  private http = inject(HttpClient)
+  private readonly url = `${environment.apiUrl}/pedidos`
+  private readonly http = inject(HttpClient)
 
   getPendientes(usuario:string, estado:number):Observable<FacDespedidowebV[]> {
     return this.http.get<FacDespedidowebV[]>(`${this.url}/pendientes/${usuario}/${estado}`)
