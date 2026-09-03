@@ -1,12 +1,13 @@
 <router-outlet></router-outlet>
 
-<app-alert-dialog [visible]="alertVisible"
-                  [type]="alertConfig?.type ?? 'info'"
-                  [title]="alertConfig?.title ?? ''"
-                  [message]="alertConfig?.message ?? ''"
-                  [okLabel]="alertConfig?.okLabel ?? 'OK'"
-                  [closeOnEscape]="alertConfig?.closeOnEscape ?? true"
-                  (visibleChange)="alertVisible = $event"
+<app-alert-dialog
+  [visible]="alertVisible"
+  [type]="alertConfig?.type ?? 'info'"
+  [title]="alertConfig?.title ?? ''"
+  [message]="alertConfig?.message ?? ''"
+  [okLabel]="alertConfig?.okLabel ?? 'OK'"
+  [closeOnEscape]="alertConfig?.closeOnEscape ?? true"
+  (visibleChange)="alertVisible = $event"
 />
 
 <app-toast

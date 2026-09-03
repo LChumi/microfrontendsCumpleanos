@@ -1,10 +1,10 @@
 import { Injectable } from '@angular/core';
 import {Subject} from 'rxjs';
 
-export type AlertDialogType = 'success' | 'warning' | 'error' | 'info';
+export type NotificationType = 'success' | 'warning' | 'error' | 'info';
 
 export interface AlertDialogConfig {
-  type?: AlertDialogType;
+  type?: NotificationType;
   title: string;
   message: string;
   okLabel?: string;
@@ -12,6 +12,7 @@ export interface AlertDialogConfig {
 }
 
 export interface ToastConfig {
+  type?: NotificationType;
   summary: string;
   detail?: string;
   autoCloseMs?: number;
@@ -37,6 +38,9 @@ export class NotificationService  {
   }
 
   showToast(config: ToastConfig): void {
-    this.toastSubject.next(config);
+    this.toastSubject.next({
+      type: 'info',
+      ...config,
+    });
   }
 }

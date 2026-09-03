@@ -1,6 +1,6 @@
 import {Component, EventEmitter, HostListener, Input, Output} from '@angular/core';
 import {NgClass} from '@angular/common';
-import {AlertDialogType} from '../shared-notifications.service';
+import {NotificationType} from '../shared-notifications.service';
 
 @Component({
   selector: 'app-alert-dialog',
@@ -13,7 +13,7 @@ import {AlertDialogType} from '../shared-notifications.service';
 })
 export class AlertDialogComponent {
   @Input() visible = false;
-  @Input() type: AlertDialogType = 'success';
+  @Input() type: NotificationType = 'success';
   @Input() title = '';
   @Input() message = '';
   @Input() okLabel = 'OK';
@@ -22,7 +22,7 @@ export class AlertDialogComponent {
   @Output() visibleChange = new EventEmitter<boolean>();
   @Output() accept = new EventEmitter<void>();
 
-  private readonly icons: Record<AlertDialogType, string> = {
+  private readonly icons: Record<NotificationType, string> = {
     success: 'M4.5 12.75l6 6 9-13.5',
     warning: 'M12 9v3.75m0 3.75h.008v.008H12v-.008zM21 12a9 9 0 11-18 0 9 9 0 0118 0z',
     error:
@@ -30,7 +30,7 @@ export class AlertDialogComponent {
     info: 'M11.25 11.25l.041-.02a.75.75 0 011.063.852l-.708 2.836a.75.75 0 001.063.853l.041-.021M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
   };
 
-  private readonly colors: Record<AlertDialogType, string> = {
+  private readonly colors: Record<NotificationType, string> = {
     success: 'bg-green-100 text-green-600',
     warning: 'bg-amber-100 text-amber-600',
     error: 'bg-red-100 text-red-600',

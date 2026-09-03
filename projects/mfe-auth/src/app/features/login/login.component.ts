@@ -9,6 +9,7 @@ import {CheckboxModule} from 'primeng/checkbox';
 import {InputTextModule} from 'primeng/inputtext';
 import {NgOptimizedImage} from '@angular/common';
 import {getSessionItem, setSessionItem} from '../../core/utils/storage.utils';
+import {NotificationService} from 'shared-notifications';
 
 @Component({
   selector: 'app-login',
@@ -34,6 +35,7 @@ export class LoginComponent implements OnInit {
   private usuarioService = inject(AuthService)
   private router = inject(Router)
   private messageService = inject(MessageService)
+  private notif = inject(NotificationService)
 
   ngOnInit(): void {
     this.getSession()
@@ -62,6 +64,12 @@ export class LoginComponent implements OnInit {
         setSessionItem('username', user.username)
 
         this.messageService.add({severity: 'success', summary: 'Bienvenido', detail: user.nombre, life: 2000})
+        this.notif.showToast({
+          type: 'success',
+          summary: 'Bienvenido',
+          detail: user.nombre,
+          autoCloseMs: 10000
+        })
         this.goToEmpresas()
       }, error: (error: ErrorResponse) => {
         this.messageService.add({
