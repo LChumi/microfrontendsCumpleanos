@@ -6,6 +6,9 @@ RUN npm ci
 
 COPY . .
 
+# Compilar primero la librería compartida
+RUN npx ng build shared-notifications --configuration production
+
 RUN npx ng build mfe-auth --configuration production
 
 FROM nginx:alpine
