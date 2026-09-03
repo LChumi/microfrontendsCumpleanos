@@ -91,16 +91,16 @@ export class AprobarReposicionComponent {
     if (usrLiquida !== null){
       this.router.navigate(['procesos/reposicion/aprobacion', usrLiquida, this.bodega, this.almacen ]).then(() => {} );
     } else {
+      this.loading = true
       const request: EmpresaCodigosRequest = {
         empresa: this.empresa,
         codigos: seleccionados.map(p => p.id.codigo),
       };
-      console.log(request)
-      /*this.dreposicionService.generateUsrLiquida(request).subscribe({
+      this.dreposicionService.generateUsrLiquida(request).subscribe({
         next: value => {
-          this.router.navigate(['procesos/reposicion/aprobacion', value, this.bodega, this.almacen ]).then(() => {} );
+          this.router.navigate(['procesos/reposicion/aprobacion', value, this.bodega, this.almacen ]).then(() => {this.loading = false} );
         }
-      })*/
+      })
     }
 
   }

@@ -68,7 +68,7 @@ export class LoginComponent implements OnInit {
           type: 'success',
           summary: 'Bienvenido',
           detail: user.nombre,
-          autoCloseMs: 10000
+          autoCloseMs: 2000
         })
         this.goToEmpresas()
       }, error: (error: ErrorResponse) => {

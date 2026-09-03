@@ -13,6 +13,7 @@ import {StockOptimo} from '../../../../../core/models/stock-optimo';
 import {MinMaxUpdateDto} from '../../../../../core/dto/min-max-update.dto';
 import {map} from 'rxjs';
 import {ProductoReposicionUpdateDto} from '../../../../../core/dto/producto-reposicion-update.dto';
+import {NotificationService} from 'shared-notifications';
 
 @Component({
   selector: 'app-dreposicion-aprobacion',
@@ -31,6 +32,7 @@ export class DreposicionAprobacionComponent implements OnInit{
   private readonly dreposicionService = inject(DreposicionService);
   private readonly creposicionService = inject(CreposicionService);
   private readonly stockOptimoService = inject(StockOptimoService);
+  private readonly notif = inject(NotificationService);
 
   private readonly fb = inject(FormBuilder);
   private readonly empresa = getSessionItem("empresa")!;
@@ -213,7 +215,12 @@ export class DreposicionAprobacionComponent implements OnInit{
         const mapa = new Map(this.tieneMinMaxOriginal());
         mapa.set(item.id, true);
         this.tieneMinMaxOriginal.set(mapa);
-
+        this.notif.showToast({
+          type: 'success',
+          summary: 'Guardado',
+          detail: 'Mínimo-Maximo guardado correctamente',
+          autoCloseMs: 2000
+        })
         this.cerrarMinMax();
       },
       error: err => console.error('Error al guardar min/max', err)
@@ -267,6 +274,12 @@ export class DreposicionAprobacionComponent implements OnInit{
         this.items.removeAt(index);
         this.productos.set(this.productos().filter(p => p.id !== item.id));
         this.eliminandoId.set(null);
+        this.notif.showToast({
+          type: 'warning',
+          summary: 'Item eliminado',
+          detail: 'Producto eliminado de la lista',
+          autoCloseMs: 10000
+        })
         },
       error: () => this.eliminandoId.set(null),
     });
@@ -283,8 +296,12 @@ export class DreposicionAprobacionComponent implements OnInit{
     }
     this.creposicionService.generarPrepedido(request).subscribe({
       next: value => {
-        console.log(value)
-        this.router.navigate(['/procesos/reposicion/aprobar-pedido']);
+        this.notif.showAlert({
+          type: 'success',
+          title: 'Pedido Autorizado',
+          message: value.valor,
+        })
+        this.router.navigate(['/procesos/reposicion/aprobar-pedido']).then(() => {} );
       },
       error: err => console.error('Error al generar prepedido', err)
     })

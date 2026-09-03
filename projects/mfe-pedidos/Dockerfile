@@ -6,6 +6,8 @@ RUN npm ci
 
 COPY . .
 
+RUN npx ng build shared-notifications --configuration production
+
 RUN npx ng build mfe-pedidos --configuration production
 
 FROM nginx:alpine
