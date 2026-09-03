@@ -9,6 +9,7 @@ export interface ProductoReposicionDto {
   observacion:    string;
   usuario:        string;
   gondola:        string;
+  gonCod?:        number;
   canSol:         number;
   canApr:         number;
   stock:          number;

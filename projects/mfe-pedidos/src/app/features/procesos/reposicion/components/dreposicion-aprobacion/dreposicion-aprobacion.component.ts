@@ -12,6 +12,7 @@ import {StockOptimoService} from '../../../../../core/services/stock-optimo.serv
 import {StockOptimo} from '../../../../../core/models/stock-optimo';
 import {MinMaxUpdateDto} from '../../../../../core/dto/min-max-update.dto';
 import {map} from 'rxjs';
+import {ProductoReposicionUpdateDto} from '../../../../../core/dto/producto-reposicion-update.dto';
 
 @Component({
   selector: 'app-dreposicion-aprobacion',
@@ -118,7 +119,8 @@ export class DreposicionAprobacionComponent implements OnInit{
             min: [p.min],
             max: [p.max],
             codigoStock: [p.codigoStock],
-            gondola: [p.gondola],
+            gondola: [p.gonCod],
+            creposicion: [p.creposicion]
           }))
           }
         );
@@ -149,6 +151,26 @@ export class DreposicionAprobacionComponent implements OnInit{
     const set = new Set(this.editandoCanApr());
     set.has(id) ? set.delete(id): set.add(id);
     this.editandoCanApr.set(set);
+  }
+
+  guardarCanApr(id: number, index: number){
+    const item = this.itemForm(index).value;
+
+    const request: ProductoReposicionUpdateDto = {
+      codigo: item.id,
+      productoId: item.codigoProducto,
+      cantidad: item.canApr,
+      gondola: null
+    }
+
+    this.dreposicionService.updateProdcut(request).subscribe({
+      next: () => {
+        this.toggleEditarCanApr(id);
+      },
+      error: err => {
+        console.error('Error actualizando cantidad aprobada', err);
+      }
+    })
   }
 
   abrirMinMax(index:number){
@@ -203,7 +225,7 @@ export class DreposicionAprobacionComponent implements OnInit{
       maximo: max,
       minimo: min,
       bodega: this.bodega,
-      gondola: item.gondola,
+      gondola: item.gonCod ?? 125,
       producto: item.codigoProducto,
       usuario: this.usuarioCodigo
     }

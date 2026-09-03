@@ -4,6 +4,8 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {ProductoReposicionDto} from '../dto/producto-reposicion.dto';
 import {EmpresaCodigosRequest} from '../dto/empresa-codigos-request';
+import {ProductoReposicionUpdateDto} from '../dto/producto-reposicion-update.dto';
+import {ServiceResponse} from '../dto/service-response';
 
 @Injectable({
   providedIn: 'root'
@@ -29,4 +31,7 @@ export class DreposicionService {
     return this.http.delete<void>(`${this.url}/dreposicion/productos-reposicion/${codigo}/${empresa}`)
   }
 
+  updateProdcut(request: ProductoReposicionUpdateDto): Observable<ServiceResponse>{
+    return this.http.put<ServiceResponse>(`${this.url}/dreposicion/productos-reposicion`, request)
+  }
 }
