@@ -1,4 +1,4 @@
-import {Component, inject, OnInit, signal} from '@angular/core';
+import {Component, computed, HostListener, inject, OnInit, signal} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {DreposicionService} from '../../../../../core/services/dreposicion.service';
 import {FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
@@ -7,12 +7,14 @@ import {getSessionItem} from '../../../../../core/utils/storage.utils';
 import {CreposicionService} from '../../../../../core/services/creposicion.service';
 import {PrePedidoRequestDto} from '../../../../../core/dto/prepedido-request.dto';
 import {cargarImagenDefecto, getUrlImage} from '../../../../../core/utils/images.utils';
+import {NgClass} from '@angular/common';
 
 @Component({
   selector: 'app-dreposicion-aprobacion',
   standalone: true,
   imports: [
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgClass
   ],
   templateUrl: './dreposicion-aprobacion.component.html',
   styles: ``
@@ -55,6 +57,37 @@ export class DreposicionAprobacionComponent implements OnInit{
     this.bodega= codigo
     this.almacen = almacen
     this.cargar(usrLiquida)
+  }
+
+  duplicados = computed<Set<string>>(() => {
+    const conteo = new Map<string, number>();
+
+    this.productos().forEach(p => {
+      conteo.set(p.barra, (conteo.get(p.barra) ?? 0) + 1);
+    });
+
+    const barrasDuplicadas = new Set<string>();
+    conteo.forEach((cantidad, barra) => {
+      if (cantidad > 1) barrasDuplicadas.add(barra);
+    });
+
+    return barrasDuplicadas;
+  });
+
+  hayDuplicados = computed(() => this.duplicados().size > 0);
+
+  totalProductosDuplicados = computed(() => {
+    const dup = this.duplicados();
+    return this.productos().filter(p => dup.has(p.barra)).length;
+  });
+
+  esDuplicado(p: ProductoReposicionDto): boolean {
+    return this.duplicados().has(p.barra);
+  }
+
+  @HostListener('document:keydown.escape')
+  onEscape(): void {
+    if (this.minMaxAbierto()) this.cerrarMinMax();
   }
 
   private cargar(usrLiquida: string): void {
