@@ -11,6 +11,8 @@ RUN npm ci
 # Copiar el workspace (incluye libs/, projects/, angular.json, etc.)
 COPY . .
 
+RUN npx ng build shared-notifications --configuration production
+
 # Build del shell
 RUN npx ng build shell --configuration production
 
