@@ -34,6 +34,7 @@ export class ProfileSidebarComponent {
 
   signOut(): void {
     clearSessionItems();
+    window.dispatchEvent(new CustomEvent('user-logged-out'));
     this.visible = false;
     window.location.href='/auth/login'
   }

@@ -17,3 +17,5 @@
   [autoCloseMs]="toastConfig?.autoCloseMs"
   (visibleChange)="toastVisible = $event"
 />
+
+<app-idle-session-modal [(visible)]="showIdleWarningModal" />

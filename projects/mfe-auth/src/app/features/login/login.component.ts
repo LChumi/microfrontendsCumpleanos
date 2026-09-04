@@ -62,7 +62,7 @@ export class LoginComponent implements OnInit {
         setSessionItem('usrId', String(user.id))
         setSessionItem('nombre', user.nombre)
         setSessionItem('username', user.username)
-
+        window.dispatchEvent(new CustomEvent('user-logged-in'));
         this.messageService.add({severity: 'success', summary: 'Bienvenido', detail: user.nombre, life: 2000})
         this.notif.showToast({
           type: 'success',
