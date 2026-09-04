@@ -301,14 +301,14 @@ export class DreposicionAprobacionComponent implements OnInit{
           title: 'Pedido Autorizado',
           message: value.valor,
         })
-        this.router.navigate(['/procesos/reposicion/aprobar-pedido']).then(() => {} );
+        this.router.navigate(['/erp/pedidos/procesos/aprobar-pedido']).then(() => {} );
       },
       error: err => console.error('Error al generar prepedido', err)
     })
   }
 
-  cancelar(){
-    this.router.navigate(['/procesos/reposicion/aprobar-pedido']).then(() => {})
+  cancelar(): void {
+    this.router.navigate(['/erp/pedidos/procesos/aprobar-pedido']).then(() => {});
   }
 
   protected readonly getUrlImage = getUrlImage;

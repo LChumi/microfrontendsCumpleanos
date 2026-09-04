@@ -8,6 +8,7 @@ import {Router} from '@angular/router';
 import {EmpresaCodigosRequest} from '../../../../core/dto/empresa-codigos-request';
 import {getSessionItem} from '../../../../core/utils/storage.utils';
 import {DreposicionService} from '../../../../core/services/dreposicion.service';
+import {NotificationService} from 'shared-notifications';
 
 @Component({
   selector: 'app-aprobar-reposicion',
@@ -24,6 +25,7 @@ export class AprobarReposicionComponent {
 
   private readonly creposicionService = inject(CreposicionService)
   private readonly dreposicionService = inject(DreposicionService)
+  private readonly notif = inject(NotificationService)
   private readonly router = inject(Router)
   private readonly empresa = getSessionItem("empresa")!;
 
@@ -89,7 +91,7 @@ export class AprobarReposicionComponent {
     const usrLiquida = this.obtenerUsrLiquidaReutilizable(seleccionados);
 
     if (usrLiquida !== null){
-      this.router.navigate(['procesos/reposicion/aprobacion', usrLiquida, this.bodega, this.almacen ]).then(() => {} );
+      this.router.navigate(['/erp/pedidos/procesos/aprobacion', usrLiquida, this.bodega, this.almacen ]).then(() => {} );
     } else {
       this.loading = true
       const request: EmpresaCodigosRequest = {
@@ -98,7 +100,7 @@ export class AprobarReposicionComponent {
       };
       this.dreposicionService.generateUsrLiquida(request).subscribe({
         next: value => {
-          this.router.navigate(['procesos/reposicion/aprobacion', value, this.bodega, this.almacen ]).then(() => {this.loading = false} );
+          this.router.navigate(['/erp/pedidos/procesos/aprobacion', value, this.bodega, this.almacen ]).then(() => {this.loading = false} );
         }
       })
     }
@@ -107,7 +109,22 @@ export class AprobarReposicionComponent {
 
   anularSeleccionados(): void {
     const ids = this.pedidosSeleccionados();
-    // this.creposicionService.anular(ids).subscribe(...)
+    if (!ids.length) return;
+
+    const request: EmpresaCodigosRequest = {
+      empresa: this.empresa,
+      codigos: ids.map(p => p.id.codigo)
+    }
+     this.creposicionService.anularPedidos(request).subscribe({
+       next: () => {
+         this.notif.showToast({
+           type: 'info',
+           summary: 'Eliminados',
+           detail: 'Pedidos eliminados',
+           autoCloseMs: 2000
+         })
+       }
+     })
     console.log('Anular', ids);
   }
 
