@@ -287,6 +287,7 @@ export class DreposicionAprobacionComponent implements OnInit{
 
   finalizarPedido() {
     if (this.form.invalid) return;
+    this.loading.set(true);
     const request: PrePedidoRequestDto = {
       empresa: this.empresa,
       almacen: this.almacen,
@@ -301,9 +302,12 @@ export class DreposicionAprobacionComponent implements OnInit{
           title: 'Pedido Autorizado',
           message: value.valor,
         })
-        this.router.navigate(['/erp/pedidos/procesos/aprobar-pedido']).then(() => {} );
+        this.router.navigate(['/erp/pedidos/procesos/aprobar-pedido']).then(() => {this.loading.set(false)} );
       },
-      error: err => console.error('Error al generar prepedido', err)
+      error: err => {
+        console.error('Error al generar prepedido', err)
+        this.loading.set(false);
+      }
     })
   }
 

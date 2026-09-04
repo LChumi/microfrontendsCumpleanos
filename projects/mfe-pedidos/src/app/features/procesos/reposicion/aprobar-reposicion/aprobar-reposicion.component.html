@@ -141,12 +141,13 @@
       </div>
     }
   </div>
-
-  <app-dreposicion-productos
-    [creposicion]="creposicion"
-    [visible]="mostrarModal()"
-    (cerrar)="cerrarModal()"
-  ></app-dreposicion-productos>
+  @if (mostrarModal() && creposicion !== null) {
+    <app-dreposicion-productos
+      [creposicion]="creposicion"
+      [visible]="mostrarModal()"
+      (cerrar)="cerrarModal()"
+    ></app-dreposicion-productos>
+  }
 }
 
 <div class="sticky bottom-0 z-20 flex items-center justify-between border-t border-slate-200 bg-white/95 px-4 py-2.5 backdrop-blur">

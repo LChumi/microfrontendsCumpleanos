@@ -115,6 +115,7 @@ export class AprobarReposicionComponent {
     const ids = this.pedidosSeleccionados();
     if (!ids.length) return;
 
+    this.loading = true
     const request: EmpresaCodigosRequest = {
       empresa: this.empresa,
       codigos: ids.map(p => p.id.codigo)
@@ -127,6 +128,8 @@ export class AprobarReposicionComponent {
            detail: 'Pedidos eliminados',
            autoCloseMs: 2000
          })
+         this.loading = false
+         this.listarPedidos(this.bodega)
        }
      })
     console.log('Anular', ids);
@@ -137,7 +140,6 @@ export class AprobarReposicionComponent {
   }
 
   verDetalle(p: Creposicion){
-    console.log(p)
     this.creposicion = p.id.codigo;
     this.mostrarModal.set(true);
   }
