@@ -9,6 +9,7 @@ import {EmpresaCodigosRequest} from '../../../../core/dto/empresa-codigos-reques
 import {getSessionItem} from '../../../../core/utils/storage.utils';
 import {DreposicionService} from '../../../../core/services/dreposicion.service';
 import {NotificationService} from 'shared-notifications';
+import {DreposicionProductosComponent} from '../components/dreposicion-productos/dreposicion-productos.component';
 
 @Component({
   selector: 'app-aprobar-reposicion',
@@ -16,7 +17,8 @@ import {NotificationService} from 'shared-notifications';
   imports: [
     BodegaSelectComponent,
     DatePipe,
-    NgClass
+    NgClass,
+    DreposicionProductosComponent
   ],
   templateUrl: './aprobar-reposicion.component.html',
   styles: ``
@@ -30,11 +32,13 @@ export class AprobarReposicionComponent {
   private readonly empresa = getSessionItem("empresa")!;
 
   pedidos = signal<Creposicion[]>([])
+  mostrarModal = signal<boolean>(false)
   seleccionados = signal<Set<number>>(new Set())
   loading = false;
 
   bodega: any;
   almacen: any;
+  creposicion: any;
 
   onBodegaSeleccionada(bodega: BodegaWebV): void {
     this.bodega= bodega.codigo
@@ -134,6 +138,13 @@ export class AprobarReposicionComponent {
 
   verDetalle(p: Creposicion){
     console.log(p)
+    this.creposicion = p.id.codigo;
+    this.mostrarModal.set(true);
+  }
+
+  cerrarModal(){
+    this.creposicion = null;
+    this.mostrarModal.set(false);
   }
 
   private obtenerUsrLiquidaReutilizable(seleccionados: Creposicion[]): number | null {
