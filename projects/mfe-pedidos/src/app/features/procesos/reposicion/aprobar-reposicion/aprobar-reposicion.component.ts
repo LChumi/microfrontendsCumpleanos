@@ -170,19 +170,12 @@ export class AprobarReposicionComponent {
 
     // Todas las reposiciones que pertenecen
     // a esa liquidación deben estar seleccionadas.
-    const deLaLiquidacion = this.pedidos().filter(
-      p => p.usrLiquida === usrLiquida
-    );
+    const deLaLiquidacion = this.pedidos().filter(p => p.usrLiquida === usrLiquida);
 
-    const seleccionadosIds = new Set(
-      seleccionados.map(p => p.id.codigo)
-    );
+    const seleccionadosIds = new Set(seleccionados.map(p => p.id.codigo));
 
-    const todosSeleccionados = deLaLiquidacion.every(
-      p => seleccionadosIds.has(p.id.codigo)
-    );
+    const todosSeleccionados = deLaLiquidacion.every(p => seleccionadosIds.has(p.id.codigo));
 
     return todosSeleccionados ? usrLiquida : null;
   }
-
 }
