@@ -2,16 +2,12 @@ import {Component, inject, OnInit} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {parameterIsNumeric} from '../../utils/params-utils';
 import {JepFasterService} from '../../core/services/jep-faster.service';
-import {AlertDialogComponent} from '../../shared/components/alert-dialog/alert-dialog.component';
-import {ToastComponent} from '../../shared/components/toast/toast.component';
+import {NotificationService} from 'shared-notifications';
 
 @Component({
   selector: 'app-jep-faster',
   standalone: true,
-  imports: [
-    AlertDialogComponent,
-    ToastComponent
-  ],
+  imports: [],
   templateUrl: './jep-faster.component.html',
   styles: ``
 })
@@ -19,20 +15,12 @@ export class JepFasterComponent implements OnInit {
 
   private readonly route = inject(ActivatedRoute);
   private readonly jepService = inject(JepFasterService);
+  private readonly notif = inject(NotificationService);
 
   protected usrLiquida: any;
   protected empresa: any;
 
   protected imageBase64: string | null = null;
-
-  protected showDialog = false;
-  protected dialogTitle = '';
-  protected dialogMessage = '';
-  protected dialogType: 'success' | 'warning' = 'success';
-
-  protected showToast = false;
-  protected toastSummary = '';
-  protected toastDetail = '';
 
   private static readonly base64 = 'data:image/png;base64,';
 
@@ -97,37 +85,26 @@ export class JepFasterComponent implements OnInit {
   }
 
   private confirm(): void {
-    this.dialogType = 'success';
-    this.dialogTitle = 'Confirmación';
-    this.dialogMessage =
-      'El pago fue realizado exitosamente. Por favor cierre la ventana.';
-
-    this.showDialog = true;
+    this.notif.showAlert({
+      type: 'success',
+      title: 'Confirmación',
+      message: '¡Pago con JepFaster realizado con éxito! Cierre la ventana para continuar.'
+    });
   }
 
   private error(error: string, message: string): void {
-    this.dialogType = 'warning';
-    this.dialogTitle = 'Advertencia';
-    this.dialogMessage = message;
+    this.notif.showAlert({
+      type: 'warning',
+      title: 'Advertencia',
+      message: message
+    });
 
-    this.showDialog = true;
-
-    this.toastSummary = error;
-    this.toastDetail = 'Cierre la ventana por favor';
-  }
-
-  protected acceptDialog(): void {
-    this.showDialog = false;
-
-    this.showToast = true;
-
-    setTimeout(() => {
-      this.showToast = false;
-    }, 4000);
-  }
-
-  protected closeDialog(): void {
-    this.showDialog = false;
+    this.notif.showToast({
+      type: 'error',
+      summary: message,
+      detail: error,
+      autoCloseMs: 10000
+    })
   }
 
   private cleanData(): void {

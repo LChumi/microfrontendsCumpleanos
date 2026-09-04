@@ -16,13 +16,3 @@
     </div>
   }
 </div>
-
-<app-alert-dialog
-  [(visible)]="showDialog"
-  [type]="dialogType"
-  [title]="dialogTitle"
-  [message]="dialogMessage"
-  (accept)="acceptDialog()"
-/>
-
-<app-toast [(visible)]="showToast" [summary]="toastSummary" />
