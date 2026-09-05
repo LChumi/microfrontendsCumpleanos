@@ -6,6 +6,7 @@ import {getSessionItem, setSessionItem} from '../../core/utils/storage.utils';
 import {getCurrentDateNow, getCurrentTime, getGreeting} from '../../core/utils/date.utils';
 import {DataViewModule} from 'primeng/dataview';
 import {RouterLink, RouterLinkActive} from '@angular/router';
+import {UltimosAccesosComponent} from './components/ultimos-accesos/ultimos-accesos.component';
 
 @Component({
   selector: 'app-dashboard',
@@ -13,7 +14,8 @@ import {RouterLink, RouterLinkActive} from '@angular/router';
   imports: [
     DataViewModule,
     RouterLink,
-    RouterLinkActive
+    RouterLinkActive,
+    UltimosAccesosComponent
   ],
   templateUrl: './dashboard.component.html',
   styles: ``
