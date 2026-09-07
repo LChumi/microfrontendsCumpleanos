@@ -2,6 +2,7 @@ services:
   nginx:
     image: nginx:alpine
     container_name: mfe-nginx
+    restart: unless-stopped
     ports:
       - "8080:80"
     volumes:
@@ -22,54 +23,63 @@ services:
   shell:
     image: ghcr.io/lchumi/shell:latest
     container_name: shell
+    restart: unless-stopped
     networks:
       - microfrontends
 
   mfe-auth:
     image: ghcr.io/lchumi/mfe-auth:latest
     container_name: mfe-auth
+    restart: unless-stopped
     networks:
       - microfrontends
 
   mfe-contabilidad:
     image: ghcr.io/lchumi/mfe-contabilidad:latest
     container_name: mfe-contabilidad
+    restart: unless-stopped
     networks:
       - microfrontends
 
   mfe-dashboard:
     image: ghcr.io/lchumi/mfe-dashboard:latest
     container_name: mfe-dashboard
+    restart: unless-stopped
     networks:
       - microfrontends
 
   mfe-importaciones:
     image: ghcr.io/lchumi/mfe-importaciones:latest
     container_name: mfe-importaciones
+    restart: unless-stopped
     networks:
       - microfrontends
 
   mfe-inventarios:
     image: ghcr.io/lchumi/mfe-inventarios:latest
     container_name: mfe-inventarios
+    restart: unless-stopped
     networks:
       - microfrontends
 
   mfe-system-administrador:
     image: ghcr.io/lchumi/mfe-system-administrador:latest
     container_name: mfe-system-administrador
+    restart: unless-stopped
     networks:
       - microfrontends
 
   mfe-payments:
     image: ghcr.io/lchumi/mfe-payments:latest
     container_name: mfe-payments
+    restart: unless-stopped
     networks:
       - microfrontends
 
   mfe-pedidos:
     image: ghcr.io/lchumi/mfe-pedidos:latest
     container_name: mfe-pedidos
+    restart: unless-stopped
     networks:
       - microfrontends
 
