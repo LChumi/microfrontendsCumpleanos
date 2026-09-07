@@ -29,72 +29,135 @@
 </p-tree>
 
 <!-- DIALOG CREAR/EDITAR -->
-<p-dialog header="{{ isEditMode ? 'Editar Menú' : 'Nuevo Menú' }}" [(visible)]="dialogVisible" [modal]="true" [style]="{width: '550px'}" [breakpoints]="{'960px': '90vw'}">
-  <div class="flex flex-col gap-3">
+<p-dialog
+  header="{{ isEditMode ? 'Editar Menú' : 'Nuevo Menú' }}"
+  [(visible)]="dialogVisible"
+  [modal]="true"
+  [style]="{width: '600px'}"
+  [breakpoints]="{'960px': '90vw'}"
+  styleClass="menu-dialog"
+>
+  <div class="flex flex-col gap-6 pt-2">
 
-    <div class="field">
-      <label>ID (código único, ej. MEN003)</label>
-      <input pInputText [(ngModel)]="menuForm.mnwId" class="w-full uppercase" autocapitalize="characters"/>
-    </div>
+    <!-- SECCIÓN: Información general -->
+    <section class="flex flex-col gap-3">
+      <span class="text-xs font-semibold uppercase tracking-wide text-color-secondary flex items-center gap-2">
+        <i class="pi pi-info-circle text-primary"></i> Información general
+      </span>
 
-    <div class="field">
-      <label>Nombre</label>
-      <input pInputText [(ngModel)]="menuForm.nombre" class="w-full uppercase" autocapitalize="characters"/>
-    </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="field flex flex-col gap-1">
+          <label class="text-sm font-medium">ID <span class="text-color-secondary font-normal">(ej. MEN003)</span></label>
+          <input pInputText [(ngModel)]="menuForm.mnwId" class="w-full uppercase" autocapitalize="characters"/>
+        </div>
 
-    <div class="field">
-      <label>Ícono</label>
-      <p-dropdown [options]="icons" [(ngModel)]="menuForm.icono" optionLabel="name" optionValue="label" [filter]="true" filterBy="name" placeholder="Seleccione un ícono" styleClass="w-full">
-        <ng-template let-icon pTemplate="item">
-          <div class="flex items-center gap-2">
-            <i [class]="icon.label"></i>
-            <span>{{ icon.label }}</span>
-          </div>
-        </ng-template>
-
-        <ng-template let-selected pTemplate="selectedItem">
-          @if (selected) {
-            <div class="flex items-center gap-2">
-              <i [class]="selected.label"></i>
-              <span>{{ selected.label }}</span>
-            </div>
-          }
-        </ng-template>
-      </p-dropdown>
-    </div>
-
-    <div class="field">
-      <label>Reporta a (menú padre)</label>
-      <div class="flex items-center gap-2">
-        <p-treeSelect [options]="treeDataPadre" [(ngModel)]="reportaNode" selectionMode="single" placeholder="-- Nodo raíz (sin padre) --" appendTo="body" class="w-full"></p-treeSelect>
-        <p-button icon="pi pi-times" [text]="true" (onClick)="reportaNode = null" pTooltip="Quitar padre (nodo raíz)"></p-button>
+        <div class="field flex flex-col gap-1">
+          <label class="text-sm font-medium">Nombre</label>
+          <input pInputText [(ngModel)]="menuForm.nombre" class="w-full uppercase" autocapitalize="characters"/>
+        </div>
       </div>
-    </div>
 
-    <div class="field">
-      <label>Orden</label>
-      <p-inputNumber [(ngModel)]="menuForm.orden" class="w-full"></p-inputNumber>
-    </div>
+      <div class="grid grid-cols-2 gap-4">
+        <div class="field flex flex-col gap-1">
+          <label class="text-sm font-medium">Ícono</label>
+          <p-dropdown [options]="icons" [(ngModel)]="menuForm.icono" optionLabel="name" optionValue="label"
+                      [filter]="true" filterBy="name" placeholder="Seleccione un ícono" styleClass="w-full">
+            <ng-template let-icon pTemplate="item">
+              <div class="flex items-center gap-2">
+                <i [class]="icon.label"></i>
+                <span>{{ icon.label }}</span>
+              </div>
+            </ng-template>
+            <ng-template let-selected pTemplate="selectedItem">
+              @if (selected) {
+                <div class="flex items-center gap-2">
+                  <i [class]="selected.label"></i>
+                  <span>{{ selected.label }}</span>
+                </div>
+              }
+            </ng-template>
+          </p-dropdown>
+        </div>
 
-    <div class="field flex items-center gap-2">
-      <p-toggleButton [(ngModel)]="esMenuItem" onLabel="Es Menú Item (navega)" offLabel="Es Cabecera (solo agrupa)"></p-toggleButton>
-    </div>
+        <div class="field flex flex-col gap-1">
+          <label class="text-sm font-medium">Orden</label>
+          <p-inputNumber [(ngModel)]="menuForm.orden" class="w-full" styleClass="w-full"></p-inputNumber>
+        </div>
+      </div>
+    </section>
 
-    @if (esMenuItem) {
-      <div class="field">
-        <label>Programa (UI Route)</label>
-        <p-dropdown [options]="programas" [(ngModel)]="menuForm.programa" optionLabel="nombre" [filter]="true" filterBy="nombre" placeholder="Selecciona el programa" appendTo="body" autocapitalize="characters" class="w-full uppercase">
-          <ng-template let-prog pTemplate="item">
-            {{ prog.nombre }} — {{ prog.path }}
+    <p-divider></p-divider>
+
+    <!-- SECCIÓN: Jerarquía y tipo -->
+    <section class="flex flex-col gap-3">
+      <span class="text-xs font-semibold uppercase tracking-wide text-color-secondary flex items-center gap-2">
+        <i class="pi pi-sitemap text-primary"></i> Jerarquía y tipo
+      </span>
+
+      <div class="field flex flex-col gap-1">
+        <label class="text-sm font-medium">Reporta a (menú padre)</label>
+        <div class="flex items-center gap-2">
+          <p-treeSelect [options]="treeDataPadre" [(ngModel)]="reportaNode" selectionMode="single"
+                        placeholder="-- Nodo raíz (sin padre) --" appendTo="body" class="w-full"></p-treeSelect>
+          <p-button icon="pi pi-times" [text]="true" [rounded]="true" severity="secondary"
+                    (onClick)="reportaNode = null" pTooltip="Quitar padre (nodo raíz)"></p-button>
+        </div>
+      </div>
+
+      <div class="field flex items-center justify-between gap-2 p-3 surface-100 border-round">
+        <span class="text-sm font-medium">
+          {{ esMenuItem ? 'Es Menú Item (navega)' : 'Es Cabecera (solo agrupa)' }}
+        </span>
+        <p-toggleButton [(ngModel)]="esMenuItem" onLabel="Ítem" offLabel="Cabecera"
+                        onIcon="pi pi-external-link" offIcon="pi pi-list"></p-toggleButton>
+      </div>
+    </section>
+
+    <p-divider></p-divider>
+
+    <!-- SECCIÓN: Seguridad y navegación -->
+    <section class="flex flex-col gap-3">
+      <span class="text-xs font-semibold uppercase tracking-wide text-color-secondary flex items-center gap-2">
+        <i class="pi pi-shield text-primary"></i> Seguridad y navegación
+      </span>
+
+      <div class="field flex flex-col gap-1">
+        <label class="text-sm font-medium">Seguridad</label>
+        <p-dropdown [options]="listSeguridad" [(ngModel)]="menuForm.seguridad" optionLabel="segNombre" dataKey="id"
+                    [filter]="true" filterBy="segNombre" placeholder="Seleccione una seguridad"
+                    appendTo="body" styleClass="w-full">
+          <ng-template let-seguridad pTemplate="item">
+            <span>{{ seguridad.segNombre }}</span>
+          </ng-template>
+          <ng-template let-selected pTemplate="selectedItem">
+            @if (selected) {
+              <span>{{ selected.segNombre }}</span>
+            }
           </ng-template>
         </p-dropdown>
       </div>
-    }
+
+      @if (esMenuItem) {
+        <div class="field flex flex-col gap-1">
+          <label class="text-sm font-medium">Programa (UI Route)</label>
+          <p-dropdown [options]="programas" [(ngModel)]="menuForm.programa" optionLabel="nombre"
+                      [filter]="true" filterBy="nombre" placeholder="Selecciona el programa"
+                      appendTo="body" styleClass="w-full uppercase">
+            <ng-template let-prog pTemplate="item">
+              <div class="flex flex-col">
+                <span class="font-medium">{{ prog.nombre }}</span>
+                <span class="text-xs text-color-secondary">{{ prog.path }}</span>
+              </div>
+            </ng-template>
+          </p-dropdown>
+        </div>
+      }
+    </section>
 
   </div>
 
   <ng-template pTemplate="footer">
-    <p-button label="Cancelar" [text]="true" (onClick)="dialogVisible = false"></p-button>
-    <p-button label="Guardar" (onClick)="save()"></p-button>
+    <p-button label="Cancelar" [text]="true" severity="secondary" (onClick)="dialogVisible = false"></p-button>
+    <p-button label="Guardar" icon="pi pi-check" (onClick)="save()"></p-button>
   </ng-template>
 </p-dialog>

@@ -16,6 +16,9 @@ import {ToggleButtonModule} from 'primeng/togglebutton';
 import {TooltipModule} from 'primeng/tooltip';
 import {MenuSyncService} from '../../../../../core/services/menu-sync.service';
 import {Subscription} from 'rxjs';
+import {Seguridad} from '../../../../../core/models/seguridad';
+import {SeguridadService} from '../../../../../core/services/seguridad.service';
+import {DividerModule} from 'primeng/divider';
 
 @Component({
   selector: 'app-menu-tree',
@@ -29,7 +32,8 @@ import {Subscription} from 'rxjs';
     TreeSelectModule,
     InputNumberModule,
     ToggleButtonModule,
-    TooltipModule
+    TooltipModule,
+    DividerModule
   ],
   templateUrl: './menu-tree.component.html',
   styles: ``
@@ -42,6 +46,7 @@ export class MenuTreeComponent implements OnInit, OnDestroy {
   private confirmationService = inject(ConfirmationService);
   private menuSync = inject(MenuSyncService);
   private subs = new Subscription();
+  private seguridadService = inject(SeguridadService);
 
   icons: PrimeIcon[] = PRIME_ICONS;
   treeData: TreeNode[] = [];
@@ -57,9 +62,12 @@ export class MenuTreeComponent implements OnInit, OnDestroy {
 
   menuForm: Partial<MenuW> = {};
 
+  listSeguridad: Seguridad[] = [];
+
   ngOnInit() {
     this.getMenus();
     this.getProgramas();
+    this.getSeguridades();
     this.subs.add(this.menuSync.progrmamCreado.subscribe(() => this.getProgramas()))
   }
 
@@ -80,6 +88,12 @@ export class MenuTreeComponent implements OnInit, OnDestroy {
       expanded: true,
       children: n.children?.length ? this.makeAllSelectable(n.children) : []
     }));
+  }
+
+  private getSeguridades(){
+    this.seguridadService.getAll().subscribe({
+      next: data => this.listSeguridad = data
+    })
   }
 
   getMenus() {
