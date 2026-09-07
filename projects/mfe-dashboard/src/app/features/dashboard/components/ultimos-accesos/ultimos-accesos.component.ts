@@ -2,6 +2,7 @@ import {Component, inject} from '@angular/core';
 import {SessionService} from '../../../../core/services/session.service';
 import {SessionAccessDTO} from '../../../../core/models/session-access.dto';
 import {getSessionItem} from '../../../../../../../mfe-pedidos/src/app/core/utils/storage.utils';
+import {AccesoView, parseUserAgent} from '../../../../core/utils/user-agent.utils';
 
 @Component({
   selector: 'app-ultimos-accesos',
@@ -15,12 +16,20 @@ export class UltimosAccesosComponent {
   private readonly sessionService = inject(SessionService);
   private readonly usuarioId = getSessionItem("username")!;
 
-  accesos: SessionAccessDTO[] = [];
+  accesos: AccesoView[] = [];
 
   ngOnInit(): void {
     this.sessionService.getUserAccesses(this.usuarioId).subscribe({
-      next: value => this.accesos = value
+      next: value => this.setAccesos(value)
     });
+  }
+
+  private setAccesos(data: SessionAccessDTO[]){
+    this.accesos = data.map((acceso, index) => ({
+      ...acceso,
+        ua: parseUserAgent(acceso.userAgent),
+        isActive: index === 0
+    }));
   }
 
   formatFecha(fecha: string): string {
@@ -38,4 +47,5 @@ export class UltimosAccesosComponent {
     });
   }
 
+  protected readonly parseUserAgent = parseUserAgent;
 }
