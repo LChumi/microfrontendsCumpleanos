@@ -16,6 +16,7 @@ services:
       - mfe-inventarios
       - mfe-system-administrador
       - mfe-payments
+      - mfe-pedidos
     networks:
       - microfrontends
 
