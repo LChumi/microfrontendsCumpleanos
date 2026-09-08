@@ -64,7 +64,6 @@ export class FavoriteComponent implements OnInit, OnDestroy {
     this.loadFavoriteState();
   }
 
-
   private loadFavoriteState(): void {
 
     const favoriteRequest = this.buildFavoriteRequest();
@@ -123,7 +122,7 @@ export class FavoriteComponent implements OnInit, OnDestroy {
     return {
       empresa: Number(getSessionItem('empresa')),
       path: this.router.url,
-      idUsuario: Number(getSessionItem('usuario'))
+      idUsuario: Number(getSessionItem('usrId'))
     };
   }
 
