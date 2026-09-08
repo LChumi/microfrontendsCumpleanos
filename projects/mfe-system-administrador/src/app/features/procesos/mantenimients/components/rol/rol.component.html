@@ -24,19 +24,135 @@
   </ng-template>
 </p-table>
 
-<p-dialog header="{{ isEditMode ? 'Editar' : 'Nuevo' }} Rol" [(visible)]="dialogVisible" [modal]="true" [style]="{width: '450px'}">
-  <div class="flex flex-col gap-3">
-    <div class="field">
-      <label>ID</label>
-      <input pInputText [(ngModel)]="form.rlwId" class="w-full"/>
+<p-dialog [(visible)]="dialogVisible" [modal]="true" [style]="{width: '480px'}" [draggable]="false" [resizable]="false">
+
+  <!-- Header -->
+  <ng-template pTemplate="header">
+    <div class="flex items-center gap-3">
+      <div class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-indigo-50 text-indigo-600">
+        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
+          <circle cx="9" cy="7" r="4"/>
+          <path stroke-linecap="round" stroke-linejoin="round" d="M19 8v6m3-3h-6"/>
+        </svg>
+      </div>
+
+      <div class="min-w-0">
+        <h2 class="text-base font-semibold text-slate-800">
+          {{ isEditMode ? 'Editar rol' : 'Nuevo rol' }}
+        </h2>
+        <p class="mt-0.5 text-xs text-slate-500">
+          {{ isEditMode ? 'Modifica la información del rol' : 'Registra un nuevo rol en el sistema' }}
+        </p>
+      </div>
     </div>
-    <div class="field">
-      <label>Nombre</label>
-      <input pInputText [(ngModel)]="form.nombre" class="w-full"/>
-    </div>
-  </div>
-  <ng-template pTemplate="footer">
-    <p-button label="Cancelar" [text]="true" (onClick)="dialogVisible = false"></p-button>
-    <p-button label="Guardar" (onClick)="save()"></p-button>
   </ng-template>
+
+  <!-- Body -->
+  <div class="space-y-5">
+
+    <!-- ID -->
+    <div class="space-y-1.5">
+      <label for="rlwId" class="block text-sm font-medium text-slate-700">
+        ID
+      </label>
+
+      <input
+        id="rlwId"
+        type="text"
+        pInputText
+        [(ngModel)]="form.rlwId"
+        autocapitalize="characters"
+        placeholder="Ingrese el ID"
+        class="uppercase !w-full !rounded-lg !border-slate-300 !bg-white !px-3 !py-2.5 !text-sm !text-slate-700 !shadow-sm placeholder:!text-slate-400 focus:!border-indigo-500 focus:!ring-2 focus:!ring-indigo-100"
+      />
+    </div>
+
+    <!-- Nombre -->
+    <div class="space-y-1.5">
+      <label for="nombre" class="block text-sm font-medium text-slate-700">
+        Nombre
+      </label>
+
+      <input
+        id="nombre"
+        type="text"
+        pInputText
+        [(ngModel)]="form.nombre"
+        autocapitalize="characters"
+        placeholder="Ej. Administrador"
+        class="!w-full uppercase !rounded-lg !border-slate-300 !bg-white !px-3 !py-2.5 !text-sm !text-slate-700 !shadow-sm placeholder:!text-slate-400 focus:!border-indigo-500 focus:!ring-2 focus:!ring-indigo-100"
+      />
+    </div>
+
+    <!-- Seguridad -->
+    <div class="space-y-1.5">
+      <label class="block text-sm font-medium text-slate-700">
+        Seguridad
+      </label>
+
+      <p-dropdown
+        [options]="listSeguridad"
+        [(ngModel)]="form.seguridad"
+        optionLabel="segNombre"
+        dataKey="id"
+        [filter]="true"
+        filterBy="segNombre"
+        placeholder="Seleccione una seguridad"
+        appendTo="body"
+        styleClass="!w-full">
+
+        <ng-template let-seguridad pTemplate="item">
+          <div class="flex items-center gap-3 px-1 py-1">
+            <div class="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-500">
+              <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.8">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 0 0 2-2v-5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2Zm2-9V7a4 4 0 1 1 8 0v3"/>
+              </svg>
+            </div>
+
+            <span class="text-sm font-medium text-slate-700">
+              {{ seguridad.segNombre }}
+            </span>
+          </div>
+        </ng-template>
+
+        <ng-template let-selected pTemplate="selectedItem">
+          @if (selected) {
+            <span class="text-sm text-slate-700">
+              {{ selected.segNombre }}
+            </span>
+          }
+        </ng-template>
+
+      </p-dropdown>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+  <ng-template pTemplate="footer">
+    <div class="flex items-center justify-end gap-2">
+
+      <button
+        type="button"
+        (click)="dialogVisible = false"
+        class="border-0 inline-flex items-center justify-center rounded-lg px-4 py-2.5 text-sm font-medium text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-800 focus:outline-none focus:ring-2 focus:ring-slate-200">
+        Cancelar
+      </button>
+
+      <button
+        type="button"
+        (click)="save()"
+        class="border-0 inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-semibold text-white shadow-sm transition-all hover:bg-indigo-700 hover:shadow focus:outline-none focus:ring-2 focus:ring-indigo-200 active:scale-[0.98]">
+
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+        </svg>
+
+        Guardar
+      </button>
+
+    </div>
+  </ng-template>
+
 </p-dialog>

@@ -8,6 +8,9 @@ import {RolW} from '../../../../../core/models/rol-w';
 import {FormsModule} from '@angular/forms';
 import {InputTextModule} from 'primeng/inputtext';
 import {MenuSyncService} from '../../../../../core/services/menu-sync.service';
+import {SeguridadService} from '../../../../../core/services/seguridad.service';
+import {Seguridad} from '../../../../../core/models/seguridad';
+import {DropdownModule} from 'primeng/dropdown';
 
 @Component({
   selector: 'app-rol',
@@ -17,7 +20,8 @@ import {MenuSyncService} from '../../../../../core/services/menu-sync.service';
     DialogModule,
     Button,
     FormsModule,
-    InputTextModule
+    InputTextModule,
+    DropdownModule
   ],
   templateUrl: './rol.component.html',
   styles: ``
@@ -27,14 +31,17 @@ export class RolComponent implements OnInit {
   private rolwService = inject(RolWService);
   private messageService = inject(MessageService);
   private menuSync = inject(MenuSyncService)
+  private seguridadService = inject(SeguridadService);
 
   roles: RolW[] = [];
+  listSeguridad: Seguridad[] = [];
   dialogVisible = false;
   isEditMode = false;
   form: Partial<RolW> = {};
 
   ngOnInit() {
     this.getAll();
+    this.getSeguridades()
   }
 
   getAll() {
@@ -53,8 +60,19 @@ export class RolComponent implements OnInit {
     this.dialogVisible = true;
   }
 
+  private getSeguridades(){
+    this.seguridadService.getAll().subscribe({
+      next: data => this.listSeguridad = data
+    })
+  }
+
   save() {
-    const payload = this.form as RolW;
+    const payload: RolW = {
+      ...this.form,
+      rlwId: this.form.rlwId!.toUpperCase(),
+      nombre: this.form.nombre!.toUpperCase(),
+      seguridad: this.form.seguridad!
+    }
     const request$ = this.isEditMode ? this.rolwService.update(payload) : this.rolwService.create(payload);
     request$.subscribe({
       next: () => {
