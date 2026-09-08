@@ -59,6 +59,7 @@
                   [src]="getUrlImage(p.barra)"
                   [alt]="p.item"
                   class="h-12 w-12 shrink-0 rounded-lg border border-slate-200 object-cover"
+                  (click)="verImagen(getUrlImage(p.barra))"
                   (error)="cargarImagenDefecto($event)">
                 <div class="min-w-0">
                   <div class="truncate text-sm font-semibold text-slate-800">
@@ -198,6 +199,7 @@
             [src]="getUrlImage(p.barra)"
             [alt]="p.item"
             class="h-14 w-14 shrink-0 rounded-lg border border-slate-200 object-cover"
+            (click)="verImagen(getUrlImage(p.barra))"
             (error)="cargarImagenDefecto($event)">
           <div class="min-w-0 flex-1">
             <div class="text-sm font-semibold text-slate-800">{{ p.item }}</div>
@@ -292,6 +294,16 @@
   </div>
 }
 
+@if (imagenAmpliada()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm" (click)="cerrarImagen()">
+    <div class="relative max-h-[90vh] max-w-[90vw]" (click)="$event.stopPropagation()">
+      <button type="button" class="border-0 absolute -right-3 -top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white text-slate-600 shadow-lg transition hover:bg-slate-100" (click)="cerrarImagen()">
+        <i class="pi pi-times"></i>
+      </button>
+      <img [src]="imagenAmpliada()" class="max-h-[85vh] max-w-[85vw] rounded-xl object-contain shadow-2xl" alt="Imagen ampliada" (error)="cargarImagenDefecto($event)">
+    </div>
+  </div>
+}
 
 @if (minMaxAbierto()) {
   <div
@@ -352,3 +364,4 @@
     </div>
   </div>
 }
+<app-scroll-top></app-scroll-top>

@@ -14,13 +14,15 @@ import {MinMaxUpdateDto} from '../../../../../core/dto/min-max-update.dto';
 import {map} from 'rxjs';
 import {ProductoReposicionUpdateDto} from '../../../../../core/dto/producto-reposicion-update.dto';
 import {NotificationService} from 'shared-notifications';
+import {ScrollTopComponent} from '../../../../../shared/components/scroll-top/scroll-top.component';
 
 @Component({
   selector: 'app-dreposicion-aprobacion',
   standalone: true,
   imports: [
     ReactiveFormsModule,
-    NgClass
+    NgClass,
+    ScrollTopComponent
   ],
   templateUrl: './dreposicion-aprobacion.component.html',
   styles: ``
@@ -47,6 +49,7 @@ export class DreposicionAprobacionComponent implements OnInit{
   minMaxAbierto = signal(false);
   minMaxIndexActual = signal<number | null>(null);
   confirmandoEliminarId = signal<number | null>(null);
+  imagenAmpliada = signal<string | null>(null);
 
   minMaxForm = this.fb.group({
     min: [0, Validators.required],
@@ -154,6 +157,14 @@ export class DreposicionAprobacionComponent implements OnInit{
     const set = new Set(this.editandoCanApr());
     set.has(id) ? set.delete(id): set.add(id);
     this.editandoCanApr.set(set);
+  }
+
+  verImagen(url: string) {
+    this.imagenAmpliada.set(url);
+  }
+
+  cerrarImagen() {
+    this.imagenAmpliada.set(null);
   }
 
   guardarCanApr(id: number, index: number){
