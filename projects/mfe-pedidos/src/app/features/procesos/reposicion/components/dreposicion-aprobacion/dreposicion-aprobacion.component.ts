@@ -109,7 +109,28 @@ export class DreposicionAprobacionComponent implements OnInit{
     this.loading.set(true);
     this.dreposicionService.getProductsByUsrLiquida(usrLiquida).subscribe({
       next: productos => {
-        this.productos.set(productos);
+        const conteo = new Map<string, number>();
+
+        productos.forEach(p => conteo.set(p.barra, (conteo.get(p.barra) ?? 0) + 1));
+
+        const productosOrdenados =[...productos].sort((a, b) => {
+          const aDuplicado = (conteo.get(a.barra) ?? 0) > 1;
+          const bDuplicado = (conteo.get(b.barra) ?? 0) > 1;
+
+          return Number(bDuplicado) - Number(aDuplicado);
+        })
+
+        this.productos.set(productosOrdenados);
+
+        if (this.duplicados().size > 0) {
+          this.notif.showToast({
+            type: 'warning',
+            summary: 'Productos duplicados',
+            detail: `Se encontraron ${this.duplicados().size} productos con código duplicado`,
+            autoCloseMs: 10000
+          });
+        }
+
         this.items.clear();
 
         const mapa = new Map<number, boolean>();
