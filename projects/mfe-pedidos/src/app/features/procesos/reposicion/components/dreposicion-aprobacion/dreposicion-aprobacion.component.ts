@@ -14,7 +14,6 @@ import {MinMaxUpdateDto} from '../../../../../core/dto/min-max-update.dto';
 import {map} from 'rxjs';
 import {ProductoReposicionUpdateDto} from '../../../../../core/dto/producto-reposicion-update.dto';
 import {NotificationService} from 'shared-notifications';
-import {ScrollTopComponent} from '../../../../../shared/components/scroll-top/scroll-top.component';
 
 @Component({
   selector: 'app-dreposicion-aprobacion',
@@ -22,7 +21,6 @@ import {ScrollTopComponent} from '../../../../../shared/components/scroll-top/sc
   imports: [
     ReactiveFormsModule,
     NgClass,
-    ScrollTopComponent
   ],
   templateUrl: './dreposicion-aprobacion.component.html',
   styles: ``
