@@ -2,7 +2,6 @@ import {Component, inject, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Router, RouterLink} from '@angular/router';
 import {MessageService} from 'primeng/api';
-import {ErrorResponse} from '../../core/error/error-response';
 import {AuthService} from '../../core/services/auth.service';
 import {AuthenticationRequest} from '../../core/models/autentication-resquest';
 import {CheckboxModule} from 'primeng/checkbox';
@@ -30,6 +29,7 @@ export class LoginComponent implements OnInit {
 
   password!: string;
   loginForm!: FormGroup
+  mostrarPassword = false;
 
   private fb = inject(FormBuilder)
   private usuarioService = inject(AuthService)
@@ -71,11 +71,12 @@ export class LoginComponent implements OnInit {
           autoCloseMs: 2000
         })
         this.goToEmpresas()
-      }, error: (error: ErrorResponse) => {
-        this.messageService.add({
-          severity: 'warn',
-          summary: 'Verifique nombre usuario o contraseña',
-          detail: error.message
+      }, error: () => {
+        this.notif.showToast({
+          type: 'warning',
+          summary: 'Usuario no autenticado',
+          detail: 'Verifique nombre de usuario o contraseña',
+          autoCloseMs: 2000
         })
       }
     })

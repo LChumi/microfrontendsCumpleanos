@@ -91,17 +91,11 @@
         <div>
           <label for="password1" class="block text-sm font-medium text-[#4d4d4f] mb-1.5">Contraseña</label>
           <div class="relative">
-            <i class="pi pi-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
-            <input
-              id="password1"
-              type="password"
-              formControlName="password"
-              autocomplete="off"
-              placeholder="••••••••"
-              class="w-full pl-10 pr-4 py-2.5 rounded-lg border border-gray-200 text-sm text-[#4d4d4f]
-                     placeholder:text-gray-400 outline-none transition
-                     focus:border-[#00acec] focus:ring-4 focus:ring-[#00acec]/15"
-            />
+            <i class="pi pi-lock absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+            <input id="password1" [type]="mostrarPassword ? 'text' : 'password'" formControlName="password" autocomplete="off" placeholder="••••••••" class="w-full pl-10 pr-11 py-2.5 rounded-lg border border-gray-200 text-sm text-[#4d4d4f] placeholder:text-gray-400 outline-none transition focus:border-[#00acec] focus:ring-4 focus:ring-[#00acec]/15" />
+            <button type="button" (click)="mostrarPassword = !mostrarPassword" class="bg-transparent absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors border-0 appearance-none">
+              <i [class]="mostrarPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
+            </button>
           </div>
           @if (loginForm.get('password')?.invalid && (loginForm.get('password')?.touched || loginForm.get('password')?.dirty)) {
             <p class="text-red-500 text-xs mt-1.5">La contraseña es requerida</p>
