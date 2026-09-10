@@ -1,22 +1,19 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Router, RouterLink} from '@angular/router';
-import {MessageService} from 'primeng/api';
 import {AuthService} from '../../core/services/auth.service';
 import {AuthenticationRequest} from '../../core/models/autentication-resquest';
-import {CheckboxModule} from 'primeng/checkbox';
-import {InputTextModule} from 'primeng/inputtext';
 import {NgOptimizedImage} from '@angular/common';
 import {getSessionItem, setSessionItem} from '../../core/utils/storage.utils';
 import {NotificationService} from 'shared-notifications';
+import Clarity from '@microsoft/clarity'
+import {UserResponse} from '../../core/dto/user-response';
 
 @Component({
   selector: 'app-login',
   standalone: true,
   imports: [
-    CheckboxModule,
     RouterLink,
-    InputTextModule,
     ReactiveFormsModule,
     NgOptimizedImage
   ],
@@ -34,7 +31,6 @@ export class LoginComponent implements OnInit {
   private fb = inject(FormBuilder)
   private usuarioService = inject(AuthService)
   private router = inject(Router)
-  private messageService = inject(MessageService)
   private notif = inject(NotificationService)
 
   ngOnInit(): void {
@@ -63,7 +59,7 @@ export class LoginComponent implements OnInit {
         setSessionItem('nombre', user.nombre)
         setSessionItem('username', user.username)
         window.dispatchEvent(new CustomEvent('user-logged-in'));
-        this.messageService.add({severity: 'success', summary: 'Bienvenido', detail: user.nombre, life: 2000})
+        this.notifyClarity(user)
         this.notif.showToast({
           type: 'success',
           summary: 'Bienvenido',
@@ -90,9 +86,25 @@ export class LoginComponent implements OnInit {
     setTimeout(() => {
       const usrId = getSessionItem("usrId")
       if (usrId) {
-        this.messageService.add({severity: 'success', summary: 'Bienvenido', detail: 'Sesión iniciada', life: 2000})
+        this.notif.showToast({
+          type: 'success',
+          summary: 'Bienvenido',
+          detail: 'Sesión iniciada',
+          autoCloseMs: 2000
+        })
         this.goToEmpresas()
       }
     }, 500)
+  }
+
+  private notifyClarity(user: UserResponse){
+    Clarity.identify(
+      user.id.toString(),              // customId
+      undefined,                       // customSessionId
+      'AssistWeb',                       // customPageId
+      `${user.nombre} (${user.username})` // friendlyName
+    );
+    Clarity.setTag("username", user.username);
+    Clarity.setTag("nombre", user.nombre);
   }
 }
