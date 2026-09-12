@@ -6,7 +6,7 @@ import {RolComponent} from '../components/rol/rol.component';
 import {RolMenuAsignacionComponent} from '../components/rol-menu-asignacion/rol-menu-asignacion.component';
 
 @Component({
-  selector: 'app-menus-sistema',
+  selector: 'app-menus-sistema.ts',
   standalone: true,
   imports: [
     TabViewModule,
