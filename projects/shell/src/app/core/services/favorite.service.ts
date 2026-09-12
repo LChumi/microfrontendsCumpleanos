@@ -10,7 +10,7 @@ import {UsuarioFavoritos} from '../models/usuario-favoritos';
 })
 export class FavoriteService {
 
-  private readonly url = `${environment.apiUrl}/assist`
+  private readonly url = `${environment.apiUrl}/system`
   private http = inject(HttpClient)
 
   getFavorites(usrId: number, empresa: number): Observable<UsuarioFavoritos[]> {

@@ -9,7 +9,7 @@ import {MenuW} from '../models/menu-w';
 })
 export class MenuWService {
 
-  private readonly url = `${environment.apiUrl}/assist`
+  private readonly url = `${environment.apiUrl}/system`
   private http = inject(HttpClient)
 
   getAll(): Observable<MenuW[]> {

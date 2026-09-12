@@ -9,7 +9,7 @@ import {ProgramaW} from '../models/programa-w';
 })
 export class ProgramaWService {
 
-  private readonly url = `${environment.apiUrl}/assist`
+  private readonly url = `${environment.apiUrl}/system`
   private http = inject(HttpClient)
 
   getAll(): Observable<ProgramaW[]> {

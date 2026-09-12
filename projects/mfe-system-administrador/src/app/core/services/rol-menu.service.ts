@@ -9,7 +9,7 @@ import {RolMenu} from '../models/rol-menu';
 })
 export class RolMenuService {
 
-  private readonly url =  `${environment.apiUrl}/assist`
+  private readonly url =  `${environment.apiUrl}/system`
   private http = inject(HttpClient)
 
   getAll(): Observable<RolMenu[]> {

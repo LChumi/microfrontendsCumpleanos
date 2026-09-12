@@ -9,7 +9,7 @@ import {RolW} from '../models/rol-w';
 })
 export class RolWService {
 
-  private readonly url = `${environment.apiUrl}/assist`
+  private readonly url = `${environment.apiUrl}/system`
   private http= inject(HttpClient)
 
   getAll(): Observable<RolW[]> {
