@@ -1,0 +1,109 @@
+@if (accesos().length) {
+  <!-- Desktop / Tablet -->
+  <div class="hidden overflow-x-auto rounded-xl border border-gray-200 bg-white shadow-sm sm:block">
+    <table class="w-full min-w-[640px] text-sm">
+      <thead class="border-b border-gray-200 bg-gray-50">
+      <tr>
+        <th class="px-5 py-3.5 text-left text-xs font-semibold tracking-wide text-gray-500">Empresa</th>
+        <th class="px-5 py-3.5 text-left text-xs font-semibold tracking-wide text-gray-500">Almacén</th>
+        <th class="px-5 py-3.5 text-left text-xs font-semibold tracking-wide text-gray-500">Rol</th>
+        <th class="px-5 py-3.5 text-right text-xs font-semibold tracking-wide text-gray-500">Acciones</th>
+      </tr>
+      </thead>
+
+      <tbody class="divide-y divide-gray-100">
+        @for (a of accesos(); track a.id) {
+          <tr class="group transition-colors duration-150 hover:bg-gray-50/80">
+            <td class="px-5 py-4">
+              <div class="font-medium text-gray-800">{{ a.sistema?.nombre }}</div>
+            </td>
+
+            <td class="px-5 py-4">
+              <span class="inline-flex items-center rounded-md bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600">
+                {{ a.almacen }}
+              </span>
+            </td>
+
+            <td class="px-5 py-4">
+              <span class="inline-flex items-center rounded-md bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700">
+                {{ a.rolW.nombre }}
+              </span>
+            </td>
+
+            <td class="px-5 py-4">
+              <div class="flex justify-end gap-1.5">
+                <button type="button" (click)="editar.emit(a)" title="Editar acceso" class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 shadow-sm transition-all hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+                  <svg class="h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
+                  </svg>
+                </button>
+
+                <button type="button" (click)="eliminar.emit(a)" title="Eliminar acceso" class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 shadow-sm transition-all hover:border-red-200 hover:bg-red-50 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-500/20">
+                  <svg class="h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>
+                  </svg>
+                </button>
+              </div>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Mobile -->
+  <div class="space-y-3 sm:hidden">
+    @for (a of accesos(); track a.id) {
+      <div class="rounded-xl border border-gray-200 bg-white p-4 shadow-sm">
+        <div class="flex items-start justify-between gap-3">
+          <div class="min-w-0">
+            <p class="text-xs font-medium uppercase tracking-wide text-gray-400">Empresa</p>
+            <p class="mt-1 truncate text-sm font-semibold text-gray-800">{{ a.sistema?.nombre }}</p>
+          </div>
+
+          <div class="flex shrink-0 gap-1.5">
+            <button type="button" (click)="editar.emit(a)" title="Editar acceso" class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 shadow-sm transition-all hover:border-blue-200 hover:bg-blue-50 hover:text-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500/20">
+              <svg class="h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m14.304 4.844 2.852 2.852M7 7H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h11a1 1 0 0 0 1-1v-4.5m2.409-9.91a2.017 2.017 0 0 1 0 2.853l-6.844 6.844L8 14l.713-3.565 6.844-6.844a2.015 2.015 0 0 1 2.852 0Z"/>
+              </svg>
+            </button>
+
+            <button type="button" (click)="eliminar.emit(a)" title="Eliminar acceso" class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 shadow-sm transition-all hover:border-red-200 hover:bg-red-50 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-500/20">
+              <svg class="h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+
+        <div class="mt-4 grid grid-cols-2 gap-3 border-t border-gray-100 pt-3">
+          <div>
+            <p class="text-xs font-medium text-gray-400">Almacén</p>
+            <span class="mt-1 inline-flex items-center rounded-md bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600">
+              {{ a.almacen }}
+            </span>
+          </div>
+
+          <div>
+            <p class="text-xs font-medium text-gray-400">Rol</p>
+            <span class="mt-1 inline-flex max-w-full items-center truncate rounded-md bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700">
+              {{ a.rolW.nombre }}
+            </span>
+          </div>
+        </div>
+      </div>
+    }
+  </div>
+} @else {
+  <div class="flex min-h-44 items-center justify-center rounded-xl border border-dashed border-gray-300 bg-gray-50 px-6 py-10">
+    <div class="text-center">
+      <div class="mx-auto mb-3 flex h-10 w-10 items-center justify-center rounded-full bg-gray-100 text-gray-400">
+        <svg class="h-5 w-5" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+          <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="1.8" d="M15 19a6 6 0 0 0-12 0m6-8a4 4 0 1 0 0-8 4 4 0 0 0 0 8Zm9 8a6 6 0 0 0-5-5.91m2-3.09a4 4 0 1 0 0-8"/>
+        </svg>
+      </div>
+      <p class="text-sm font-medium text-gray-600">Sin accesos asignados</p>
+      <p class="mt-1 text-xs text-gray-400">Los accesos asignados aparecerán aquí.</p>
+    </div>
+  </div>
+}
