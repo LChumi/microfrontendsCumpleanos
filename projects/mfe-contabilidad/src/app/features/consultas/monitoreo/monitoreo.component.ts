@@ -72,12 +72,6 @@ export class MonitoreoComponent implements OnInit{
   protected almacenSelected: Almacen = {} as Almacen;
 
   ngOnInit(): void {
-    /*this.seoHelper.setupPageSeo({
-      title: 'Pagina de consultas monitoreo | Assist web',
-      description: 'Consulta o monitoreo de todos los documentos del sistema assist web',
-      schemaTitle: 'ContentPage'
-    });*/
-
     this.usrId = getSessionItem('usrId')
     this.empresa = getSessionItem("empresa");
     this.getAlmacenes()
