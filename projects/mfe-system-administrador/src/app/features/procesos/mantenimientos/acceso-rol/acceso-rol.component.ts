@@ -26,19 +26,21 @@ export class AccesoRolComponent {
   accesos = signal<AccesoRol[]>([])
   almacenActual = signal<number | null>(null);
 
+  accesoEditando = signal<AccesoRol | null>(null);
+
   onUsuario(u: UsuarioDTO) {
     this.usuario.set(u);
     this.accesos.set([]);
     this.almacenActual.set(null);
+    this.accesoEditando.set(null);
   }
 
   onAlmacenSeleccionado(sel: { empresaId: number; almacenId: number }) {
     this.almacenActual.set(sel.almacenId);
     this.accesoRolService
-      .getByUserAndAlmacen(this.usuario()!.codigo, sel.almacenId)
+      .getByUserAndAlmacenAndEmpresa(this.usuario()!.codigo, sel.almacenId, sel.empresaId)
       .subscribe(r => this.accesos.set(r));
   }
-
 
   onAgregar(sel: {empresaId: number; empresaNombre: string; almacenId: number; almacenNombre: string; rol: RolW}){
     const nuevo: AccesoRol = {
@@ -55,7 +57,20 @@ export class AccesoRolComponent {
   }
 
   onEditar(acceso: AccesoRol){
+    this.accesoEditando.set(acceso);
+  }
 
+  onActualizar(acceso: AccesoRol){
+    this.accesoRolService.update(acceso).subscribe(actualizado => {
+      this.accesos.update(list =>
+        list.map( a => a.id === actualizado.id ? actualizado : a)
+      );
+      this.accesoEditando.set(null);
+    });
+  }
+
+  onCancelarEdicion(){
+    this.accesoEditando.set(null);
   }
 
   onEliminar(acceso: AccesoRol){

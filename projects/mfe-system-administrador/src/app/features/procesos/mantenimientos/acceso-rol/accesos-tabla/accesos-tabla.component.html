@@ -5,7 +5,6 @@
       <thead class="border-b border-gray-200 bg-gray-50">
       <tr>
         <th class="px-5 py-3.5 text-left text-xs font-semibold tracking-wide text-gray-500">Empresa</th>
-        <th class="px-5 py-3.5 text-left text-xs font-semibold tracking-wide text-gray-500">Almacén</th>
         <th class="px-5 py-3.5 text-left text-xs font-semibold tracking-wide text-gray-500">Rol</th>
         <th class="px-5 py-3.5 text-right text-xs font-semibold tracking-wide text-gray-500">Acciones</th>
       </tr>
@@ -16,12 +15,6 @@
           <tr class="group transition-colors duration-150 hover:bg-gray-50/80">
             <td class="px-5 py-4">
               <div class="font-medium text-gray-800">{{ a.sistema?.nombre }}</div>
-            </td>
-
-            <td class="px-5 py-4">
-              <span class="inline-flex items-center rounded-md bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600">
-                {{ a.almacen }}
-              </span>
             </td>
 
             <td class="px-5 py-4">
@@ -38,11 +31,11 @@
                   </svg>
                 </button>
 
-                <button type="button" (click)="eliminar.emit(a)" title="Eliminar acceso" class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 shadow-sm transition-all hover:border-red-200 hover:bg-red-50 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-500/20">
-                  <svg class="h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>
-                  </svg>
-                </button>
+<!--                <button type="button" (click)="eliminar.emit(a)" title="Eliminar acceso" class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 shadow-sm transition-all hover:border-red-200 hover:bg-red-50 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-500/20">-->
+<!--                  <svg class="h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">-->
+<!--                    <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>-->
+<!--                  </svg>-->
+<!--                </button>-->
               </div>
             </td>
           </tr>
@@ -68,22 +61,15 @@
               </svg>
             </button>
 
-            <button type="button" (click)="eliminar.emit(a)" title="Eliminar acceso" class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 shadow-sm transition-all hover:border-red-200 hover:bg-red-50 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-500/20">
+            <!--<button type="button" (click)="eliminar.emit(a)" title="Eliminar acceso" class="inline-flex h-9 w-9 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500 shadow-sm transition-all hover:border-red-200 hover:bg-red-50 hover:text-red-600 focus:outline-none focus:ring-2 focus:ring-red-500/20">
               <svg class="h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 7h14m-9 3v8m4-8v8M10 3h4a1 1 0 0 1 1 1v3H9V4a1 1 0 0 1 1-1ZM6 7h12v13a1 1 0 0 1-1 1H7a1 1 0 0 1-1-1V7Z"/>
               </svg>
-            </button>
+            </button>-->
           </div>
         </div>
 
         <div class="mt-4 grid grid-cols-2 gap-3 border-t border-gray-100 pt-3">
-          <div>
-            <p class="text-xs font-medium text-gray-400">Almacén</p>
-            <span class="mt-1 inline-flex items-center rounded-md bg-gray-100 px-2.5 py-1 text-xs font-medium text-gray-600">
-              {{ a.almacen }}
-            </span>
-          </div>
-
           <div>
             <p class="text-xs font-medium text-gray-400">Rol</p>
             <span class="mt-1 inline-flex max-w-full items-center truncate rounded-md bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700">

@@ -31,6 +31,14 @@
 </div>
 
 <div class="mt-5 flex flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+  @if (accesoEditar()) {
+    <button
+      type="button"
+      (click)="onCancelar()"
+      class="inline-flex w-full items-center justify-center rounded-lg border border-gray-200 bg-white px-4 py-2.5 text-sm font-semibold text-gray-600 shadow-sm hover:bg-gray-50 sm:w-auto">
+      Cancelar
+    </button>
+  }
   <button
     type="button"
     [disabled]="!puedeAgregar()"
@@ -39,6 +47,6 @@
     <svg class="h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
       <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 5v14m-7-7h14"/>
     </svg>
-    Agregar acceso
+    {{ accesoEditar() ? 'Guardar cambios' : 'Agregar acceso' }}
   </button>
 </div>

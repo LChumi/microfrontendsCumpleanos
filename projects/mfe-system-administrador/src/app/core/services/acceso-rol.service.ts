@@ -16,8 +16,8 @@ export class AccesoRolService {
     return this.http.get<AccesoRol[]>(`${this.url}/acceso-rol/all`)
   }
 
-  getByUserAndAlmacen(usr: number, alm: number): Observable<AccesoRol[]> {
-    return this.http.get<AccesoRol[]>(`${this.url}/acceso-rol/user/${usr}/${alm}`)
+  getByUserAndAlmacenAndEmpresa(usr: number, alm: number, empresa: number): Observable<AccesoRol[]> {
+    return this.http.get<AccesoRol[]>(`${this.url}/acceso-rol/user/${usr}/${alm}/${empresa}`)
   }
 
   getById(id: number): Observable<AccesoRol> {
