@@ -9,7 +9,7 @@ import {MenuPrincipal} from '../models/menu-principal';
 })
 export class MenusService {
 
-  private baseUrl = environment.apiUrl + '/assist'
+  private baseUrl = environment.apiUrl + '/system'
   private http = inject(HttpClient)
 
   getMenus(usuario: number, empresa: number): Observable<MenuPrincipal[]> {
