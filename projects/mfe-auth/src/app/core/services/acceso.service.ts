@@ -9,7 +9,7 @@ import {Empresa} from '../models/empresa';
 })
 export class AccesoService {
 
-  private url = environment.apiUrl + '/assist'
+  private url = environment.apiUrl + '/system'
   private http = inject(HttpClient)
 
   getEmpresas(usuario: number): Observable<Empresa[]> {
