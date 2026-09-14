@@ -22,7 +22,7 @@ export class UsuarioBuscadorComponent {
   resultados = signal<UsuarioDTO[]>([]);
 
   buscar() {
-    if (!this.usrId.trim()){
+    if (!this.usrId.trim()) {
       this.resultados.set([]);
       return;
     }

@@ -59,21 +59,21 @@ export class ConfigurarAccesoComponent {
   }
 
   ngOnInit() {
-    this.empresaService.listEmpresas().subscribe( r => this.empresas.set(r));
-    this.rolWService.getAll().subscribe( r => this.roles.set(r));
+    this.empresaService.listEmpresas().subscribe(r => this.empresas.set(r));
+    this.rolWService.getAll().subscribe(r => this.roles.set(r));
   }
 
   onEmpresaChange() {
     this.almacenId = null;
     this.almacenes.set([]);
-    if(this.empresaId){
-      this.almacenService.getByEmpresa(this.empresaId).subscribe( r => this.almacenes.set(r));
+    if (this.empresaId) {
+      this.almacenService.getByEmpresa(this.empresaId).subscribe(r => this.almacenes.set(r));
     }
   }
 
   onAlmacenChange() {
     if (this.empresaId && this.almacenId) {
-      this.almacenSeleccionado.emit({ empresaId: this.empresaId, almacenId: this.almacenId });
+      this.almacenSeleccionado.emit({empresaId: this.empresaId, almacenId: this.almacenId});
     }
   }
 
@@ -86,7 +86,7 @@ export class ConfigurarAccesoComponent {
     const almacen = this.almacenes().find(a => a.codigo === this.almacenId);
     const rol = this.roles().find(r => r.id === this.rolId);
 
-    if (this.accesoEditar()){
+    if (this.accesoEditar()) {
       const actualizado: AccesoRol = {
         ...this.accesoEditar()!,
         empresa: empresa!.id,
@@ -115,7 +115,7 @@ export class ConfigurarAccesoComponent {
 
   private limpiar() {
     this.rolId = null;
-    if (this.accesoEditar()){
+    if (this.accesoEditar()) {
       this.empresaId = null;
       this.almacenId = null;
       this.almacenes.set([]);

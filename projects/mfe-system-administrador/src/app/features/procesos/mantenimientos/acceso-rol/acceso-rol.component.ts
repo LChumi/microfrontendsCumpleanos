@@ -42,7 +42,7 @@ export class AccesoRolComponent {
       .subscribe(r => this.accesos.set(r));
   }
 
-  onAgregar(sel: {empresaId: number; empresaNombre: string; almacenId: number; almacenNombre: string; rol: RolW}){
+  onAgregar(sel: { empresaId: number; empresaNombre: string; almacenId: number; almacenNombre: string; rol: RolW }) {
     const nuevo: AccesoRol = {
       empresa: sel.empresaId,
       almacen: sel.almacenId,
@@ -56,24 +56,24 @@ export class AccesoRolComponent {
     })
   }
 
-  onEditar(acceso: AccesoRol){
+  onEditar(acceso: AccesoRol) {
     this.accesoEditando.set(acceso);
   }
 
-  onActualizar(acceso: AccesoRol){
+  onActualizar(acceso: AccesoRol) {
     this.accesoRolService.update(acceso).subscribe(actualizado => {
       this.accesos.update(list =>
-        list.map( a => a.id === actualizado.id ? actualizado : a)
+        list.map(a => a.id === actualizado.id ? actualizado : a)
       );
       this.accesoEditando.set(null);
     });
   }
 
-  onCancelarEdicion(){
+  onCancelarEdicion() {
     this.accesoEditando.set(null);
   }
 
-  onEliminar(acceso: AccesoRol){
+  onEliminar(acceso: AccesoRol) {
     this.accesos.update(list => list.filter(a => a.id !== acceso.id));
 
   }
