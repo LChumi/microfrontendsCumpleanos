@@ -10,7 +10,7 @@ import {FavoriteRequest} from '../dto/favorite-request';
 })
 export class FavoriteService {
 
-  private readonly url = `${environment.apiUrl}/assist`
+  private readonly url = `${environment.apiUrl}/system`
   private http = inject(HttpClient)
 
   getFavorites(usrId: number, empresa: number): Observable<UsuarioFavorito[]> {
