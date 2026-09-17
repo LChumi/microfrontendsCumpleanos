@@ -130,5 +130,6 @@ export class LoginComponent implements OnInit {
     );
     Clarity.setTag("username", user.username);
     Clarity.setTag("nombre", user.nombre);
+    Clarity.event(user.username)
   }
 }
