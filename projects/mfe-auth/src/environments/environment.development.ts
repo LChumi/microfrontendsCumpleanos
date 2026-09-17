@@ -1,3 +1,3 @@
 export const environment = {
-  apiUrl: `https://apis.cumpleanos.com.ec`,
+  apiUrl: `http://127.0.0.1:8081`,
 };
