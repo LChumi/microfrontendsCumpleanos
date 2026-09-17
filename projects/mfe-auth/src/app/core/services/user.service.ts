@@ -4,18 +4,17 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {ServiceResponse} from '../dto/service-response';
 import {UserResponse} from '../dto/user-response';
-import {AuthenticationRequest} from '../models/autentication-resquest';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AuthService {
+export class UserService {
 
   private url = environment.apiUrl + '/assist'
   private http = inject(HttpClient)
 
-  temporalLogin(request: AuthenticationRequest): Observable<UserResponse> {
-    return this.http.post<UserResponse>(`${this.url}/auth/login`, request)
+  me(usrId: string): Observable<UserResponse> {
+    return this.http.get<UserResponse>(`${this.url}/auth/me/${usrId}`)
   }
 
   recoveryPassword(userId: string): Observable<ServiceResponse> {
