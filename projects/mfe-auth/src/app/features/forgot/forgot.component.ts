@@ -1,7 +1,7 @@
 import {Component, inject, OnInit} from '@angular/core';
 import {ServiceResponse} from '../../core/dto/service-response';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
-import {AuthService} from '../../core/services/auth.service';
+import {UserService} from '../../core/services/user.service';
 import {RouterLink} from '@angular/router';
 import {NgOptimizedImage} from '@angular/common';
 
@@ -24,7 +24,7 @@ export class ForgotComponent implements OnInit{
   serviceResponse: ServiceResponse = {} as ServiceResponse
 
   private fb = inject(FormBuilder)
-  private usuarioService = inject(AuthService)
+  private usuarioService = inject(UserService)
 
   ngOnInit(): void {
     /*this.seoHelper.setupPageSeo({
