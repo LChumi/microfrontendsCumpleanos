@@ -13,11 +13,8 @@ module.exports = withModuleFederationPlugin({
   shared: {
     ...shareAll({ singleton: true, strictVersion: true, requiredVersion: 'auto' }),
 
-    'shared-notifications': {
-      singleton: true,
-      strictVersion: true,
-      requiredVersion: 'auto'
-    },
+    'shared-auth'           : { singleton: true, strictVersion: true, requiredVersion: 'auto' },
+    'shared-notifications'  : { singleton: true, strictVersion: true, requiredVersion: 'auto' },
   },
 
 });

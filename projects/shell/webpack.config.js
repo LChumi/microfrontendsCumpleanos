@@ -18,6 +18,12 @@ module.exports = withModuleFederationPlugin({
       requiredVersion: 'auto'
     },
 
+    'shared-auth': {
+      singleton: true,
+      strictVersion: true,
+      requiredVersion: 'auto'
+    },
+
     '@angular/cdk': {
       singleton: true,
       strictVersion: true,
