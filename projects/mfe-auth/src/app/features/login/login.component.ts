@@ -91,7 +91,7 @@ export class LoginComponent implements OnInit {
         })
         this.goToEmpresas()
       },
-      error: (err: HttpErrorResponse) => {
+      error: () => {
         this.notif.showToast({
           type: 'warning',
           summary: 'Error al cargar usuario',
