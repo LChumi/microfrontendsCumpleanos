@@ -71,11 +71,9 @@ export class LoginComponent implements OnInit {
         });
       }
     })
-
-
   }
 
-  getDatosUser(usrId: string){
+  getDatosUser(usrId: string) {
     this.usuarioService.me(usrId).subscribe({
       next: user => {
         setSessionItem('usrId', String(user.id))
@@ -103,7 +101,8 @@ export class LoginComponent implements OnInit {
   }
 
   goToEmpresas() {
-    this.router.navigate(['/auth', 'empresas']).then(() => {})
+    this.router.navigate(['/auth', 'empresas']).then(() => {
+    })
   }
 
   private getSession() {
@@ -121,7 +120,7 @@ export class LoginComponent implements OnInit {
     }, 500)
   }
 
-  private notifyClarity(user: UserResponse){
+  private notifyClarity(user: UserResponse) {
     Clarity.identify(
       user.id.toString(),              // customId
       undefined,                       // customSessionId
