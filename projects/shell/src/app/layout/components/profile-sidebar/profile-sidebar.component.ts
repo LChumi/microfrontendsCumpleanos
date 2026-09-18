@@ -3,6 +3,7 @@ import {SidebarModule} from "primeng/sidebar";
 import {BadgeModule} from "primeng/badge";
 import {LayoutService} from '../../service/layout.service';
 import {clearSessionItems, getSessionItem} from '../../../core/utils/storage-utils';
+import {AuthService} from 'shared-auth';
 
 @Component({
   selector: 'app-profilemenu',
@@ -15,9 +16,10 @@ import {clearSessionItems, getSessionItem} from '../../../core/utils/storage-uti
 })
 export class ProfileSidebarComponent {
 
+  private readonly layoutService = inject(LayoutService)
+  private readonly authService = inject(AuthService)
   nombre: any;
   username: any;
-  private layoutService = inject(LayoutService)
 
   constructor() {
     this.nombre = getSessionItem('nombre');
@@ -36,6 +38,7 @@ export class ProfileSidebarComponent {
     clearSessionItems();
     window.dispatchEvent(new CustomEvent('user-logged-out'));
     this.visible = false;
+    this.authService.logout()
     window.location.href='/auth/login'
   }
 }

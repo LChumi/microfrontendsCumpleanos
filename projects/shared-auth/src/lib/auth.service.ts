@@ -9,7 +9,7 @@ import { LoginRequest, LoginResponse } from './models';
 export class AuthService {
 
   private readonly http = inject(HttpClient);
-  private readonly baseUrl = 'http://127.0.0.1:8081/system/auth';
+  private readonly baseUrl = 'https://apis.cumpleanos.com.ec/system/auth';
 
   // SOLO memoria. No localStorage ni sessionStorage.
   private accessToken: string | null = null;
