@@ -13,6 +13,8 @@ COPY . .
 
 RUN npx ng build shared-notifications --configuration production
 
+RUN npx ng build shared-auth --configuration production
+
 # Build del shell
 RUN npx ng build shell --configuration production
 
