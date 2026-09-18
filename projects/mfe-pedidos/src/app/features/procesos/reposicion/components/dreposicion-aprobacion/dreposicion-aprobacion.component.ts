@@ -331,7 +331,7 @@ export class DreposicionAprobacionComponent implements OnInit{
         this.notif.showAlert({
           type: 'success',
           title: 'Pedido Autorizado',
-          message: `Prp: ${value.valor} de ${usuarios}`,
+          message: `${value.valor} de ${usuarios}`,
         })
         this.router.navigate(['/erp/pedidos/procesos/aprobar-pedido']).then(() => {this.loading.set(false)} );
       },

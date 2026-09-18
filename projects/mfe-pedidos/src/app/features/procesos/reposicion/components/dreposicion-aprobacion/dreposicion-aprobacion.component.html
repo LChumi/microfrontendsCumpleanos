@@ -7,10 +7,26 @@
     <h1 class="text-lg font-semibold text-slate-800">Aprobación de reposición</h1>
     <span class="text-sm text-slate-500">Total de productos: {{ productos().length }}</span>
   </div>
-  <button type="button" [disabled]="form.invalid || !items.length" (click)="finalizarPedido()" class="appearance-none border-0 p-0 shadow-none inline-flex items-center gap-2 rounded-lg bg-blue-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400">
-    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
-    Finalizar pedido
+  <button
+    type="button"
+    [disabled]="form.invalid || !items.length || loading()"
+    (click)="finalizarPedido()"
+    class="appearance-none border-0 p-0 shadow-none inline-flex items-center gap-2 rounded-lg bg-blue-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400">
+
+    @if (!loading()) {
+      <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/>
+      </svg>
+      Finalizar pedido
+    } @else {
+      <svg class="animate-spin h-4 w-4 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8v8z"></path>
+      </svg>
+      Procesando...
+    }
   </button>
+
 </div>
 
 @if (hayDuplicados()) {
