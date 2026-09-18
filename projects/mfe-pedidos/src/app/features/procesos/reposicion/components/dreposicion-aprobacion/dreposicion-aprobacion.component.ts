@@ -327,10 +327,11 @@ export class DreposicionAprobacionComponent implements OnInit{
     }
     this.creposicionService.generarPrepedido(request).subscribe({
       next: value => {
+        const usuarios = this.getUsuariosUnicos().join(', ');
         this.notif.showAlert({
           type: 'success',
           title: 'Pedido Autorizado',
-          message: value.valor,
+          message: `Prp: ${value.valor} de ${usuarios}`,
         })
         this.router.navigate(['/erp/pedidos/procesos/aprobar-pedido']).then(() => {this.loading.set(false)} );
       },
@@ -343,6 +344,14 @@ export class DreposicionAprobacionComponent implements OnInit{
 
   cancelar(): void {
     this.router.navigate(['/erp/pedidos/procesos/aprobar-pedido']).then(() => {});
+  }
+
+  getUsuariosUnicos() : string []{
+    const lista = this.productos()
+    if (!lista || lista.length === 0) return [];
+
+    //Obtener con map los usuarios y set para eliminar duplicados
+    return [...new Set(lista.map(p => p.usuario))]
   }
 
   protected readonly getUrlImage = getUrlImage;
