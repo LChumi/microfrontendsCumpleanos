@@ -3,7 +3,8 @@
   <div class="hidden lg:flex lg:w-[45%] relative overflow-hidden bg-gradient-to-br from-[#0090c9] to-[#00acec]">
 
     <!-- Red de nodos conectados: firma visual -->
-    <svg class="absolute inset-0 w-full h-full" viewBox="0 0 500 800" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid slice">
+    <svg class="absolute inset-0 w-full h-full" viewBox="0 0 500 800" xmlns="http://www.w3.org/2000/svg"
+         preserveAspectRatio="xMidYMid slice">
       <g stroke="white" stroke-opacity="0.18" stroke-width="1">
         <line x1="80" y1="120" x2="220" y2="220"/>
         <line x1="220" y1="220" x2="380" y2="160"/>
@@ -47,7 +48,7 @@
         <p class="font-[Manrope] text-xl font-semibold text-white/90">Importadora Cumpleaños</p>
       </div>
 
-      <p class="text-xs text-[#c6e5fa]">© {{date}} Assist Software. Todos los derechos reservados.</p>
+      <p class="text-xs text-[#c6e5fa]">© {{ date }} Assist Software. Todos los derechos reservados.</p>
     </div>
   </div>
 
@@ -92,8 +93,11 @@
           <label for="password1" class="block text-sm font-medium text-[#4d4d4f] mb-1.5">Contraseña</label>
           <div class="relative">
             <i class="pi pi-lock absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-            <input id="password1" [type]="mostrarPassword ? 'text' : 'password'" formControlName="password" autocomplete="off" placeholder="••••••••" class="w-full pl-10 pr-11 py-2.5 rounded-lg border-0 text-sm text-[#4d4d4f] placeholder:text-gray-400 outline-none transition focus:border-[#00acec] focus:ring-4 focus:ring-[#00acec]/15" />
-            <button type="button" (click)="mostrarPassword = !mostrarPassword" class="bg-transparent absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors border-0 appearance-none">
+            <input id="password1" [type]="mostrarPassword ? 'text' : 'password'" formControlName="password"
+                   autocomplete="off" placeholder="••••••••"
+                   class="w-full pl-10 pr-11 py-2.5 rounded-lg border-0 text-sm text-[#4d4d4f] placeholder:text-gray-400 outline-none transition focus:border-[#00acec] focus:ring-4 focus:ring-[#00acec]/15"/>
+            <button type="button" (click)="mostrarPassword = !mostrarPassword"
+                    class="bg-transparent absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors border-0 appearance-none">
               <i [class]="mostrarPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
             </button>
           </div>
@@ -104,10 +108,10 @@
 
         <div class="flex items-center justify-between pt-1">
           <a
-          [routerLink]="['/auth/forgotpassword']"
-          class="text-sm font-medium text-[#00acec] hover:text-[#0090c9] cursor-pointer"
+            [routerLink]="['/auth/forgotpassword']"
+            class="text-sm font-medium text-[#00acec] hover:text-[#0090c9] cursor-pointer"
           >
-          Olvidé la contraseña
+            Olvidé la contraseña
           </a>
         </div>
 

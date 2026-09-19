@@ -1,7 +1,7 @@
-import { Injectable, inject } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { Observable, tap } from 'rxjs';
-import { LoginRequest, LoginResponse } from './models';
+import {Injectable, inject} from '@angular/core';
+import {HttpClient} from '@angular/common/http';
+import {Observable, tap} from 'rxjs';
+import {LoginRequest, LoginResponse} from './models';
 
 @Injectable({
   providedIn: 'root'
@@ -18,7 +18,7 @@ export class AuthService {
     return this.http.post<LoginResponse>(
       `${this.baseUrl}/login`,
       request,
-      { withCredentials: true }
+      {withCredentials: true}
     ).pipe(
       tap(response => {
         this.accessToken = response.accessToken;
@@ -30,7 +30,7 @@ export class AuthService {
     return this.http.post<LoginResponse>(
       `${this.baseUrl}/refresh`,
       {},
-      { withCredentials: true }
+      {withCredentials: true}
     ).pipe(
       tap(response => {
         this.accessToken = response.accessToken;
@@ -41,8 +41,11 @@ export class AuthService {
   logout(): void {
     this.accessToken = null;
 
-    this.http.post(`${this.baseUrl}/logout`, {}, { withCredentials: true })
-      .subscribe({ error: () => { /* token local ya limpio, ignoramos fallo del server */ } });
+    this.http.post(`${this.baseUrl}/logout`, {}, {withCredentials: true})
+      .subscribe({
+        error: () => { /* token local ya limpio, ignoramos fallo del server */
+        }
+      });
   }
 
   clearToken(): void {

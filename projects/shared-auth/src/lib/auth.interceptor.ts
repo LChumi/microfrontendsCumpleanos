@@ -1,7 +1,7 @@
-import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
-import { inject } from '@angular/core';
-import { catchError, finalize, map, Observable, shareReplay, switchMap, throwError } from 'rxjs';
-import { AuthService } from './auth.service';
+import {HttpErrorResponse, HttpInterceptorFn} from '@angular/common/http';
+import {inject} from '@angular/core';
+import {catchError, finalize, map, Observable, shareReplay, switchMap, throwError} from 'rxjs';
+import {AuthService} from './auth.service';
 
 const AUTH_EXCLUDED_PATHS = [
   '/system/auth/login',
@@ -16,12 +16,12 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
 
   const isAuthEndpoint = AUTH_EXCLUDED_PATHS.some(path => req.url.includes(path));
   if (isAuthEndpoint) {
-    return next(req.clone({ withCredentials: true }));
+    return next(req.clone({withCredentials: true}));
   }
 
   const accessToken = authService.getAccessToken();
   const authReq = accessToken
-    ? req.clone({ setHeaders: { Authorization: `Bearer ${accessToken}` } })
+    ? req.clone({setHeaders: {Authorization: `Bearer ${accessToken}`}})
     : req;
 
   return next(authReq).pipe(
@@ -34,14 +34,16 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         refreshInProgress$ = authService.refreshToken().pipe(
           map(res => res.accessToken),
           shareReplay(1),
-          finalize(() => { refreshInProgress$ = null; })
+          finalize(() => {
+            refreshInProgress$ = null;
+          })
         );
       }
 
       return refreshInProgress$.pipe(
         switchMap(newToken => {
           const retryReq = req.clone({
-            setHeaders: { Authorization: `Bearer ${newToken}` }
+            setHeaders: {Authorization: `Bearer ${newToken}`}
           });
           return next(retryReq);
         }),
