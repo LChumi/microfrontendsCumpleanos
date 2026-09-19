@@ -3,6 +3,7 @@ import {AccesoService} from '../../core/services/acceso.service';
 import {Empresa} from '../../core/models/empresa';
 import {NgOptimizedImage} from '@angular/common';
 import {getSessionItem, setSessionItem} from '../../core/utils/storage.utils';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-empresa.ts',
@@ -16,6 +17,7 @@ import {getSessionItem, setSessionItem} from '../../core/utils/storage.utils';
 export class EmpresasComponent {
 
   private menuService = inject(AccesoService)
+  private readonly router = inject(Router)
 
   listasEmpresa: Empresa[] = []
 
@@ -42,7 +44,6 @@ export class EmpresasComponent {
 
   //navegar fuera del router del remote usando Location
   goToInicio() {
-    window.location.href = '/erp/dashboard/inicio'
+    this.router.navigateByUrl('/erp/dashboard/inicio').then(() => {});
   }
-
 }

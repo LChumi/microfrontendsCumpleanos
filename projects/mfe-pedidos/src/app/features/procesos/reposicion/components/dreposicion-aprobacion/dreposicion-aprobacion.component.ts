@@ -25,7 +25,7 @@ import {NotificationService} from 'shared-notifications';
   templateUrl: './dreposicion-aprobacion.component.html',
   styles: ``
 })
-export class DreposicionAprobacionComponent implements OnInit{
+export class DreposicionAprobacionComponent implements OnInit {
 
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -39,13 +39,13 @@ export class DreposicionAprobacionComponent implements OnInit{
   private readonly usuarioCodigo = getSessionItem("usrId")!;
   private readonly usuarioId = getSessionItem("username")!;
 
-  productos = signal<ProductoReposicionDto[]>([])
+  productos = signal<ProductoReposicionDto[]>([]);
   loading = signal(true);
   eliminandoId = signal<number | null>(null);
   editandoCanApr = signal<Set<number>>(new Set());
-  tieneMinMaxOriginal = signal<Map<number, boolean>>(new Map())
+  tieneMinMaxOriginal = signal<Map<number, boolean>>(new Map());
   minMaxAbierto = signal(false);
-  minMaxIndexActual = signal<number | null>(null);
+  minMaxIdActual = signal<number | null>(null);
   confirmandoEliminarId = signal<number | null>(null);
   imagenAmpliada = signal<string | null>(null);
 
@@ -54,20 +54,25 @@ export class DreposicionAprobacionComponent implements OnInit{
     max: [0, Validators.required],
   });
 
-  form = this.fb.group({ items: this.fb.array<FormGroup>([]) });
+  form = this.fb.group({items: this.fb.array<FormGroup>([])});
+
+  // Acceso directo (O(1)) al FormGroup de cada producto por su id
+  private readonly formsPorId = new Map<number, FormGroup>();
 
   bodega: any;
   almacen: any;
   usrLiquida: any;
 
-  get items(): FormArray { return this.form.get('items') as FormArray; }
+  get items(): FormArray {
+    return this.form.get('items') as FormArray;
+  }
 
   ngOnInit() {
     const usrLiquida = this.route.snapshot.paramMap.get('usrLiquida')!;
     const bodega = this.route.snapshot.paramMap.get('bodega')!;
     const almacen = this.route.snapshot.paramMap.get('almacen')!;
     this.usrLiquida = usrLiquida
-    this.bodega= bodega
+    this.bodega = bodega
     this.almacen = almacen
     this.cargar(usrLiquida)
   }
@@ -94,6 +99,12 @@ export class DreposicionAprobacionComponent implements OnInit{
     return this.productos().filter(p => dup.has(p.barra)).length;
   });
 
+  productoActualMinMax = computed<ProductoReposicionDto | null>(() => {
+    const id = this.minMaxIdActual();
+    if (id === null) return null;
+    return this.productos().find(p => p.id === id) ?? null;
+  });
+
   esDuplicado(p: ProductoReposicionDto): boolean {
     return this.duplicados().has(p.barra);
   }
@@ -101,6 +112,8 @@ export class DreposicionAprobacionComponent implements OnInit{
   @HostListener('document:keydown.escape')
   onEscape(): void {
     if (this.minMaxAbierto()) this.cerrarMinMax();
+    else if (this.imagenAmpliada()) this.cerrarImagen();
+    else if (this.confirmandoEliminarId() !== null) this.cancelarEliminar();
   }
 
   private cargar(usrLiquida: string): void {
@@ -111,12 +124,13 @@ export class DreposicionAprobacionComponent implements OnInit{
 
         productos.forEach(p => conteo.set(p.barra, (conteo.get(p.barra) ?? 0) + 1));
 
-        const productosOrdenados =[...productos].sort((a, b) => {
+        // Duplicados primero
+        const productosOrdenados = [...productos].sort((a, b) => {
           const aDuplicado = (conteo.get(a.barra) ?? 0) > 1;
           const bDuplicado = (conteo.get(b.barra) ?? 0) > 1;
 
           return Number(bDuplicado) - Number(aDuplicado);
-        })
+        });
 
         this.productos.set(productosOrdenados);
 
@@ -130,14 +144,15 @@ export class DreposicionAprobacionComponent implements OnInit{
         }
 
         this.items.clear();
+        this.formsPorId.clear();
 
         const mapa = new Map<number, boolean>();
 
-        productos.forEach(p => {
+        productosOrdenados.forEach(p => {
           const tieneMinMax = p.min != null && p.max != null;
           mapa.set(p.id, tieneMinMax);
 
-          this.items.push(this.fb.group({
+          const grupo = this.fb.group({
             id: [p.id],
             codigoProducto: [p.codigoProducto],
             canApr: [p.canApr, [Validators.required, Validators.min(0)]],
@@ -146,35 +161,37 @@ export class DreposicionAprobacionComponent implements OnInit{
             codigoStock: [p.codigoStock],
             gondola: [p.gonCod],
             creposicion: [p.creposicion]
-          }))
-          }
-        );
+          });
 
-        this.tieneMinMaxOriginal.set(mapa)
+          this.items.push(grupo);
+          this.formsPorId.set(p.id, grupo);
+        });
+
+        this.tieneMinMaxOriginal.set(mapa);
         this.loading.set(false);
       },
       error: err => {
         console.error('Error cargando productos', err);
         this.loading.set(false);
       }
-    })
+    });
   }
 
   esNuevoMinMax(id: number): boolean {
     return !this.tieneMinMaxOriginal().get(id);
   }
 
-  itemForm(index: number): FormGroup {
-    return this.items.at(index) as FormGroup;
+  itemForm(id: number): FormGroup {
+    return this.formsPorId.get(id)!;
   }
 
-  estaEditandoCanApr(id: number): boolean{
+  estaEditandoCanApr(id: number): boolean {
     return this.editandoCanApr().has(id);
   }
 
-  toggleEditarCanApr(id:number){
+  toggleEditarCanApr(id: number) {
     const set = new Set(this.editandoCanApr());
-    set.has(id) ? set.delete(id): set.add(id);
+    set.has(id) ? set.delete(id) : set.add(id);
     this.editandoCanApr.set(set);
   }
 
@@ -186,15 +203,18 @@ export class DreposicionAprobacionComponent implements OnInit{
     this.imagenAmpliada.set(null);
   }
 
-  guardarCanApr(id: number, index: number){
-    const item = this.itemForm(index).value;
+  guardarCanApr(id: number) {
+    const form = this.itemForm(id);
+    if (form.invalid) return;
+
+    const item = form.value;
 
     const request: ProductoReposicionUpdateDto = {
       codigo: item.id,
       productoId: item.codigoProducto,
       cantidad: item.canApr,
       gondola: null
-    }
+    };
 
     this.dreposicionService.updateProdcut(request).subscribe({
       next: () => {
@@ -203,33 +223,34 @@ export class DreposicionAprobacionComponent implements OnInit{
       error: err => {
         console.error('Error actualizando cantidad aprobada', err);
       }
-    })
+    });
   }
 
-  abrirMinMax(index:number){
-    const control = this.itemForm(index);
+  abrirMinMax(id: number) {
+    const control = this.itemForm(id);
     this.minMaxForm.setValue({
       min: control.value.min,
       max: control.value.max,
     });
-    this.minMaxIndexActual.set(index);
-    this.minMaxAbierto.set(true)
+    this.minMaxIdActual.set(id);
+    this.minMaxAbierto.set(true);
   }
 
   cerrarMinMax() {
-    this.minMaxAbierto.set(false)
-    this.minMaxIndexActual.set(null)
+    this.minMaxAbierto.set(false);
+    this.minMaxIdActual.set(null);
   }
 
   guardarMinMax(): void {
     if (this.minMaxForm.invalid) return;
-    const index = this.minMaxIndexActual();
-    if (index === null) return;
+    const id = this.minMaxIdActual();
+    if (id === null) return;
 
-    const item = this.itemForm(index).value;
-    const { min, max } = this.minMaxForm.value;
+    const form = this.itemForm(id);
+    const item = form.value;
+    const {min, max} = this.minMaxForm.value;
 
-    const request$ = this.esNuevoMinMax(item.id)
+    const request$ = this.esNuevoMinMax(id)
       ? this.stockOptimoService.crearMinMax(this.buildCreatePayload(item, min!, max!)).pipe(
         map(() => void 0)
       )
@@ -239,78 +260,92 @@ export class DreposicionAprobacionComponent implements OnInit{
 
     request$.subscribe({
       next: () => {
-        this.itemForm(index).patchValue({ min, max });
+        form.patchValue({min, max});
 
-        // ya no es "nuevo" una vez guardado, para que si lo vuelve a editar sea update
+        // Ya no es "nuevo" una vez guardado, para que si lo vuelve a editar sea update
         const mapa = new Map(this.tieneMinMaxOriginal());
-        mapa.set(item.id, true);
+        mapa.set(id, true);
         this.tieneMinMaxOriginal.set(mapa);
+
         this.notif.showToast({
           type: 'success',
           summary: 'Guardado',
-          detail: 'Mínimo-Maximo guardado correctamente',
+          detail: 'Mínimo-Máximo guardado correctamente',
           autoCloseMs: 2000
-        })
+        });
         this.cerrarMinMax();
       },
       error: err => console.error('Error al guardar min/max', err)
     });
   }
 
-  private buildCreatePayload(item: any, min:number, max: number): StockOptimo{
+  private buildCreatePayload(item: any, min: number, max: number): StockOptimo {
     return {
       id: {empresa: this.empresa},
       maximo: max,
       minimo: min,
       bodega: this.bodega,
-      gondola: item.gonCod ?? 125,
+      gondola: item.gonCod ?? 125, // código de góndola por defecto
       producto: item.codigoProducto,
       usuario: this.usuarioCodigo
-    }
+    };
   }
 
-  private buildUpdatePayload(item: any, min: number, max: number): MinMaxUpdateDto{
+  private buildUpdatePayload(item: any, min: number, max: number): MinMaxUpdateDto {
     return {
       codigo: item.codigoStock,
       empresa: this.empresa,
       maximo: max,
       minimo: min,
-    }
+    };
   }
 
-  productoActualMinMax(): ProductoReposicionDto | null {
-    const index = this.minMaxIndexActual();
-    return index != null ? this.productos()[index]: null;
-  }
-
-  confirmarEliminar(id: number){
+  confirmarEliminar(id: number) {
     this.confirmandoEliminarId.set(id);
   }
 
-  cancelarEliminar(){
+  cancelarEliminar() {
     this.confirmandoEliminarId.set(null);
   }
 
-  eliminarConfirmado(i: number){
+  eliminarConfirmado(id: number) {
     this.confirmandoEliminarId.set(null);
-    this.eliminarItem(i);
+    this.eliminarItem(id);
   }
 
-  eliminarItem(index: number){
-    const item = this.items.at(index).value;
-    this.eliminandoId.set(item.id)
-    this.dreposicionService.deleteProductoReposicion(item.id, this.empresa).subscribe({
+  eliminarItem(id: number) {
+    if (this.eliminandoId() !== null) return; // evita doble click mientras se borra
+
+    this.eliminandoId.set(id);
+    this.dreposicionService.deleteProductoReposicion(id, this.empresa).subscribe({
       next: () => {
-        this.items.removeAt(index);
-        this.productos.set(this.productos().filter(p => p.id !== item.id));
+        const idx = this.items.controls.findIndex(c => c.value.id === id);
+        if (idx >= 0) this.items.removeAt(idx);
+        this.formsPorId.delete(id);
+
+        this.productos.update(lista => lista.filter(p => p.id !== id));
+
+        // Limpieza de estado asociado al producto eliminado
+        this.editandoCanApr.update(set => {
+          const nuevo = new Set(set);
+          nuevo.delete(id);
+          return nuevo;
+        });
+        this.tieneMinMaxOriginal.update(mapa => {
+          const nuevo = new Map(mapa);
+          nuevo.delete(id);
+          return nuevo;
+        });
+
         this.eliminandoId.set(null);
+
         this.notif.showToast({
           type: 'warning',
           summary: 'Item eliminado',
           detail: 'Producto eliminado de la lista',
           autoCloseMs: 10000
-        })
-        },
+        });
+      },
       error: () => this.eliminandoId.set(null),
     });
   }
@@ -324,25 +359,37 @@ export class DreposicionAprobacionComponent implements OnInit{
       bodega: this.bodega,
       usrLiquida: this.usrLiquida,
       usr: this.usuarioId
-    }
+    };
     this.creposicionService.generarPrepedido(request).subscribe({
       next: value => {
+        const usuarios = this.getUsuariosUnicos().join(', ');
         this.notif.showAlert({
           type: 'success',
           title: 'Pedido Autorizado',
-          message: value.valor,
-        })
-        this.router.navigate(['/erp/pedidos/procesos/aprobar-pedido']).then(() => {this.loading.set(false)} );
+          message: `${value.valor} de ${usuarios}`,
+        });
+        this.router.navigate(['/erp/pedidos/procesos/aprobar-pedido']).then(() => {
+          this.loading.set(false);
+        });
       },
       error: err => {
-        console.error('Error al generar prepedido', err)
+        console.error('Error al generar prepedido', err);
         this.loading.set(false);
       }
-    })
+    });
   }
 
   cancelar(): void {
-    this.router.navigate(['/erp/pedidos/procesos/aprobar-pedido']).then(() => {});
+    this.router.navigate(['/erp/pedidos/procesos/aprobar-pedido']).then(() => {
+    });
+  }
+
+  getUsuariosUnicos(): string[] {
+    const lista = this.productos();
+    if (!lista || lista.length === 0) return [];
+
+    // Obtener con map los usuarios y Set para eliminar duplicados
+    return [...new Set(lista.map(p => p.usuario))];
   }
 
   protected readonly getUrlImage = getUrlImage;
