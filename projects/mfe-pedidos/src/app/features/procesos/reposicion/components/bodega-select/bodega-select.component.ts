@@ -34,6 +34,7 @@ export class BodegaSelectComponent implements OnInit{
           this.bodegas.set(value)
           if (!this.bodegaActual() && value.length){
             this.bodegaActual.set(value[0]);
+            this.bodegaSeleccionada.emit(value[0]);
           }
         },
         error: () => {
@@ -51,8 +52,8 @@ export class BodegaSelectComponent implements OnInit{
     if (this.bodegaActual()?.codigo !== bodega.codigo) {
       this.bodegaActual.set(bodega);
       this.bodegaSeleccionada.emit(bodega);
-      this.abierto.set(false);
     }
+    this.abierto.set(false);
   }
 
   @HostListener('document:click', ['$event'])

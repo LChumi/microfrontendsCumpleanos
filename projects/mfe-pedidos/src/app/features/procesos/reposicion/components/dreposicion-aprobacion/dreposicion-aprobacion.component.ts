@@ -362,18 +362,30 @@ export class DreposicionAprobacionComponent implements OnInit {
     };
     this.creposicionService.generarPrepedido(request).subscribe({
       next: value => {
-        const usuarios = this.getUsuariosUnicos().join(', ');
-        this.notif.showAlert({
-          type: 'success',
-          title: 'Pedido Autorizado',
-          message: `${value.valor} de ${usuarios}`,
-        });
-        this.router.navigate(['/erp/pedidos/procesos/aprobar-pedido']).then(() => {
-          this.loading.set(false);
-        });
+        if (value.valor != null && value.codigo != null){
+          const usuarios = this.getUsuariosUnicos().join(', ');
+          this.notif.showAlert({
+            type: 'success',
+            title: 'Pedido Autorizado',
+            message: `${value.valor} de ${usuarios}`,
+          });
+          this.router.navigate(['/erp/pedidos/procesos/aprobar-pedido']).then(() => {
+            this.loading.set(false);
+          });
+        } else {
+          this.notif.showAlert({
+            type: 'warning',
+            title: 'Pedido no autorizado',
+            message: `${value.valor}}`,
+          });
+        }
       },
       error: err => {
-        console.error('Error al generar prepedido', err);
+        this.notif.showAlert({
+          type: 'error',
+          title: 'Error al generar el pedido',
+          message: `${err}`,
+        });
         this.loading.set(false);
       }
     });
