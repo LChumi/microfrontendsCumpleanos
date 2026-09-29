@@ -110,9 +110,9 @@
             <td class="px-4 py-3 text-sm text-slate-600">{{ p.usuario }}</td>
 
             <td class="max-w-xs px-4 py-3 text-sm text-slate-600">
-              <p class="truncate">{{ p.descripcion }}</p>
+              <p class="truncate" [title]="p.descripcion">{{ p.descripcion }}</p>
               @if (p.observacion) {
-                <p class="mt-0.5 truncate text-xs text-slate-400">{{ p.observacion }}</p>
+                <p class="mt-0.5 truncate text-xs text-slate-400 " [title]="p.observacion">{{ p.observacion }}</p>
               }
             </td>
 
