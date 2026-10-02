@@ -27,4 +27,8 @@ export class CreposicionService {
   anularPedidos(dto: EmpresaCodigosRequest):Observable<ServiceResponse>{
     return this.http.post<ServiceResponse>(`${this.url}/creposicion/anular/prepedido`, dto)
   }
+
+  generarReposicion(crepo: Creposicion): Observable<ReposicionGenerado>{
+    return this.http.post<ReposicionGenerado>(`${this.url}/creposicion/generar/reposicion`, crepo)
+  }
 }
