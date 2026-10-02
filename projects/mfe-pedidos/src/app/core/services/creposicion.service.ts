@@ -1,6 +1,6 @@
 import {inject, Injectable} from '@angular/core';
 import {environment} from '../../../environments/environment';
-import {HttpClient} from '@angular/common/http';
+import {HttpClient, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {PrePedidoRequestDto} from '../dto/prepedido-request.dto';
 import {ReposicionGenerado} from '../dto/reposicion-generado';
@@ -18,6 +18,11 @@ export class CreposicionService {
 
   listarPedidos(estado: number, bodega: number, tipo: number): Observable<Creposicion[]> {
     return this.http.get<Creposicion[]>(`${this.url}/creposicion/load-finalizados/${estado}/${bodega}/${tipo}`)
+  }
+
+  listarPendientes(tipo: number, usr:string):Observable<Creposicion[]>{
+    const params = new HttpParams().set('usuarioId', usr)
+    return this.http.get<Creposicion[]>(`${this.url}/creposicion/load-pendientes/${tipo}/${usr}`, {params})
   }
 
   generarPrepedido(request: PrePedidoRequestDto): Observable<ReposicionGenerado>{
