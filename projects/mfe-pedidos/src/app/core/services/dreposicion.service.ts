@@ -40,8 +40,9 @@ export class DreposicionService {
     return this.http.post<Dreposicion>(`${this.url}/dreposicion/productos-reposicion`, prod)
   }
 
-  getProduct(bodega:number, data:string){
+  getProduct(bodega:number, data:string): Observable<ProductoReposicionDto[]>{
     const params = new HttpParams().set('data', data)
     return this.http.get<ProductoReposicionDto[]>(`${this.url}/dreposicion/buscar-productos/${bodega}`, {params})
   }
+
 }

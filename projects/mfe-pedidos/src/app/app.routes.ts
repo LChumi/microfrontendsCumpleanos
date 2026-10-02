@@ -27,11 +27,21 @@ export const routes: Routes = [
           import('./features/procesos/pedidos/despacho/despacho.component').then(m => m.DespachoComponent)
       },
       {
-        path: 'generar-reposicion',
+        path: 'reposicion',
         data: {breadcrumb: 'Generar Reposición'},
-        //title: 'Generar Reposición | Assist Web',
-        loadComponent: () =>
-          import('./features/procesos/reposicion/generar-reposicion/generar-reposicion.component').then(m => m.GenerarReposicionComponent)
+        children: [
+          {
+            path: 'nuevo-pedido',
+            data: {breadcrumb: 'Nuevo Pedido'},
+            title: 'Nueva Reposicion',
+            loadComponent: () =>
+              import('./features/procesos/reposicion/generar-reposicion/generar-reposicion.component').then(m => m.GenerarReposicionComponent)
+          },
+          {
+            path: 'pedido/:id',
+
+          }
+        ]
       }
 
     ]

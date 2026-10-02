@@ -17,4 +17,7 @@ export interface ProductoReposicionDto {
   codigoStock:    number;
   min:            number;
   max:            number;
+
+  precio:         number;
+  cxb:            number;
 }
