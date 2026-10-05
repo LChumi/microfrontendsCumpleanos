@@ -6,18 +6,18 @@ export interface Creposicion {
   bodegaId:    number;
   estado:      number;
   estadoGar:   number;
-  fecha:       any;
+  fecha?:       any;
   finalizado:  number;
   gondolaId:   any;
   observacion: string;
   tipo:        number;
   urgente:     number;
-  usrLiquida:  any;
+  usrLiquida?:  any;
   usuario:     string;
   gondola:     Gondola | null;
 }
 
 export interface ID {
-  codigo:  number;
+  codigo?:  any;
   empresa: number;
 }

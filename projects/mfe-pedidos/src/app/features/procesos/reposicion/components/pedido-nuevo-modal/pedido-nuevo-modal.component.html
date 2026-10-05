@@ -1,0 +1,56 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" (click)="cancelar.emit()">
+  <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl" (click)="$event.stopPropagation()">
+    <div class="flex items-center justify-between">
+      <div><h3 class="text-base font-semibold text-slate-800">Nuevo pedido</h3>
+        <p class="mt-0.5 text-xs text-slate-500">Reposición de productos</p></div>
+      <button type="button" (click)="cancelar.emit()"
+              class="border-0 rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600">✕
+      </button>
+    </div>
+
+    <label
+      [class]="urgente() ? 'mt-5 flex cursor-pointer items-center gap-3 rounded-xl border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700 transition-colors' : 'mt-5 flex cursor-pointer items-center gap-3 rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm text-slate-600 transition-colors hover:bg-slate-100'">
+      <input type="checkbox" class="h-4 w-4 rounded border-slate-300 accent-red-500" [checked]="urgente()"
+             (change)="cambiarUrgente($any($event.target).checked)">
+      <span class="font-semibold">Pedido urgente</span>
+      <span class="ml-auto text-xs font-medium">{{ urgente() ? 'URGENTE' : 'Normal' }}</span>
+    </label>
+
+    <div class="relative mt-5 space-y-4">
+      <div class="relative z-30">
+        <app-bodega-select (bodegaSeleccionada)="onBodegaSeleccionada($event)"/>
+      </div>
+      @if (!urgente()) {
+        <div class="relative z-20">
+          <app-gondola-select [bodegaId]="bodegaId()" [(seleccionada)]="gondolaId"/>
+        </div>
+      }
+
+      <label class="block">
+    <span class="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500">
+      Observaciones
+    </span>
+
+        <textarea
+          rows="3"
+          (input)="observacion.set($any($event.target).value)"
+          placeholder="Agrega una observación..."
+          class="w-full resize-none rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-sm text-slate-700 shadow-sm outline-none transition-all duration-150 placeholder:text-slate-400 hover:border-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15"
+        ></textarea>
+      </label>
+    </div>
+
+    <div class="mt-6 flex justify-end gap-2 border-t border-slate-100 pt-4">
+      @if (error()) {
+        <p class="mt-4 rounded-lg bg-red-50 px-3 py-2 text-xs font-medium text-red-600">{{ error() }}</p>
+      }
+      <button type="button" (click)="cancelar.emit()"
+              class="rounded-lg border-0 bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-600 shadow-none transition hover:bg-slate-200">
+        Cancelar
+      </button>
+      <button type="button" [disabled]="!bodegaId() || guardando()" (click)="guardar()"
+              class="rounded-lg border-0 bg-blue-500 px-5 py-2 text-sm font-semibold text-white shadow-none transition hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400">{{ guardando() ? 'Guardando...' : 'Guardar' }}
+      </button>
+    </div>
+  </div>
+</div>

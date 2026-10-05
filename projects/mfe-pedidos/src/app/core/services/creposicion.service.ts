@@ -22,7 +22,7 @@ export class CreposicionService {
 
   listarPendientes(tipo: number, usr:string):Observable<Creposicion[]>{
     const params = new HttpParams().set('usuarioId', usr)
-    return this.http.get<Creposicion[]>(`${this.url}/creposicion/load-pendientes/${tipo}/${usr}`, {params})
+    return this.http.get<Creposicion[]>(`${this.url}/creposicion/load-pendientes/${tipo}`, {params})
   }
 
   generarPrepedido(request: PrePedidoRequestDto): Observable<ReposicionGenerado>{
@@ -33,7 +33,7 @@ export class CreposicionService {
     return this.http.post<ServiceResponse>(`${this.url}/creposicion/anular/prepedido`, dto)
   }
 
-  generarReposicion(crepo: Creposicion): Observable<ReposicionGenerado>{
-    return this.http.post<ReposicionGenerado>(`${this.url}/creposicion/generar/reposicion`, crepo)
+  generarReposicion(crepo: Creposicion): Observable<Creposicion>{
+    return this.http.post<Creposicion>(`${this.url}/creposicion/generar/reposicion`, crepo)
   }
 }
