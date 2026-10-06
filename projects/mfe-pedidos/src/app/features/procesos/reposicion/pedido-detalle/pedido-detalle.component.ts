@@ -1,4 +1,4 @@
-import {Component, computed, ElementRef, inject, signal, viewChild, WritableSignal} from '@angular/core';
+import {Component, computed, ElementRef, inject, OnInit, signal, viewChild, WritableSignal} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {CreposicionService} from '../../../../core/services/creposicion.service';
 import {DreposicionService} from '../../../../core/services/dreposicion.service';
@@ -30,51 +30,76 @@ import {NotificationService} from 'shared-notifications';
   templateUrl: './pedido-detalle.component.html',
   styles: ``
 })
-export class PedidoDetalleComponent {
+export class PedidoDetalleComponent implements OnInit {
 
+  // ---------- refs ----------
   buscadorRef = viewChild<ElementRef<HTMLInputElement>>('buscador');
+  cantidadRef = viewChild<ElementRef<HTMLInputElement>>('cantidadInput');
 
+  // ---------- inyecciones ----------
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly creposicionSvc = inject(CreposicionService);
   private readonly dreposicionSvc = inject(DreposicionService);
   private readonly stockOptimoService = inject(StockOptimoService);
-  private readonly notif = inject(NotificationService);          // AJUSTAR al nombre real
+  private readonly notif = inject(NotificationService);
   private readonly fb = inject(NonNullableFormBuilder);
 
+  // ---------- sesión / ruta ----------
   private readonly empresa = +getSessionItem('empresa')!;
   private readonly usuario = getSessionItem('username')!;
-  private readonly usuarioCodigo = getSessionItem('username')!;  // AJUSTAR: el que usabas en StockOptimo.usuario
+  private readonly usuarioCodigo = getSessionItem('username')!;   // AJUSTAR si StockOptimo.usuario es otro valor
   readonly codigo = +this.route.snapshot.paramMap.get('id')!;
 
-  // datos
+  private readonly GONDOLA_DEFECTO = 125;
+  private resaltadoTimer: ReturnType<typeof setTimeout> | null = null;
+
+  // ---------- datos ----------
   pedido = signal<Creposicion | null>(null);
   items = signal<ProductoReposicionDto[]>([]);
 
-  // búsqueda
+  // ---------- búsqueda ----------
   barraItem = signal('');
   buscando = signal(false);
   encontrados = signal<ProductoReposicionDto[]>([]);
   producto = signal<ProductoReposicionDto | null>(null);
 
-  // captura del producto a agregar
+  // ---------- captura del producto ----------
   cantidad = signal(1);
   observacion = signal('');
-  gondolaId = signal<number | null>(null);
+  gondolaId = signal<number | null>(null);   // solo se usa en pedidos urgentes
   agregando = signal(false);
 
-  // acciones sobre items
+  // ---------- acciones sobre items ----------
   eliminandoId = signal<number | null>(null);
   resaltadoId = signal<number | null>(null);
 
-  // visor de imagen
+  // ---------- visor de imagen ----------
   imagenAmpliada = signal<string | null>(null);
 
-  // min / max
+  // ---------- min / max ----------
   minMaxAbierto = signal(false);
   minMaxForm = this.fb.group({
     min: [0, [Validators.required, Validators.min(0)]],
     max: [0, [Validators.required, Validators.min(0)]],
+  });
+
+  // ---------- derivados ----------
+  esUrgente = computed(() => this.pedido()?.urgente === 1);
+
+  /** Nombre de la góndola del pedido (para pedidos no urgentes) */
+  gondolaPedidoNombre = computed<string | null>(() => this.pedido()?.gondola?.nombre ?? null);   // AJUSTAR campo
+
+  /** Góndola con la que se guardará el producto actual */
+  gondolaDestino = computed<number>(() => {
+    const p = this.producto();
+    const ped = this.pedido();
+    const porDefecto = p?.gonCod ?? this.GONDOLA_DEFECTO;
+    if (!ped) return porDefecto;
+
+    return this.esUrgente()
+      ? (this.gondolaId() ?? porDefecto)
+      : ((ped.gondolaId as number | null) ?? porDefecto);
   });
 
   yaEnPedido = computed(() => {
@@ -82,6 +107,27 @@ export class PedidoDetalleComponent {
     return !!p && this.items().some(i => i.codigoProducto === p.codigoProducto);
   });
 
+  sinStockZh = computed(() => {
+    const p = this.producto();
+    return !!p && (p.stockZh ?? 0) <= 0;
+  });
+
+  excedeStock = computed(() => {
+    const p = this.producto();
+    return !!p && this.cantidad() > (p.stockZh ?? 0);
+  });
+
+  puedeAgregar = computed(() =>
+    !!this.pedido() &&
+    !!this.producto() &&
+    !this.yaEnPedido() &&
+    !this.sinStockZh() &&
+    !this.excedeStock() &&
+    this.cantidad() > 0 &&
+    !this.agregando()
+  );
+
+  // ---------- ciclo de vida ----------
   ngOnInit() {
     this.creposicionSvc.getPedido(this.codigo, this.empresa).subscribe({
       next: p => this.pedido.set(p),
@@ -92,7 +138,7 @@ export class PedidoDetalleComponent {
 
   private cargarItems() {
     this.dreposicionSvc.getProductsByCreposicion(this.codigo).subscribe({
-      next: l => this.items.set(l),
+      next: l => this.items.set([...l].sort((a, b) => b.id - a.id)),   // los más nuevos primero
       error: e => console.error(e),
     });
   }
@@ -106,21 +152,17 @@ export class PedidoDetalleComponent {
     // limpiar el input apenas se busca
     this.barraItem.set('');
     const el = this.buscadorRef()?.nativeElement;
-    if (el) { el.value = ''; el.focus(); }
-    this.buscadorRef()?.nativeElement.focus();
+    if (el) {
+      el.value = '';
+      el.focus();
+    }
 
     // 1) ¿ya está en el pedido? (coincidencia exacta por barra o item)
     const existente = this.buscarEnItems(dato);
     if (existente) {
       this.producto.set(null);
       this.encontrados.set([]);
-      this.subirAlInicio(existente.id);
-      this.notif.showToast({
-        type: 'warning',
-        summary: 'Item ya agregado',
-        detail: `${existente.item} ya está en el pedido`,
-        autoCloseMs: 2500,
-      });
+      this.avisarDuplicado(existente);
       return;
     }
 
@@ -143,17 +185,11 @@ export class PedidoDetalleComponent {
           return;
         }
 
-        // 3) si el backend devolvió uno que ya está en el pedido (por otra barra o código)
         if (lista.length === 1) {
+          // 3) el back devolvió uno que ya está en el pedido (por otra barra o código)
           const dup = this.items().find(i => i.codigoProducto === lista[0].codigoProducto);
           if (dup) {
-            this.subirAlInicio(dup.id);
-            this.notif.showToast({
-              type: 'warning',
-              summary: 'Item ya agregado',
-              detail: `${dup.item} ya está en el pedido`,
-              autoCloseMs: 2500,
-            });
+            this.avisarDuplicado(dup);
             return;
           }
           this.seleccionarProducto(lista[0]);
@@ -174,18 +210,21 @@ export class PedidoDetalleComponent {
     this.cantidad.set(1);
     this.observacion.set('');
     this.gondolaId.set(null);
+    setTimeout(() => this.cantidadRef()?.nativeElement.select());
   }
 
   cancelarProducto() {
     this.producto.set(null);
     this.encontrados.set([]);
+    this.buscadorRef()?.nativeElement.focus();
   }
 
   // ---------- agregar ----------
   agregar() {
-    const p = this.producto();
+    if (!this.puedeAgregar()) return;
+    const p = this.producto()!;
     const cant = this.cantidad();
-    if (!p || this.yaEnPedido() || cant <= 0 || this.agregando()) return;
+
     this.agregando.set(true);
 
     const d: Dreposicion = {
@@ -195,12 +234,10 @@ export class PedidoDetalleComponent {
       cantSol: cant,
       cantApr: cant,
       observacion: this.observacion().trim(),
-      gondolaId: this.gondolaId() ?? p.gonCod ?? 125,
+      gondolaId: this.gondolaDestino(),
       precio: p.precio,
       usuario: this.usuario,
     };
-
-    console.log(d)
 
     this.dreposicionSvc.addedProduct(d).subscribe({
       next: () => {
@@ -208,6 +245,7 @@ export class PedidoDetalleComponent {
         this.producto.set(null);
         this.barraItem.set('');
         this.cargarItems();
+        this.buscadorRef()?.nativeElement.focus();
       },
       error: e => {
         console.error(e);
@@ -268,7 +306,7 @@ export class PedidoDetalleComponent {
     if (!p || !bodega || this.minMaxForm.invalid) return;
 
     const {min, max} = this.minMaxForm.getRawValue();
-    const esNuevo = !p.codigoStock;       // AJUSTAR: así detecto que aún no existe stock óptimo
+    const esNuevo = !p.codigoStock;
 
     const request$ = esNuevo
       ? this.stockOptimoService.crearMinMax({
@@ -276,7 +314,7 @@ export class PedidoDetalleComponent {
         maximo: max,
         minimo: min,
         bodega,
-        gondola: p.gonCod ?? 125,
+        gondola: p.gonCod ?? this.GONDOLA_DEFECTO,   // o this.gondolaDestino() si el min/max es por góndola
         producto: p.codigoProducto,
         usuario: this.usuarioCodigo,
       }).pipe(map(r => (r as any).id?.codigo as number | undefined))   // AJUSTAR: dónde viene el código
@@ -294,7 +332,7 @@ export class PedidoDetalleComponent {
           type: 'success',
           summary: 'Guardado',
           detail: 'Mínimo-Máximo guardado correctamente',
-          autoCloseMs: 2000
+          autoCloseMs: 2000,
         });
         this.cerrarMinMax();
       },
@@ -304,11 +342,10 @@ export class PedidoDetalleComponent {
 
   // ---------- navegación ----------
   regresar() {
-    this.router.navigate(['/erp/pedidos/procesos/reposicion/nuevo-pedido']).then(() => {
-    });
+    this.router.navigate(['/erp/pedidos/procesos/reposicion/nuevo-pedido']).then(() => {});
   }
 
-  // ---------- helpers de template ----------
+  // ---------- helpers ----------
   onInput(sig: WritableSignal<string>, e: Event) {
     sig.set((e.target as HTMLInputElement).value);
   }
@@ -328,16 +365,27 @@ export class PedidoDetalleComponent {
     );
   }
 
+  private avisarDuplicado(item: ProductoReposicionDto) {
+    this.subirAlInicio(item.id);
+    this.notif.showToast({
+      type: 'warning',
+      summary: 'Item ya agregado',
+      detail: `${item.item} ya está en el pedido`,
+      autoCloseMs: 2500,
+    });
+  }
+
   private subirAlInicio(id: number) {
     this.items.update(l => {
       const idx = l.findIndex(i => i.id === id);
-      if (idx <= 0) return l;                 // ya es el primero o no existe
+      if (idx <= 0) return l;
       const copia = [...l];
       const [mov] = copia.splice(idx, 1);
       return [mov, ...copia];
     });
-    this.resaltadoId.set(id);
-    setTimeout(() => this.resaltadoId.set(null), 2500);
-  }
 
+    if (this.resaltadoTimer) clearTimeout(this.resaltadoTimer);
+    this.resaltadoId.set(id);
+    this.resaltadoTimer = setTimeout(() => this.resaltadoId.set(null), 3500);
+  }
 }
