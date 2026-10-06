@@ -1,0 +1,256 @@
+<!-- ============ CABECERA ============ -->
+<div class="sticky top-0 z-20 mt-3 border-b border-slate-200 bg-white/95 px-4 py-3 backdrop-blur">
+  <div class="flex items-center justify-between gap-2">
+    <button type="button" (click)="regresar()"
+            class="appearance-none border-0 shadow-none inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-200">
+      <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+      </svg>
+      Regresar
+    </button>
+
+    <div class="flex flex-wrap items-center justify-center gap-2">
+      <span class="font-semibold text-slate-800">Pedido #{{ codigo }}</span>
+      @if (pedido(); as ped) {
+        @if (ped.urgente === 1) {
+          <span class="rounded-full bg-red-50 px-2 py-0.5 text-xs font-semibold text-red-600">Urgente</span>
+        } @else if (ped.gondola) {
+          <span class="rounded-full bg-slate-100 px-2 py-0.5 text-xs font-medium text-slate-600">
+            Góndola: {{ ped.gondola.nombre }}  <!-- AJUSTAR campo -->
+          </span>
+        }
+      }
+      <span class="text-sm text-slate-500">{{ items().length }} item(s)</span>
+    </div>
+
+    <!-- Aquí irá el botón "Enviar pedido" cuando exista el endpoint -->
+    <span class="w-20"></span>
+  </div>
+
+  @if (pedido()?.observacion; as obs) {
+    <p class="mt-2 text-xs text-slate-500">{{ obs }}</p>
+  }
+</div>
+
+<!-- ============ BUSCADOR ============ -->
+<div class="flex gap-2 p-4">
+  <input type="text" [value]="barraItem()" (input)="onInput(barraItem, $event)"
+         (keyup.enter)="mostrarProducto()" placeholder="Código de ítem o barra..."
+         class="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm uppercase focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+  <button type="button" [disabled]="buscando()" (click)="mostrarProducto()"
+          class="appearance-none border-0 shadow-none rounded-lg bg-blue-500 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400">
+    {{ buscando() ? 'Buscando...' : 'Buscar' }}
+  </button>
+</div>
+
+<!-- ============ VARIOS RESULTADOS ============ -->
+@if (encontrados().length > 0) {
+  <div class="mx-4 mb-4 divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white shadow-sm">
+    @for (e of encontrados(); track e.codigoProducto) {
+      <button type="button" (click)="seleccionarProducto(e)"
+              class="appearance-none flex w-full items-center gap-3 border-0 bg-transparent p-3 text-left hover:bg-slate-50">
+        <app-producto-imagen [barra]="e.barra" [alt]="e.item" tamano="h-12 w-12" (ampliar)="imagenAmpliada.set($event)" />
+        <div>
+          <div class="text-xs text-slate-400">{{ e.barra }}</div>
+          <p class="text-sm text-slate-700">{{ e.item }}</p>
+        </div>
+      </button>
+    }
+  </div>
+}
+
+<!-- ============ PRODUCTO ENCONTRADO ============ -->
+@if (producto(); as p) {
+  <section class="mx-4 mb-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+    <div class="grid gap-4 md:grid-cols-2">
+
+      <!-- Datos -->
+      <div class="flex items-start gap-3">
+        <app-producto-imagen [barra]="p.barra" [alt]="p.item" tamano="h-14 w-14" (ampliar)="imagenAmpliada.set($event)" />
+        <div class="min-w-0 flex-1">
+          <div class="text-xs text-slate-400">{{ p.barra }}</div>
+          <p class="mt-1 text-sm font-medium text-slate-700">{{ p.item }}</p>
+          <p class="text-sm text-slate-600">{{ p.descripcion }}</p>
+
+          <dl class="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-slate-500">
+            <div><dt class="inline">PVP:</dt> <dd class="inline font-semibold text-slate-800">{{ p.precio }}</dd></div>
+            <div><dt class="inline">CXB:</dt> <dd class="inline font-semibold text-slate-800">{{ p.cxb }}</dd></div>
+            <div><dt class="inline">Stock Almacen:</dt> <dd class="inline font-semibold text-slate-800">{{ p.stock }}</dd></div>
+            <div><dt class="inline">Stock Bodega:</dt> <dd class="inline font-semibold text-slate-800">{{ p.stockZh }}</dd></div>
+            <div><dt class="inline">Tránsito:</dt> <dd class="inline font-semibold text-slate-800">{{ p.transito }}</dd></div>
+            <div><dt class="inline">Mín:</dt> <dd class="inline font-semibold text-slate-800">{{ p.min }}</dd></div>
+            <div><dt class="inline">Máx:</dt> <dd class="inline font-semibold text-slate-800">{{ p.max }}</dd></div>
+          </dl>
+
+          <button type="button" (click)="abrirMinMax()"
+                  class="appearance-none border-0 shadow-none mt-3 inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200">
+            <svg class="h-4 w-4 text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
+              <path stroke="currentColor" stroke-linecap="round" stroke-width="2"
+                    d="M20 6H10m0 0a2 2 0 1 0-4 0m4 0a2 2 0 1 1-4 0m0 0H4m16 6h-2m0 0a2 2 0 1 0-4 0m4 0a2 2 0 1 1-4 0m0 0H4m16 6H10m0 0a2 2 0 1 0-4 0m4 0a2 2 0 1 1-4 0m0 0H4"/>
+            </svg>
+            Min/Max
+          </button>
+        </div>
+      </div>
+
+      <!-- Captura -->
+      <div class="space-y-3">
+        <label class="block">
+          <span class="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500">Cantidad</span>
+          <input type="number" min="1" [value]="cantidad()" (input)="onNumber(cantidad, $event)"
+                 class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+        </label>
+        <label class="block">
+          <span class="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500">Observaciones</span>
+          <input type="text" [value]="observacion()" (input)="onInput(observacion, $event)"
+                 class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+        </label>
+        <app-gondola-select [bodegaId]="pedido()?.bodegaId ?? null" [(seleccionada)]="gondolaId" />
+      </div>
+    </div>
+
+    @if (yaEnPedido()) {
+      <p class="mt-3 text-xs font-medium text-amber-600">Este producto ya está en el pedido.</p>
+    }
+
+    <div class="mt-4 flex justify-end gap-2">
+      <button type="button" (click)="cancelarProducto()"
+              class="appearance-none border-0 shadow-none rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-200">
+        Cancelar
+      </button>
+      <button type="button" [disabled]="yaEnPedido() || cantidad() <= 0 || agregando()" (click)="agregar()"
+              class="appearance-none border-0 shadow-none rounded-lg bg-blue-500 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400">
+        {{ agregando() ? 'Agregando...' : 'Agregar' }}
+      </button>
+    </div>
+  </section>
+}
+
+<!-- ============ LISTA: DESKTOP ============ -->
+<div class="hidden overflow-x-auto md:block">
+  <table class="w-full text-sm">
+    <thead class="bg-slate-50 text-left text-xs uppercase text-slate-500">
+    <tr>
+      <th class="px-4 py-3">Imagen</th>
+      <th class="px-4 py-3">Barra</th>
+      <th class="px-4 py-3">Descripción</th>
+      <th class="px-4 py-3">Observación</th>
+      <th class="px-4 py-3">Góndola</th>
+      <th class="px-4 py-3 text-center">Cantidad</th>
+      <th class="px-4 py-3"></th>
+    </tr>
+    </thead>
+    <tbody class="divide-y divide-slate-100">
+      @for (p of items(); track p.id) {
+        <tr class="hover:bg-slate-50">
+          <td class="px-4 py-3">
+            <app-producto-imagen [barra]="p.barra" [alt]="p.item" tamano="h-12 w-12" (ampliar)="imagenAmpliada.set($event)" />
+          </td>
+          <td class="px-4 py-3 text-xs text-slate-500">{{ p.barra }}</td>
+          <td class="px-4 py-3 text-slate-700">{{ p.descripcion }}</td>
+          <td class="px-4 py-3 text-slate-600">{{ p.observacion }}</td>
+          <td class="px-4 py-3 text-slate-600">{{ p.gondola || '—' }}</td>
+          <td class="px-4 py-3">
+            <app-cantidad-editable [solicitada]="p.canSol" [valor]="p.canApr" (cambiado)="actualizarCanApr(p, $event)" />
+          </td>
+          <td class="px-4 py-3 text-right">
+            <app-eliminar-confirm [eliminando]="eliminandoId() === p.id" (confirmado)="eliminar(p.id)" />
+          </td>
+        </tr>
+      } @empty {
+        <tr>
+          <td colspan="7" class="p-8 text-center text-sm text-slate-400">Aún no hay productos en este pedido.</td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+<!-- ============ LISTA: MOBILE ============ -->
+<div class="grid gap-3 p-4 md:hidden">
+  @for (p of items(); track p.id) {
+    <div class="rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
+      <div class="flex items-start gap-3">
+        <app-producto-imagen [barra]="p.barra" [alt]="p.item" tamano="h-14 w-14" (ampliar)="imagenAmpliada.set($event)" />
+        <div class="min-w-0 flex-1">
+          <div class="text-xs text-slate-400">{{ p.barra }}</div>
+          <p class="text-sm text-slate-700">{{ p.descripcion }}</p>
+          @if (p.observacion) {
+            <p class="mt-1 text-xs text-slate-500">{{ p.observacion }}</p>
+          }
+          <p class="mt-1 text-xs text-slate-500">Góndola: {{ p.gondola || '—' }}</p>
+        </div>
+      </div>
+      <div class="mt-3 flex items-center justify-between">
+        <app-cantidad-editable [solicitada]="p.canSol" [valor]="p.canApr" (cambiado)="actualizarCanApr(p, $event)" />
+        <app-eliminar-confirm [eliminando]="eliminandoId() === p.id" (confirmado)="eliminar(p.id)" />
+      </div>
+    </div>
+  } @empty {
+    <p class="p-8 text-center text-sm text-slate-400">Aún no hay productos en este pedido.</p>
+  }
+</div>
+
+<!-- ============ VISOR DE IMAGEN ============ -->
+@if (imagenAmpliada(); as src) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-4 backdrop-blur-sm"
+       (click)="imagenAmpliada.set(null)">
+    <div class="relative max-h-[90vh] max-w-[90vw]" (click)="$event.stopPropagation()">
+      <button type="button" (click)="imagenAmpliada.set(null)"
+              class="border-0 absolute -right-3 -top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white text-slate-600 shadow-lg transition hover:bg-slate-100">
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+        </svg>
+      </button>
+      <img [src]="src" alt="Imagen ampliada"
+           class="max-h-[85vh] max-w-[85vw] rounded-xl object-contain shadow-2xl"
+           (error)="onImgError($event)">
+    </div>
+  </div>
+}
+
+<!-- ============ MODAL MIN/MAX ============ -->
+@if (minMaxAbierto()) {
+  <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" (click)="cerrarMinMax()">
+    <div class="w-full max-w-sm rounded-xl bg-white p-5 shadow-xl"
+         (click)="$event.stopPropagation()" [formGroup]="minMaxForm">
+      <div class="flex items-center justify-between">
+        <h3 class="text-sm font-semibold text-slate-800">Editar mínimo y máximo</h3>
+        <button type="button" (click)="cerrarMinMax()"
+                class="appearance-none border-0 bg-transparent p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-md">
+          <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>
+        </button>
+      </div>
+
+      @if (producto(); as p) {
+        <p class="mt-1 truncate text-xs text-slate-400">{{ p.descripcion }}</p>
+      }
+
+      <div class="mt-4 grid grid-cols-2 gap-3">
+        <label class="block">
+          <span class="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500">Mínimo</span>
+          <input type="number" formControlName="min"
+                 class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+        </label>
+        <label class="block">
+          <span class="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500">Máximo</span>
+          <input type="number" formControlName="max"
+                 class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+        </label>
+      </div>
+
+      <div class="mt-5 flex justify-end gap-2">
+        <button type="button" (click)="cerrarMinMax()"
+                class="appearance-none border-0 shadow-none rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-200">
+          Cancelar
+        </button>
+        <button type="button" [disabled]="minMaxForm.invalid" (click)="guardarMinMax()"
+                class="appearance-none border-0 shadow-none rounded-lg bg-blue-500 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400">
+          Guardar
+        </button>
+      </div>
+    </div>
+  </div>
+}

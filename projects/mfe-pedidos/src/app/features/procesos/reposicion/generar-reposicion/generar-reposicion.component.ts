@@ -46,10 +46,10 @@ export class GenerarReposicionComponent implements OnInit{
 
   onCreado(codigo: number) {
     this.cerrarModal();
-    this.router.navigate(['/reposicion/pedido', codigo]).then(() => {});
+    this.router.navigate(['/erp/pedidos/procesos/reposicion/pedido', codigo]).then(() => {});
   }
 
   abrirPedido(r: Creposicion) {
-    this.router.navigate(['/reposicion/pedido', r.id.codigo]).then(() => {});
+    this.router.navigate(['/erp/pedidos/procesos/reposicion/pedido', r.id.codigo]).then(() => {});
   }
 }
