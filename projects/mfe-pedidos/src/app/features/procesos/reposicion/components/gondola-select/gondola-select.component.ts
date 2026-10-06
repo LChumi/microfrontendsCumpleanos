@@ -1,7 +1,6 @@
 import {
   Component,
   computed,
-  DestroyRef,
   effect,
   ElementRef, HostListener,
   inject,
@@ -24,7 +23,6 @@ import {Gondola} from '../../../../../core/models/gondola';
 export class GondolaSelectComponent {
   private readonly svc = inject(GondolaService);
   private readonly elementRef = inject(ElementRef);
-  private readonly destroyRef = inject(DestroyRef);
 
   private readonly empresa = +getSessionItem('empresa')!;
   private readonly usuario = +getSessionItem('usrId')!;

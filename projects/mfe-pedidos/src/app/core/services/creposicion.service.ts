@@ -36,4 +36,8 @@ export class CreposicionService {
   generarReposicion(crepo: Creposicion): Observable<Creposicion>{
     return this.http.post<Creposicion>(`${this.url}/creposicion/generar/reposicion`, crepo)
   }
+
+  getPedido(codigo:number, empresa:number): Observable<Creposicion>{
+    return this.http.get<Creposicion>(`${this.url}/creposicion/${empresa}/${codigo}`)
+  }
 }

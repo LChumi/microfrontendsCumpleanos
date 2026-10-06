@@ -32,18 +32,20 @@ export const routes: Routes = [
         children: [
           {
             path: 'nuevo-pedido',
-            data: {breadcrumb: 'Nuevo Pedido'},
+            data: {breadcrumb: 'Nuevo Pedido', favorite: true},
             title: 'Nueva Reposicion',
             loadComponent: () =>
               import('./features/procesos/reposicion/generar-reposicion/generar-reposicion.component').then(m => m.GenerarReposicionComponent)
           },
           {
             path: 'pedido/:id',
-
+            data: {breadcrumb: 'Pedido Generado'},
+            title: 'Pedido Generado',
+            loadComponent: () =>
+              import('./features/procesos/reposicion/pedido-detalle/pedido-detalle.component').then(m => m.PedidoDetalleComponent)
           }
         ]
       }
-
     ]
   }
 ];

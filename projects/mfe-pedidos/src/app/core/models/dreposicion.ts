@@ -8,18 +8,18 @@ export interface Dreposicion {
   observacion:   string;
   usuario:       string;
   precio:        number;
-  porcDesc:      number;
-  valDesc:       number;
-  total:         number;
-  cantDisp:      number;
+  porcDesc?:     number;
+  valDesc?:      number;
+  total?:        number;
+  cantDisp?:     number;
   productoId:    number;
   gondolaId:     number;
   creposicionId: number;
-  creposicion:   Creposicion;
-  drpGondola:    Gondola;
+  creposicion?:   Creposicion;
+  drpGondola?:    Gondola;
 }
 
 export interface ID {
-  codigo:   number;
+  codigo?:   number;
   empresa:  number;
 }
