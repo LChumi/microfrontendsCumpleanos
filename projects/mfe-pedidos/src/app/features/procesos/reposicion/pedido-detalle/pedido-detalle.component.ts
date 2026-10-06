@@ -1,4 +1,4 @@
-import {Component, computed, inject, signal, WritableSignal} from '@angular/core';
+import {Component, computed, ElementRef, inject, signal, viewChild, WritableSignal} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {CreposicionService} from '../../../../core/services/creposicion.service';
 import {DreposicionService} from '../../../../core/services/dreposicion.service';
@@ -31,6 +31,9 @@ import {NotificationService} from 'shared-notifications';
   styles: ``
 })
 export class PedidoDetalleComponent {
+
+  buscadorRef = viewChild<ElementRef<HTMLInputElement>>('buscador');
+
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly creposicionSvc = inject(CreposicionService);
@@ -62,6 +65,7 @@ export class PedidoDetalleComponent {
 
   // acciones sobre items
   eliminandoId = signal<number | null>(null);
+  resaltadoId = signal<number | null>(null);
 
   // visor de imagen
   imagenAmpliada = signal<string | null>(null);
@@ -99,6 +103,28 @@ export class PedidoDetalleComponent {
     const dato = this.barraItem().trim().toUpperCase();
     if (!bodega || !dato || this.buscando()) return;
 
+    // limpiar el input apenas se busca
+    this.barraItem.set('');
+    const el = this.buscadorRef()?.nativeElement;
+    if (el) { el.value = ''; el.focus(); }
+    this.buscadorRef()?.nativeElement.focus();
+
+    // 1) ¿ya está en el pedido? (coincidencia exacta por barra o item)
+    const existente = this.buscarEnItems(dato);
+    if (existente) {
+      this.producto.set(null);
+      this.encontrados.set([]);
+      this.subirAlInicio(existente.id);
+      this.notif.showToast({
+        type: 'warning',
+        summary: 'Item ya agregado',
+        detail: `${existente.item} ya está en el pedido`,
+        autoCloseMs: 2500,
+      });
+      return;
+    }
+
+    // 2) búsqueda normal
     this.buscando.set(true);
     this.producto.set(null);
     this.encontrados.set([]);
@@ -106,14 +132,30 @@ export class PedidoDetalleComponent {
     this.dreposicionSvc.getProduct(bodega, dato).subscribe({
       next: lista => {
         this.buscando.set(false);
+
         if (lista.length === 0) {
           this.notif.showToast({
             type: 'warning',
             summary: 'Sin resultados',
             detail: 'No se encontró el producto',
-            autoCloseMs: 2500
+            autoCloseMs: 2500,
           });
-        } else if (lista.length === 1) {
+          return;
+        }
+
+        // 3) si el backend devolvió uno que ya está en el pedido (por otra barra o código)
+        if (lista.length === 1) {
+          const dup = this.items().find(i => i.codigoProducto === lista[0].codigoProducto);
+          if (dup) {
+            this.subirAlInicio(dup.id);
+            this.notif.showToast({
+              type: 'warning',
+              summary: 'Item ya agregado',
+              detail: `${dup.item} ya está en el pedido`,
+              autoCloseMs: 2500,
+            });
+            return;
+          }
           this.seleccionarProducto(lista[0]);
         } else {
           this.encontrados.set(lista);
@@ -278,4 +320,24 @@ export class PedidoDetalleComponent {
   onImgError(e: Event) {
     cargarImagenDefecto(e);
   }
+
+  private buscarEnItems(dato: string): ProductoReposicionDto | undefined {
+    const d = dato.toUpperCase();
+    return this.items().find(i =>
+      i.barra?.toUpperCase() === d || i.item?.toUpperCase() === d
+    );
+  }
+
+  private subirAlInicio(id: number) {
+    this.items.update(l => {
+      const idx = l.findIndex(i => i.id === id);
+      if (idx <= 0) return l;                 // ya es el primero o no existe
+      const copia = [...l];
+      const [mov] = copia.splice(idx, 1);
+      return [mov, ...copia];
+    });
+    this.resaltadoId.set(id);
+    setTimeout(() => this.resaltadoId.set(null), 2500);
+  }
+
 }
