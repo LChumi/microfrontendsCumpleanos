@@ -1,7 +1,17 @@
-import {Component, ElementRef, EventEmitter, HostListener, inject, OnInit, Output, signal} from '@angular/core';
-import {getSessionItem} from '../../../../../core/utils/storage.utils';
-import {BodegaWebVService} from '../../../../../core/services/bodega-web-v.service';
+import {
+  Component,
+  effect,
+  ElementRef,
+  EventEmitter,
+  HostListener,
+  inject,
+  OnInit,
+  Output,
+  signal,
+  untracked
+} from '@angular/core';
 import {BodegaWebV} from '../../../../../core/dto/bodega-web-v';
+import { BodegaStoreService } from "../../../../../core/services/bodega-store.service";
 
 @Component({
   selector: 'app-bodega-select',
@@ -12,36 +22,27 @@ import {BodegaWebV} from '../../../../../core/dto/bodega-web-v';
 })
 export class BodegaSelectComponent implements OnInit{
 
-  private readonly empresa =  getSessionItem("empresa")!;
-  private readonly usuarioId = getSessionItem("usrId")!;
-  private readonly bodegaService = inject(BodegaWebVService)
-  private readonly elementRef = inject(ElementRef)
+  private readonly bodegaStore = inject(BodegaStoreService);
+  private readonly elementRef = inject(ElementRef);
 
-  @Output() bodegaSeleccionada = new EventEmitter<BodegaWebV>()
+  @Output() bodegaSeleccionada = new EventEmitter<BodegaWebV>();
 
-  bodegas = signal<BodegaWebV[]>([]);
+  bodegas = this.bodegaStore.bodegas;          // <- esta línea era la que fallaba
   bodegaActual = signal<BodegaWebV | null>(null);
-  abierto = signal(false)
+  abierto = signal(false);
 
-  ngOnInit(): void {
-    this.listarBodegas()
+  constructor() {
+    effect(() => {
+      const lista = this.bodegas();
+      if (!untracked(this.bodegaActual) && lista.length) {
+        this.bodegaActual.set(lista[0]);
+        this.bodegaSeleccionada.emit(lista[0]);
+      }
+    });
   }
 
-  listarBodegas(){
-    if (this.empresa && this.usuarioId){
-      this.bodegaService.listarBodegas(Number(this.usuarioId), Number(this.empresa)).subscribe({
-        next: value => {
-          this.bodegas.set(value)
-          if (!this.bodegaActual() && value.length){
-            this.bodegaActual.set(value[0]);
-            this.bodegaSeleccionada.emit(value[0]);
-          }
-        },
-        error: () => {
-          console.log("Error al obtener las bodegas")
-        }
-      })
-    }
+  ngOnInit(): void {
+    this.bodegaStore.cargar();
   }
 
   toggleDropdown() {

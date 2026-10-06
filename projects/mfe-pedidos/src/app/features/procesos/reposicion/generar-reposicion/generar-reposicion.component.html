@@ -1,12 +1,13 @@
-<div class="sticky top-0 z-20 mt-3 flex items-center justify-between border-b border-slate-200 bg-white/95 px-4 py-3 backdrop-blur">
-  <div class="flex items-center gap-2">
+<!-- ============ CABECERA ============ -->
+<div class="sticky top-0 z-20 flex items-center justify-between gap-2 border-b border-slate-200 bg-white/95 px-3 py-3 backdrop-blur md:mt-3 md:px-4">
+  <div class="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-0.5">
     <span class="font-semibold text-slate-800">Pedidos en proceso</span>
     <span class="text-sm font-medium text-slate-500">{{ reposiciones().length }} pedido(s)</span>
   </div>
   <button
     type="button"
     (click)="abrirModal()"
-    class="appearance-none border-0 p-0 shadow-none inline-flex items-center gap-2 rounded-lg bg-blue-500 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-600">
+    class="appearance-none border-0 p-0 shadow-none inline-flex h-10 shrink-0 items-center gap-2 rounded-lg bg-blue-500 px-4 text-sm font-semibold text-white transition hover:bg-blue-600 active:bg-blue-700">
     <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
       <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
     </svg>
@@ -18,7 +19,7 @@
   <p class="p-8 text-center text-sm text-slate-400">No tienes pedidos en proceso.</p>
 }
 
-<!-- Desktop -->
+<!-- ============ DESKTOP ============ -->
 <div class="hidden overflow-x-auto md:block">
   <table class="w-full text-sm">
     <thead class="bg-slate-50 text-left text-xs uppercase text-slate-500">
@@ -26,6 +27,7 @@
       <th class="px-4 py-3">#</th>
       <th class="px-4 py-3">Fecha</th>
       <th class="px-4 py-3">Góndola</th>
+      <th class="px-4 py-3">Bodega</th>
       <th class="px-4 py-3">Observación</th>
       <th class="px-4 py-3">Estado</th>
       <th class="px-4 py-3"></th>
@@ -33,19 +35,26 @@
     </thead>
     <tbody class="divide-y divide-slate-100">
       @for (r of reposiciones(); track r.id.codigo) {
-        <tr class="hover:bg-slate-50">
+        <tr class="transition-colors"
+            [ngClass]="r.urgente === 1
+              ? 'bg-red-50 hover:bg-red-100'
+              : 'hover:bg-slate-50'">
           <td class="px-4 py-3 font-semibold text-slate-800">{{ r.id.codigo }}</td>
           <td class="px-4 py-3 text-slate-600">{{ r.fecha | date: 'dd/MM/yyyy HH:mm' }}</td>
           <td class="px-4 py-3 text-slate-600">{{ r.gondola?.nombre ?? '—' }}</td>
+          <td class="px-4 py-3 text-slate-600">{{ r.nombreBodega ?? '—' }}</td>
           <td class="px-4 py-3 text-slate-600">{{ r.observacion }}</td>
           <td class="px-4 py-3">
             @if (r.urgente === 1) {
-              <span class="rounded-full bg-red-50 px-2 py-0.5 text-xs font-semibold text-red-600">Urgente</span>
+              <span class="rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-700 ring-1 ring-red-300">Urgente</span>
             }
           </td>
           <td class="px-4 py-3 text-right">
             <button type="button" (click)="abrirPedido(r)"
-                    class="appearance-none border-0 shadow-none rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200">
+                    class="appearance-none border-0 shadow-none rounded-lg px-3 py-1.5 text-xs font-semibold"
+                    [ngClass]="r.urgente === 1
+                      ? 'bg-white text-red-700 hover:bg-red-100'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'">
               Abrir
             </button>
           </td>
@@ -55,22 +64,29 @@
   </table>
 </div>
 
-<!-- Mobile -->
+<!-- ============ MOBILE ============ -->
 <div class="grid gap-3 p-4 md:hidden">
   @for (r of reposiciones(); track r.id.codigo) {
     <button type="button" (click)="abrirPedido(r)"
-            class="appearance-none rounded-xl border border-slate-200 bg-white p-3 text-left shadow-sm">
-      <div class="flex items-center justify-between">
+            class="appearance-none w-full rounded-xl border p-3 text-left shadow-sm transition-colors"
+            [ngClass]="r.urgente === 1
+              ? 'border-red-300 border-l-4 border-l-red-500 bg-red-50 active:bg-red-100'
+              : 'border-slate-200 bg-white active:bg-slate-50'">
+      <div class="flex items-center justify-between gap-2">
         <span class="font-semibold text-slate-800">Pedido #{{ r.id.codigo }}</span>
         @if (r.urgente === 1) {
-          <span class="text-xs font-semibold text-red-600">Urgente</span>
+          <span class="rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-700 ring-1 ring-red-300">Urgente</span>
         }
       </div>
       <p class="mt-1 text-xs text-slate-400">{{ r.fecha | date: 'dd/MM/yyyy HH:mm' }}</p>
+      @if (r.gondola?.nombre) {
+        <p class="mt-1 text-xs text-slate-500">Góndola: {{ r.gondola?.nombre }}</p>
+      }
+      <p class="mt-1 text-xs text-slate-500">Bodega: {{ r.nombreBodega }}</p>
       @if (r.observacion) {
         <p class="mt-1 text-sm text-slate-600">{{ r.observacion }}</p>
       }
-    </button>
+    </button>nombreBodega
   }
 </div>
 

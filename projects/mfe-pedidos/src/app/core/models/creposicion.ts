@@ -15,6 +15,8 @@ export interface Creposicion {
   usrLiquida?:  any;
   usuario:     string;
   gondola:     Gondola | null;
+
+  nombreBodega?: string;
 }
 
 export interface ID {
