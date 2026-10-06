@@ -3,7 +3,7 @@ import {ActivatedRoute, Router} from '@angular/router';
 import {CreposicionService} from '../../../../core/services/creposicion.service';
 import {DreposicionService} from '../../../../core/services/dreposicion.service';
 import {getSessionItem} from '../../../../core/utils/storage.utils';
-import {Creposicion} from '../../../../core/models/creposicion';
+import {Creposicion, ID} from '../../../../core/models/creposicion';
 import {ProductoReposicionDto} from '../../../../core/dto/producto-reposicion.dto';
 import {Dreposicion} from '../../../../core/models/dreposicion';
 import {cargarImagenDefecto} from '../../../../core/utils/images.utils';
@@ -125,6 +125,13 @@ export class PedidoDetalleComponent implements OnInit {
     !this.excedeStock() &&
     this.cantidad() > 0 &&
     !this.agregando()
+  );
+
+  enviando = signal(false);
+  confirmandoEnvio = signal(false);
+
+  puedeEnviar = computed(() =>
+    !!this.pedido() && this.items().length > 0 && !this.enviando()
   );
 
   // ---------- ciclo de vida ----------
@@ -337,6 +344,58 @@ export class PedidoDetalleComponent implements OnInit {
         this.cerrarMinMax();
       },
       error: err => console.error('Error al guardar min/max', err),
+    });
+  }
+
+  // ---------- enviar pedido ----------
+  pedirConfirmacionEnvio() {
+    if (!this.puedeEnviar()) return;
+    this.confirmandoEnvio.set(true);
+  }
+
+  cancelarEnvio() {
+    this.confirmandoEnvio.set(false);
+  }
+
+  enviarPedido() {
+    if (!this.puedeEnviar()) return;
+    this.enviando.set(true);
+    this.confirmandoEnvio.set(false);
+
+    const id: ID = {codigo: this.codigo, empresa: this.empresa};
+
+    this.creposicionSvc.generarSolicitud(id).subscribe({
+      next: (resp) => {
+        this.enviando.set(false);
+
+        if (!resp.success) {
+          this.notif.showToast({
+            type: 'error',
+            summary: 'No se pudo enviar',
+            detail: resp.message || 'Intenta de nuevo',
+            autoCloseMs: 4000,
+          });
+          return;
+        }
+
+        this.notif.showToast({
+          type: 'success',
+          summary: 'Pedido enviado',
+          detail: resp.message || `El pedido #${this.codigo} fue enviado para aprobación`,
+          autoCloseMs: 3000,
+        });
+        this.regresar();
+      },
+      error: e => {
+        console.error(e);
+        this.enviando.set(false);
+        this.notif.showToast({
+          type: 'error',
+          summary: 'Error',
+          detail: 'No se pudo enviar el pedido',
+          autoCloseMs: 4000,
+        });
+      },
     });
   }
 

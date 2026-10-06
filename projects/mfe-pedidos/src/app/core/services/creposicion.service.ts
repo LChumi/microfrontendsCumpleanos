@@ -4,7 +4,7 @@ import {HttpClient, HttpParams} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {PrePedidoRequestDto} from '../dto/prepedido-request.dto';
 import {ReposicionGenerado} from '../dto/reposicion-generado';
-import {Creposicion} from '../models/creposicion';
+import {Creposicion, ID} from '../models/creposicion';
 import {ServiceResponse} from '../dto/service-response';
 import {EmpresaCodigosRequest} from '../dto/empresa-codigos-request';
 
@@ -39,5 +39,9 @@ export class CreposicionService {
 
   getPedido(codigo:number, empresa:number): Observable<Creposicion>{
     return this.http.get<Creposicion>(`${this.url}/creposicion/${empresa}/${codigo}`)
+  }
+
+  generarSolicitud(id: ID): Observable<ServiceResponse>{
+    return this.http.post<ServiceResponse>(`${this.url}/creposicion/generar/solicitud`, id)
   }
 }
