@@ -1,11 +1,14 @@
-import {Injectable, NgZone} from '@angular/core';
+import {inject, Injectable, NgZone} from '@angular/core';
 import {Subject} from 'rxjs';
 import {clearSessionItems} from '../utils/storage-utils';
+import {AuthService} from 'shared-auth';
 
 @Injectable({
   providedIn: 'root'
 })
 export class IdleSessionService {
+
+  private readonly authService = inject(AuthService)
 
   private readonly WARNING_TIMEOUT = 20 * 60 * 1000; //20 min aviso
   private readonly LOGOUT_TIMEOUT  = 30 * 60 * 1000; //30 min cierre forzado
@@ -61,6 +64,7 @@ export class IdleSessionService {
 
   private expireSession(){
     clearSessionItems();
+    this.authService.logout();
     this.stop();
     this.onSessionExpired$.next();
   }
