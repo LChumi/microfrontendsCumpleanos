@@ -2,6 +2,7 @@ import {Routes} from '@angular/router';
 import {LayoutComponent} from './layout/components/layout/layout.component';
 import {authGuard} from './guards/auth.guard';
 import {loadRemoteModuleSafe} from './core/utils/load-remote-module-safe';
+import {authFlowGuard} from './guards/auth-flow.guard';
 
 export const routes: Routes = [
   {
@@ -14,6 +15,7 @@ export const routes: Routes = [
   },
   {
     path: 'auth',
+    canActivateChild: [authFlowGuard],
     loadChildren: () =>
       loadRemoteModuleSafe('mfe-auth', './routes').then(m => m.routes)
   },
