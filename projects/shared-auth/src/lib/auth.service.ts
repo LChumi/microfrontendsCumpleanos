@@ -1,6 +1,6 @@
 import {Injectable, inject} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable, tap} from 'rxjs';
+import {catchError, map, Observable, of, tap} from 'rxjs';
 import {LoginRequest, LoginResponse} from './models';
 
 @Injectable({
@@ -35,6 +35,18 @@ export class AuthService {
       tap(response => {
         this.accessToken = response.accessToken;
       })
+    );
+  }
+
+  /**
+   * Se ejecuta al arrancar la app (F5, pestaña nueva).
+   * Si la cookie del refresh token sigue vigente, recupera el access token
+   * sin pedir login. Nunca lanza error: devuelve true/false.
+   */
+  restoreSession(): Observable<boolean> {
+    return this.refreshToken().pipe(
+      map(() => true),
+      catchError(() => of(false))
     );
   }
 
