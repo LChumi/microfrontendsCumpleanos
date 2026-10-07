@@ -75,7 +75,8 @@
         <div>
           <label for="username" class="block text-sm font-medium text-[#4d4d4f] mb-1.5">Usuario</label>
           <div class="relative">
-            <i class="pi pi-user absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none"></i>
+            <i
+              class="pi pi-user absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none"></i>
             <input
               id="username"
               type="text"
@@ -95,9 +96,11 @@
           </div>
           @if (invalid('usuario')) {
             <p id="username-error" class="text-red-500 text-xs mt-1.5" role="alert">
-              {{ loginForm.get('usuario')?.hasError('blank')
-              ? 'El usuario no puede contener solo espacios'
-              : 'El nombre de usuario es requerido' }}
+              {{
+                loginForm.get('usuario')?.hasError('blank')
+                  ? 'El usuario no puede contener solo espacios'
+                  : 'El nombre de usuario es requerido'
+              }}
             </p>
           }
         </div>
@@ -106,7 +109,8 @@
         <div>
           <label for="password1" class="block text-sm font-medium text-[#4d4d4f] mb-1.5">Contraseña</label>
           <div class="relative">
-            <i class="pi pi-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none"></i>
+            <i
+              class="pi pi-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none"></i>
             <input
               id="password1"
               [type]="mostrarPassword ? 'text' : 'password'"
