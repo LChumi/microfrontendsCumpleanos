@@ -1,5 +1,6 @@
 <!-- ============ CABECERA ============ -->
-<div class="sticky top-0 z-20 flex items-center justify-between gap-2 border-b border-slate-200 bg-white/95 px-3 py-3 backdrop-blur md:mt-3 md:px-4">
+<div
+  class="sticky top-0 z-20 flex items-center justify-between gap-2 border-b border-slate-200 bg-white/95 px-3 py-3 backdrop-blur md:mt-3 md:px-4">
   <div class="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-0.5">
     <span class="font-semibold text-slate-800">Pedidos en proceso</span>
     <span class="text-sm font-medium text-slate-500">{{ reposiciones().length }} pedido(s)</span>
@@ -91,5 +92,5 @@
 </div>
 
 @if (modalAbierto()) {
-  <app-pedido-nuevo-modal (creado)="onCreado($event)" (cancelar)="cerrarModal()" />
+  <app-pedido-nuevo-modal (creado)="onCreado($event)" (cancelar)="cerrarModal()"/>
 }
