@@ -2,7 +2,7 @@ import {Component, inject, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, ReactiveFormsModule, Validators} from '@angular/forms';
 import {Router, RouterLink} from '@angular/router';
 import {UserService} from '../../core/services/user.service';
-import {NgOptimizedImage} from '@angular/common';
+import {NgClass, NgOptimizedImage} from '@angular/common';
 import {getSessionItem, setSessionItem} from '../../core/utils/storage.utils';
 import {NotificationService} from 'shared-notifications';
 import Clarity from '@microsoft/clarity'
@@ -10,6 +10,8 @@ import {UserResponse} from '../../core/dto/user-response';
 import {AuthService, LoginRequest} from 'shared-auth';
 import {HttpErrorResponse} from '@angular/common/http';
 import {ErrorResponse} from '../../core/error/error-response';
+import {notBlank} from '../../core/utils/not-blank.validator';
+import {finalize} from 'rxjs';
 
 @Component({
   selector: 'app-login',
@@ -17,7 +19,8 @@ import {ErrorResponse} from '../../core/error/error-response';
   imports: [
     RouterLink,
     ReactiveFormsModule,
-    NgOptimizedImage
+    NgOptimizedImage,
+    NgClass
   ],
   templateUrl: './login.component.html',
   styles: ``
@@ -29,6 +32,7 @@ export class LoginComponent implements OnInit {
   password!: string;
   loginForm!: FormGroup
   mostrarPassword = false;
+  loading = false;
 
   private fb = inject(FormBuilder)
   private readonly authService = inject(AuthService)
@@ -39,35 +43,45 @@ export class LoginComponent implements OnInit {
   ngOnInit(): void {
     this.getSession()
     this.loginForm = this.fb.group({
-      usuario: ['', Validators.required],
+      usuario: ['', [Validators.required, notBlank]],
       password: ['', Validators.required]
     })
   }
 
+  invalid(name: string): boolean {
+    const c = this.loginForm.get(name);
+    return !!c && c.invalid && (c.touched || c.dirty);
+  }
+
   onSubmit() {
     if (this.loginForm.invalid) {
-      return
+      this.loginForm.markAllAsTouched();   // muestra los errores al enviar
+      return;
     }
-    const usuario = this.loginForm.get('usuario')?.value
-    const password = this.loginForm.get('password')?.value
 
     const loginRequest: LoginRequest = {
-      usrId: usuario,
-      password: password
-    }
+      usrId: this.loginForm.get('usuario')!.value.trim(),
+      password: this.loginForm.get('password')!.value
+    };
 
-    this.authService.login(loginRequest).subscribe({
+    this.loading = true;
+    this.authService.login(loginRequest)
+      .pipe(finalize(() => (this.loading = false)))
+      .subscribe({
       next: () => {
         this.getDatosUser(loginRequest.usrId)
       },
       error: (err: HttpErrorResponse) => {
         const apiError = err.error as ErrorResponse;
+        const detail =
+          err.status === 0 ? 'No hay conexión con el servidor'
+            : apiError?.message ?? 'Error inesperado, intente nuevamente';
 
         this.notif.showToast({
           type: 'warning',
-          summary: 'Usuario no autenticado',
-          detail: apiError?.message ?? 'Error de conexión, intente nuevamente',
-          autoCloseMs: 2000
+          summary: err.status === 401 ? 'Credenciales incorrectas' : 'No se pudo iniciar sesión',
+          detail,
+          autoCloseMs: 2500
         });
       }
     })

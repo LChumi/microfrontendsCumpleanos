@@ -53,6 +53,7 @@
   </div>
 
   <!-- Panel derecho: formulario -->
+  <!-- Panel derecho: formulario -->
   <div class="flex-1 flex items-center justify-center px-6 py-12 bg-white">
     <div class="w-full max-w-sm">
       <h1 class="sr-only">Página de Autorización | Assist Web</h1>
@@ -65,66 +66,101 @@
 
       <div class="mb-8">
         <h2 class="font-[Manrope] text-2xl font-bold text-[#4d4d4f]">Bienvenido de nuevo</h2>
-        <p class="text-sm text-gray-500 mt-1">Iniciá sesión para continuar en tu panel</p>
+        <p class="text-sm text-gray-500 mt-1">Inicia sesión para continuar en tu panel</p>
       </div>
 
       <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" novalidate class="space-y-5">
+
+        <!-- Usuario -->
         <div>
           <label for="username" class="block text-sm font-medium text-[#4d4d4f] mb-1.5">Usuario</label>
           <div class="relative">
-            <i class="pi pi-user absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm"></i>
+            <i class="pi pi-user absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none"></i>
             <input
               id="username"
               type="text"
               formControlName="usuario"
-              autocomplete="off"
+              autocomplete="username"
+              autocapitalize="off"
+              spellcheck="false"
               placeholder="tu.usuario"
-              class="w-full pl-10 pr-4 py-2.5 rounded-lg border-0 text-sm text-[#4d4d4f]
-                     placeholder:text-gray-400 outline-none transition
-                     focus:border-[#00acec] focus:ring-4 focus:ring-[#00acec]/15"
+              [attr.aria-invalid]="invalid('usuario')"
+              [attr.aria-describedby]="invalid('usuario') ? 'username-error' : null"
+              class="w-full pl-10 pr-4 py-2.5 rounded-lg border bg-gray-50 text-sm text-[#4d4d4f]
+         placeholder:text-gray-400 outline-none transition focus:bg-white focus:ring-4"
+              [ngClass]="invalid('usuario')
+    ? 'border-red-400 focus:border-red-400 focus:ring-red-400/15'
+    : 'border-gray-200 focus:border-[#00acec] focus:ring-[#00acec]/15'"
             />
           </div>
-          @if (loginForm.get('usuario')?.invalid && (loginForm.get('usuario')?.touched || loginForm.get('usuario')?.dirty)) {
-            <p class="text-red-500 text-xs mt-1.5">El nombre de usuario es requerido</p>
+          @if (invalid('usuario')) {
+            <p id="username-error" class="text-red-500 text-xs mt-1.5" role="alert">
+              {{ loginForm.get('usuario')?.hasError('blank')
+              ? 'El usuario no puede contener solo espacios'
+              : 'El nombre de usuario es requerido' }}
+            </p>
           }
         </div>
 
+        <!-- Contraseña -->
         <div>
           <label for="password1" class="block text-sm font-medium text-[#4d4d4f] mb-1.5">Contraseña</label>
           <div class="relative">
-            <i class="pi pi-lock absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
-            <input id="password1" [type]="mostrarPassword ? 'text' : 'password'" formControlName="password"
-                   autocomplete="off" placeholder="••••••••"
-                   class="w-full pl-10 pr-11 py-2.5 rounded-lg border-0 text-sm text-[#4d4d4f] placeholder:text-gray-400 outline-none transition focus:border-[#00acec] focus:ring-4 focus:ring-[#00acec]/15"/>
-            <button type="button" (click)="mostrarPassword = !mostrarPassword"
-                    class="bg-transparent absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors border-0 appearance-none">
+            <i class="pi pi-lock absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400 text-sm pointer-events-none"></i>
+            <input
+              id="password1"
+              [type]="mostrarPassword ? 'text' : 'password'"
+              formControlName="password"
+              autocomplete="current-password"
+              placeholder="••••••••"
+              [attr.aria-invalid]="invalid('password')"
+              [attr.aria-describedby]="invalid('password') ? 'password-error' : null"
+              class="w-full pl-10 pr-11 py-2.5 rounded-lg border bg-gray-50 text-sm text-[#4d4d4f]
+         placeholder:text-gray-400 outline-none transition focus:bg-white focus:ring-4"
+              [ngClass]="invalid('password')
+    ? 'border-red-400 focus:border-red-400 focus:ring-red-400/15'
+    : 'border-gray-200 focus:border-[#00acec] focus:ring-[#00acec]/15'"
+            />
+            <button
+              type="button"
+              (click)="mostrarPassword = !mostrarPassword"
+              [attr.aria-label]="mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+              class="bg-transparent absolute right-3 top-1/2 -translate-y-1/2 p-1 text-gray-400
+                   hover:text-gray-600 transition-colors border-0 appearance-none cursor-pointer">
               <i [class]="mostrarPassword ? 'pi pi-eye-slash' : 'pi pi-eye'"></i>
             </button>
           </div>
-          @if (loginForm.get('password')?.invalid && (loginForm.get('password')?.touched || loginForm.get('password')?.dirty)) {
-            <p class="text-red-500 text-xs mt-1.5">La contraseña es requerida</p>
+          @if (invalid('password')) {
+            <p id="password-error" class="text-red-500 text-xs mt-1.5" role="alert">La contraseña es requerida</p>
           }
         </div>
 
-        <div class="flex items-center justify-between pt-1">
-          <a
-            [routerLink]="['/auth/forgotpassword']"
-            class="text-sm font-medium text-[#00acec] hover:text-[#0090c9] cursor-pointer"
-          >
-            Olvidé la contraseña
+        <div class="flex items-center justify-end">
+          <a [routerLink]="['/auth/forgotpassword']"
+             class="text-sm font-medium text-[#00acec] hover:text-[#0090c9] transition-colors">
+            Olvidé mi contraseña
           </a>
         </div>
 
+        <!-- Submit con estado de carga -->
         <button
           type="submit"
-          class="w-full py-3 rounded-lg font-semibold text-sm text-white
-                  appearance-none border-0 p-0
-                 bg-[#00acec] hover:bg-[#0090c9] active:bg-[#00739e]
-                 transition shadow-sm shadow-[#00acec]/30"
-        >
-          Iniciar sesión
+          [disabled]="loading"
+          class="w-full py-3 rounded-lg font-semibold text-sm text-white border-0 appearance-none
+               bg-[#00acec] hover:bg-[#0090c9] active:bg-[#00739e]
+               disabled:opacity-70 disabled:cursor-not-allowed
+               transition shadow-sm shadow-[#00acec]/30
+               flex items-center justify-center gap-2 cursor-pointer
+               focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-[#00acec]/30">
+          @if (loading) {
+            <i class="pi pi-spin pi-spinner text-sm"></i>
+            <span>Ingresando...</span>
+          } @else {
+            <span>Iniciar sesión</span>
+          }
         </button>
       </form>
     </div>
   </div>
+
 </div>
