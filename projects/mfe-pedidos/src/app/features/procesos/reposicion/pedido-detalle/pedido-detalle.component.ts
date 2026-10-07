@@ -48,7 +48,7 @@ export class PedidoDetalleComponent implements OnInit {
   // ---------- sesión / ruta ----------
   private readonly empresa = +getSessionItem('empresa')!;
   private readonly usuario = getSessionItem('username')!;
-  private readonly usuarioCodigo = getSessionItem('username')!;   // AJUSTAR si StockOptimo.usuario es otro valor
+  private readonly usuarioCodigo = getSessionItem('usrId')!;   // AJUSTAR si StockOptimo.usuario es otro valor
   readonly codigo = +this.route.snapshot.paramMap.get('id')!;
 
   private readonly GONDOLA_DEFECTO = 125;
