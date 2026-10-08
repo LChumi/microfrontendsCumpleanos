@@ -11,6 +11,7 @@ export interface StockOptimo {
   gondola:   number;
   producto:  number;
   usuario:   any;
+  creaUsr:   any;
 }
 
 export interface ID {

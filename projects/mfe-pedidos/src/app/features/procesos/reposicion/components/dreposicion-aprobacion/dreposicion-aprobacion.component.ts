@@ -287,7 +287,8 @@ export class DreposicionAprobacionComponent implements OnInit {
       bodega: this.bodega,
       gondola: item.gonCod ?? 125, // código de góndola por defecto
       producto: item.codigoProducto,
-      usuario: this.usuarioCodigo
+      usuario: this.usuarioCodigo,
+      creaUsr: this.usuarioId
     };
   }
 
@@ -297,6 +298,7 @@ export class DreposicionAprobacionComponent implements OnInit {
       empresa: this.empresa,
       maximo: max,
       minimo: min,
+      usr: this.usuarioId
     };
   }
 

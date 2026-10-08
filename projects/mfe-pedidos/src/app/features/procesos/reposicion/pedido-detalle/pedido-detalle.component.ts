@@ -321,15 +321,17 @@ export class PedidoDetalleComponent implements OnInit {
         maximo: max,
         minimo: min,
         bodega,
-        gondola: p.gonCod ?? this.GONDOLA_DEFECTO,   // o this.gondolaDestino() si el min/max es por góndola
-        producto: p.codigoProducto,
+        gondola: this.gondolaDestino(),
+        producto: p.id,
         usuario: this.usuarioCodigo,
+        creaUsr: this.usuario,
       }).pipe(map(r => (r as any).id?.codigo as number | undefined))   // AJUSTAR: dónde viene el código
       : this.stockOptimoService.updateMinMax({
         codigo: p.codigoStock,
         empresa: this.empresa,
         maximo: max,
         minimo: min,
+        usr: this.usuario
       }).pipe(map(() => p.codigoStock));
 
     request$.subscribe({
