@@ -24,26 +24,32 @@ export class UltimosAccesosComponent {
     });
   }
 
-  private setAccesos(data: SessionAccessDTO[]){
+  private setAccesos(data: SessionAccessDTO[]) {
     this.accesos = data.map((acceso, index) => ({
       ...acceso,
-        ua: parseUserAgent(acceso.userAgent),
-        isActive: index === 0
+      ua: parseUserAgent(acceso.userAgent),
+      isActive: index === 0,
+      fecha: this.formatFecha(acceso.loginTime),
+      hora: this.formatHora(acceso.loginTime),
     }));
   }
 
-  formatFecha(fecha: string): string {
-    return new Date(fecha).toLocaleDateString('es-EC', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    });
+  private formatFecha(fecha: string): string {
+    const texto = new Date(fecha)
+      .toLocaleDateString('es-EC', {
+        weekday: 'long',
+        day: '2-digit',
+        month: 'long',
+        year: 'numeric',
+      })
+      .replace(',', ''); // "jueves, 08 de..." -> "jueves 08 de..."
+    return texto.charAt(0).toUpperCase() + texto.slice(1);
   }
 
-  formatHora(fecha: string): string {
+  private formatHora(fecha: string): string {
     return new Date(fecha).toLocaleTimeString('es-EC', {
       hour: '2-digit',
-      minute: '2-digit'
+      minute: '2-digit',
     });
   }
 
