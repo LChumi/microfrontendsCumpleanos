@@ -11,7 +11,7 @@ import {NgClass, NgTemplateOutlet} from '@angular/common';
 import {StockOptimoService} from '../../../../../core/services/stock-optimo.service';
 import {StockOptimo} from '../../../../../core/models/stock-optimo';
 import {MinMaxUpdateDto} from '../../../../../core/dto/min-max-update.dto';
-import {finalize, map, Observable, of, shareReplay, switchMap} from 'rxjs';
+import {map, Observable, of, shareReplay, switchMap} from 'rxjs';
 import {ProductoReposicionUpdateDto} from '../../../../../core/dto/producto-reposicion-update.dto';
 import {NotificationService} from 'shared-notifications';
 import {GondolaService} from '../../../../../core/services/gondola.service';
