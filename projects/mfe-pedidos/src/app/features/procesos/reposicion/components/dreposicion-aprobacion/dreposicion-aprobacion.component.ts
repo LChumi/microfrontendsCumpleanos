@@ -7,13 +7,15 @@ import {getSessionItem} from '../../../../../core/utils/storage.utils';
 import {CreposicionService} from '../../../../../core/services/creposicion.service';
 import {PrePedidoRequestDto} from '../../../../../core/dto/prepedido-request.dto';
 import {cargarImagenDefecto, getUrlImage} from '../../../../../core/utils/images.utils';
-import {NgClass} from '@angular/common';
+import {NgClass, NgTemplateOutlet} from '@angular/common';
 import {StockOptimoService} from '../../../../../core/services/stock-optimo.service';
 import {StockOptimo} from '../../../../../core/models/stock-optimo';
 import {MinMaxUpdateDto} from '../../../../../core/dto/min-max-update.dto';
-import {map} from 'rxjs';
+import {finalize, map, Observable, of, shareReplay, switchMap} from 'rxjs';
 import {ProductoReposicionUpdateDto} from '../../../../../core/dto/producto-reposicion-update.dto';
 import {NotificationService} from 'shared-notifications';
+import {GondolaService} from '../../../../../core/services/gondola.service';
+import {minMaxValido} from '../../../../../core/utils/form.utils';
 
 @Component({
   selector: 'app-dreposicion-aprobacion',
@@ -21,6 +23,7 @@ import {NotificationService} from 'shared-notifications';
   imports: [
     ReactiveFormsModule,
     NgClass,
+    NgTemplateOutlet,
   ],
   templateUrl: './dreposicion-aprobacion.component.html',
   styles: ``
@@ -32,12 +35,15 @@ export class DreposicionAprobacionComponent implements OnInit {
   private readonly dreposicionService = inject(DreposicionService);
   private readonly creposicionService = inject(CreposicionService);
   private readonly stockOptimoService = inject(StockOptimoService);
+  private readonly gondolaService = inject(GondolaService);
   private readonly notif = inject(NotificationService);
 
   private readonly fb = inject(FormBuilder);
   private readonly empresa = getSessionItem("empresa")!;
   private readonly usuarioCodigo = getSessionItem("usrId")!;
   private readonly usuarioId = getSessionItem("username")!;
+
+  private gondolaGeneral$?: Observable<number>;
 
   productos = signal<ProductoReposicionDto[]>([]);
   loading = signal(true);
@@ -46,13 +52,14 @@ export class DreposicionAprobacionComponent implements OnInit {
   tieneMinMaxOriginal = signal<Map<number, boolean>>(new Map());
   minMaxAbierto = signal(false);
   minMaxIdActual = signal<number | null>(null);
+  guardandoMinMax = signal(false);
   confirmandoEliminarId = signal<number | null>(null);
   imagenAmpliada = signal<string | null>(null);
 
   minMaxForm = this.fb.group({
-    min: [0, Validators.required],
-    max: [0, Validators.required],
-  });
+    min: [0, [Validators.required, Validators.min(0)]],
+    max: [0, [Validators.required, Validators.min(0)]],
+  }, {validators: minMaxValido});
 
   form = this.fb.group({items: this.fb.array<FormGroup>([])});
 
@@ -139,7 +146,7 @@ export class DreposicionAprobacionComponent implements OnInit {
             type: 'warning',
             summary: 'Productos duplicados',
             detail: `Se encontraron ${this.duplicados().size} productos con código duplicado`,
-            autoCloseMs: 10000
+            autoCloseMs: 20000
           });
         }
 
@@ -237,12 +244,13 @@ export class DreposicionAprobacionComponent implements OnInit {
   }
 
   cerrarMinMax() {
+    if (this.guardandoMinMax()) return;
     this.minMaxAbierto.set(false);
     this.minMaxIdActual.set(null);
   }
 
   guardarMinMax(): void {
-    if (this.minMaxForm.invalid) return;
+    if (this.minMaxForm.invalid || this.guardandoMinMax()) return;
     const id = this.minMaxIdActual();
     if (id === null) return;
 
@@ -250,19 +258,37 @@ export class DreposicionAprobacionComponent implements OnInit {
     const item = form.value;
     const {min, max} = this.minMaxForm.value;
 
-    const request$ = this.esNuevoMinMax(id)
-      ? this.stockOptimoService.crearMinMax(this.buildCreatePayload(item, min!, max!)).pipe(
-        map(() => void 0)
+    // Lo que hay que reflejar en el form del producto después de guardar
+    type Extra = { codigoStock?: number; gondola?: number };
+
+    const guardar$: Observable<Extra> = this.esNuevoMinMax(id)
+      ? this.resolverGondola(item).pipe(
+        switchMap(gondola =>
+          this.stockOptimoService.crearMinMax(
+            this.buildCreatePayload(item, min!, max!, gondola)
+          ).pipe(
+            // crearMinMax devuelve el StockOptimo creado: guardamos su código
+            // para que la próxima edición sea un update con el código correcto
+            map((creado): Extra => ({codigoStock: creado.id.codigo, gondola}))
+          )
+        )
       )
-      : this.stockOptimoService.updateMinMax(this.buildUpdatePayload(item, min!, max!)).pipe(
-        map(() => void 0)
+      : this.stockOptimoService.updateMinMax(
+        this.buildUpdatePayload(item, min!, max!)
+      ).pipe(
+        map((res): Extra => {
+          // updateMinMax devuelve ServiceResponse: success=false es un fallo aunque el HTTP sea 200
+          if (!res.success) throw new Error(res.message || 'No se pudo actualizar el mínimo-máximo');
+          return {};
+        })
       );
 
-    request$.subscribe({
-      next: () => {
-        form.patchValue({min, max});
+    this.guardandoMinMax.set(true);
 
-        // Ya no es "nuevo" una vez guardado, para que si lo vuelve a editar sea update
+    guardar$.subscribe({
+      next: extra => {
+        form.patchValue({min, max, ...extra});
+
         const mapa = new Map(this.tieneMinMaxOriginal());
         mapa.set(id, true);
         this.tieneMinMaxOriginal.set(mapa);
@@ -273,19 +299,30 @@ export class DreposicionAprobacionComponent implements OnInit {
           detail: 'Mínimo-Máximo guardado correctamente',
           autoCloseMs: 2000
         });
+
+        this.guardandoMinMax.set(false); // ANTES de cerrar, si no el guard de cerrarMinMax lo bloquea
         this.cerrarMinMax();
       },
-      error: err => console.error('Error al guardar min/max', err)
+      error: err => {
+        this.guardandoMinMax.set(false);
+        console.error('Error al guardar min/max', err);
+        this.notif.showToast({
+          type: 'error',
+          summary: 'Error',
+          detail: err instanceof Error ? err.message : 'No se pudo guardar el mínimo-máximo',
+          autoCloseMs: 5000
+        });
+      }
     });
   }
 
-  private buildCreatePayload(item: any, min: number, max: number): StockOptimo {
+  private buildCreatePayload(item: any, min: number, max: number, gondola: number): StockOptimo {
     return {
       id: {empresa: this.empresa},
       maximo: max,
       minimo: min,
       bodega: this.bodega,
-      gondola: item.gonCod ?? 125, // código de góndola por defecto
+      gondola,
       producto: item.codigoProducto,
       usuario: this.usuarioCodigo,
       creaUsr: this.usuarioId
@@ -300,6 +337,19 @@ export class DreposicionAprobacionComponent implements OnInit {
       minimo: min,
       usr: this.usuarioId
     };
+  }
+
+  private resolverGondola(item: any): Observable<number> {
+    if (item.gondola != null) return of(item.gondola);
+
+    this.gondolaGeneral$ ??= this.gondolaService.getGeneral(Number(this.bodega)).pipe(
+      map(g => {
+        if (!g?.id) throw new Error('La bodega no tiene góndola general configurada');
+        return g.id.codigo;
+      }),
+      shareReplay(1)
+    );
+    return this.gondolaGeneral$;
   }
 
   confirmarEliminar(id: number) {

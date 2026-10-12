@@ -27,18 +27,19 @@ export class BodegaSelectComponent implements OnInit{
 
   @Output() bodegaSeleccionada = new EventEmitter<BodegaWebV>();
 
-  bodegas = this.bodegaStore.bodegas;          // <- esta línea era la que fallaba
+  bodegas = this.bodegaStore.bodegas;
   bodegaActual = signal<BodegaWebV | null>(null);
   abierto = signal(false);
 
   constructor() {
     effect(() => {
       const lista = this.bodegas();
-      if (!untracked(this.bodegaActual) && lista.length) {
+
+      if (!this.bodegaActual() && lista.length > 0) {
         this.bodegaActual.set(lista[0]);
         this.bodegaSeleccionada.emit(lista[0]);
       }
-    });
+    }, { allowSignalWrites: true });
   }
 
   ngOnInit(): void {
