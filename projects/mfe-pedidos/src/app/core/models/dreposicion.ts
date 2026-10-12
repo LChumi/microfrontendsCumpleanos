@@ -13,7 +13,7 @@ export interface Dreposicion {
   total?:        number;
   cantDisp?:     number;
   productoId:    number;
-  gondolaId:     number;
+  gondolaId:     number | null;
   creposicionId: number;
   creposicion?:   Creposicion;
   drpGondola?:    Gondola;

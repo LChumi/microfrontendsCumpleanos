@@ -51,7 +51,6 @@ export class PedidoDetalleComponent implements OnInit {
   private readonly usuarioCodigo = getSessionItem('usrId')!;   // AJUSTAR si StockOptimo.usuario es otro valor
   readonly codigo = +this.route.snapshot.paramMap.get('id')!;
 
-  private readonly GONDOLA_DEFECTO = 125;
   private resaltadoTimer: ReturnType<typeof setTimeout> | null = null;
 
   // ---------- datos ----------
@@ -91,10 +90,10 @@ export class PedidoDetalleComponent implements OnInit {
   gondolaPedidoNombre = computed<string | null>(() => this.pedido()?.gondola?.nombre ?? null);   // AJUSTAR campo
 
   /** Góndola con la que se guardará el producto actual */
-  gondolaDestino = computed<number>(() => {
+  gondolaDestino = computed<number | null>(() => {
     const p = this.producto();
     const ped = this.pedido();
-    const porDefecto = p?.gonCod ?? this.GONDOLA_DEFECTO;
+    const porDefecto = p?.gonCod ?? null;
     if (!ped) return porDefecto;
 
     return this.esUrgente()

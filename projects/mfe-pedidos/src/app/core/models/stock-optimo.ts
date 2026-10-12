@@ -8,7 +8,7 @@ export interface StockOptimo {
   mesIni?:    number;
   mesFin?:    number;
   bodega:    number;
-  gondola:   number;
+  gondola:   number | null;
   producto:  number;
   usuario:   any;
   creaUsr:   any;
