@@ -16,4 +16,8 @@ export class GondolaService {
     return this.http.get<Gondola[]>(`${this.url}/gondolas/list/user/${empresa}/${user}/${bodega}`);
   }
 
+  getGeneral(bodega: number): Observable<Gondola>{
+    return this.http.get<Gondola>(`${this.url}/gondolas/general/${bodega}`);
+  }
+
 }
