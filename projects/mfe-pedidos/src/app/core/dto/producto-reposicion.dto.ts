@@ -20,5 +20,5 @@ export interface ProductoReposicionDto {
 
   precio:         number;
   cxb:            number;
-  stockZh:        number;
+  stockZh:        number | null;
 }
