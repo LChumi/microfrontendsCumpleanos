@@ -4,16 +4,37 @@
   <div class="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-0.5">
     <span class="font-semibold text-slate-800">Pedidos en proceso</span>
     <span class="text-sm font-medium text-slate-500">{{ reposiciones().length }} pedido(s)</span>
+    @if (algunoSeleccionado()) {
+      <span class="rounded-full bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700 ring-1 ring-blue-200">
+        {{ cantidadSeleccionada() }} seleccionado(s)
+      </span>
+    }
   </div>
-  <button
-    type="button"
-    (click)="abrirModal()"
-    class="appearance-none border-0 p-0 shadow-none inline-flex h-10 shrink-0 items-center gap-2 rounded-lg bg-blue-500 px-4 text-sm font-semibold text-white transition hover:bg-blue-600 active:bg-blue-700">
-    <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-      <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
-    </svg>
-    Nuevo Pedido
-  </button>
+
+  <div class="flex shrink-0 items-center gap-2">
+    @if (algunoSeleccionado()) {
+      <button
+        type="button"
+        [disabled]="anulando()"
+        (click)="anularSeleccionados()"
+        class="appearance-none border-0 p-0 shadow-none inline-flex h-10 items-center gap-2 rounded-lg bg-red-500 px-4 text-sm font-semibold text-white transition hover:bg-red-600 active:bg-red-700 disabled:cursor-not-allowed disabled:opacity-50">
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3"/>
+        </svg>
+        <span class="hidden sm:inline">Eliminar</span> ({{ cantidadSeleccionada() }})
+      </button>
+    }
+    <button
+      type="button"
+      (click)="abrirModal()"
+      class="appearance-none border-0 p-0 shadow-none inline-flex h-10 items-center gap-2 rounded-lg bg-blue-500 px-4 text-sm font-semibold text-white transition hover:bg-blue-600 active:bg-blue-700">
+      <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/>
+      </svg>
+      Nuevo Pedido
+    </button>
+  </div>
 </div>
 
 @if (reposiciones().length === 0) {
@@ -25,6 +46,13 @@
   <table class="w-full text-sm">
     <thead class="bg-slate-50 text-left text-xs uppercase text-slate-500">
     <tr>
+      <th class="w-12 px-4 py-3">
+        <input type="checkbox"
+               [checked]="todosSeleccionados()"
+               [indeterminate]="algunoSeleccionado() && !todosSeleccionados()"
+               (change)="toggleSeleccionarTodos()"
+               class="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+      </th>
       <th class="px-4 py-3">#</th>
       <th class="px-4 py-3">Fecha</th>
       <th class="px-4 py-3">Góndola</th>
@@ -37,9 +65,15 @@
     <tbody class="divide-y divide-slate-100">
       @for (r of reposiciones(); track r.id.codigo) {
         <tr class="transition-colors"
-            [ngClass]="r.urgente === 1
-              ? 'bg-red-50 hover:bg-red-100'
-              : 'hover:bg-slate-50'">
+            [ngClass]="estaSeleccionado(r)
+              ? (r.urgente === 1 ? 'bg-red-100' : 'bg-blue-50')
+              : (r.urgente === 1 ? 'bg-red-50 hover:bg-red-100' : 'hover:bg-slate-50')">
+          <td class="px-4 py-3">
+            <input type="checkbox"
+                   [checked]="estaSeleccionado(r)"
+                   (change)="toggleSeleccion(r)"
+                   class="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+          </td>
           <td class="px-4 py-3 font-semibold text-slate-800">{{ r.id.codigo }}</td>
           <td class="px-4 py-3 text-slate-600">{{ r.fecha | date: 'dd/MM/yyyy HH:mm' }}</td>
           <td class="px-4 py-3 text-slate-600">{{ r.gondola?.nombre ?? '—' }}</td>
@@ -50,14 +84,27 @@
               <span class="rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-700 ring-1 ring-red-300">Urgente</span>
             }
           </td>
-          <td class="px-4 py-3 text-right">
-            <button type="button" (click)="abrirPedido(r)"
-                    class="appearance-none border-0 shadow-none rounded-lg px-3 py-1.5 text-xs font-semibold"
-                    [ngClass]="r.urgente === 1
-                      ? 'bg-white text-red-700 hover:bg-red-100'
-                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'">
-              Abrir
-            </button>
+          <td class="px-4 py-3">
+            <div class="flex items-center justify-end gap-2">
+              <button type="button" (click)="abrirPedido(r)"
+                      class="appearance-none border-0 shadow-none rounded-lg px-3 py-1.5 text-xs font-semibold"
+                      [ngClass]="r.urgente === 1
+                        ? 'bg-white text-red-700 hover:bg-red-100'
+                        : 'bg-slate-100 text-slate-600 hover:bg-slate-200'">
+                Abrir
+              </button>
+              <button type="button"
+                      [disabled]="anulando()"
+                      (click)="anularUno(r)"
+                      title="Eliminar pedido"
+                      class="appearance-none border-0 shadow-none inline-flex items-center gap-1 rounded-lg bg-red-50 px-3 py-1.5 text-xs font-semibold text-red-600 transition hover:bg-red-100 disabled:cursor-not-allowed disabled:opacity-50">
+                <svg class="h-3.5 w-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+                  <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3"/>
+                </svg>
+                Eliminar
+              </button>
+            </div>
           </td>
         </tr>
       }
@@ -66,28 +113,57 @@
 </div>
 
 <!-- ============ MOBILE ============ -->
+@if (reposiciones().length > 0) {
+  <div class="flex items-center gap-2 px-4 pt-4 md:hidden">
+    <input id="sel-todos-m" type="checkbox"
+           [checked]="todosSeleccionados()"
+           [indeterminate]="algunoSeleccionado() && !todosSeleccionados()"
+           (change)="toggleSeleccionarTodos()"
+           class="h-4 w-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+    <label for="sel-todos-m" class="text-sm text-slate-600">Seleccionar todos</label>
+  </div>
+}
+
 <div class="grid gap-3 p-4 md:hidden">
   @for (r of reposiciones(); track r.id.codigo) {
-    <button type="button" (click)="abrirPedido(r)"
-            class="appearance-none w-full rounded-xl border p-3 text-left shadow-sm transition-colors"
-            [ngClass]="r.urgente === 1
-              ? 'border-red-300 border-l-4 border-l-red-500 bg-red-50 active:bg-red-100'
-              : 'border-slate-200 bg-white active:bg-slate-50'">
-      <div class="flex items-center justify-between gap-2">
-        <span class="font-semibold text-slate-800">Pedido #{{ r.id.codigo }}</span>
-        @if (r.urgente === 1) {
-          <span class="rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-700 ring-1 ring-red-300">Urgente</span>
+    <div class="flex items-stretch gap-3 rounded-xl border p-3 shadow-sm transition-colors"
+         [ngClass]="r.urgente === 1
+           ? 'border-red-300 border-l-4 border-l-red-500 ' + (estaSeleccionado(r) ? 'bg-red-100' : 'bg-red-50')
+           : 'border-slate-200 ' + (estaSeleccionado(r) ? 'bg-blue-50' : 'bg-white')">
+      <input type="checkbox"
+             [checked]="estaSeleccionado(r)"
+             (change)="toggleSeleccion(r)"
+             class="mt-1 h-4 w-4 shrink-0 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
+
+      <button type="button" (click)="abrirPedido(r)"
+              class="appearance-none min-w-0 flex-1 border-0 bg-transparent p-0 text-left shadow-none">
+        <div class="flex items-center justify-between gap-2">
+          <span class="font-semibold text-slate-800">Pedido #{{ r.id.codigo }}</span>
+          @if (r.urgente === 1) {
+            <span class="rounded-full bg-red-100 px-2 py-0.5 text-xs font-semibold text-red-700 ring-1 ring-red-300">Urgente</span>
+          }
+        </div>
+        <p class="mt-1 text-xs text-slate-400">{{ r.fecha | date: 'dd/MM/yyyy HH:mm' }}</p>
+        @if (r.gondola?.nombre) {
+          <p class="mt-1 text-xs text-slate-500">Góndola: {{ r.gondola?.nombre }}</p>
         }
-      </div>
-      <p class="mt-1 text-xs text-slate-400">{{ r.fecha | date: 'dd/MM/yyyy HH:mm' }}</p>
-      @if (r.gondola?.nombre) {
-        <p class="mt-1 text-xs text-slate-500">Góndola: {{ r.gondola?.nombre }}</p>
-      }
-      <p class="mt-1 text-xs text-slate-500">Bodega: {{ r.nombreBodega }}</p>
-      @if (r.observacion) {
-        <p class="mt-1 text-sm text-slate-600">{{ r.observacion }}</p>
-      }
-    </button>
+        <p class="mt-1 text-xs text-slate-500">Bodega: {{ r.nombreBodega }}</p>
+        @if (r.observacion) {
+          <p class="mt-1 text-sm text-slate-600">{{ r.observacion }}</p>
+        }
+      </button>
+
+      <button type="button"
+              [disabled]="anulando()"
+              (click)="anularUno(r)"
+              aria-label="Eliminar pedido"
+              class="appearance-none self-start border-0 shadow-none rounded-lg bg-red-50 p-2 text-red-600 active:bg-red-100 disabled:opacity-50">
+        <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round"
+                d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M1 7h22M9 7V4a1 1 0 011-1h4a1 1 0 011 1v3"/>
+        </svg>
+      </button>
+    </div>
   }
 </div>
 

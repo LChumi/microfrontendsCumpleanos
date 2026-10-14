@@ -20,11 +20,16 @@ import {BodegaStoreService} from '../../../../core/services/bodega-store.service
 })
 export class GenerarReposicionComponent implements OnInit{
 
+  private readonly empresa = +getSessionItem('empresa')!;
+
   private readonly usuarioId = getSessionItem("username")!;
   private readonly router = inject(Router);
   private readonly bodegaStore = inject(BodegaStoreService);
   private readonly creposicionService = inject(CreposicionService);
   private readonly pendientes = signal<Creposicion[]>([]);
+
+  seleccionados = signal<Set<number>>(new Set());
+  anulando = signal(false);
 
   reposiciones = computed(() => {
     const bodegas = this.bodegaStore.bodegas();
@@ -35,9 +40,36 @@ export class GenerarReposicionComponent implements OnInit{
   });
   modalAbierto = signal(false);
 
+  cantidadSeleccionada = computed(() => this.seleccionados().size);
+  algunoSeleccionado = computed(() => this.seleccionados().size > 0);
+  todosSeleccionados = computed(() => {
+    const lista = this.reposiciones();
+    return lista.length > 0 && lista.every(r => this.seleccionados().has(r.id.codigo));
+  });
+
   ngOnInit() {
     this.bodegaStore.cargar();
     this.listarPendientes();
+  }
+
+  estaSeleccionado(r: Creposicion) {
+    return this.seleccionados().has(r.id.codigo);
+  }
+
+  toggleSeleccion(r: Creposicion) {
+    this.seleccionados.update(s => {
+      const n = new Set(s);
+      n.has(r.id.codigo) ? n.delete(r.id.codigo) : n.add(r.id.codigo);
+      return n;
+    });
+  }
+
+  toggleSeleccionarTodos() {
+    this.seleccionados.set(
+      this.todosSeleccionados()
+        ? new Set()
+        : new Set(this.reposiciones().map(r => r.id.codigo))
+    );
   }
 
   private listarPendientes() {
@@ -62,4 +94,41 @@ export class GenerarReposicionComponent implements OnInit{
   abrirPedido(r: Creposicion) {
     this.router.navigate(['/erp/pedidos/procesos/reposicion/pedido', r.id.codigo]).then(() => {});
   }
+
+  anularSeleccionados() {
+    this.anular([...this.seleccionados()]);
+  }
+
+  anularUno(r: Creposicion) {
+    this.anular([r.id.codigo]);
+  }
+
+  private anular(codigos: number[]) {
+    if (!codigos.length || this.anulando()) return;
+
+    const msg = codigos.length === 1
+      ? `¿Eliminar el pedido #${codigos[0]}?`
+      : `¿Eliminar ${codigos.length} pedidos?`;
+    if (!confirm(msg)) return;
+
+    this.anulando.set(true);
+    this.creposicionService
+      .anularPedidos({empresa: this.empresa, codigos})
+      .subscribe({
+        next: () => {
+          this.seleccionados.update(s => {
+            const n = new Set(s);
+            codigos.forEach(c => n.delete(c));
+            return n;
+          });
+          this.listarPendientes();
+          this.anulando.set(false);
+        },
+        error: err => {
+          console.error(err);
+          this.anulando.set(false);
+        }
+      });
+  }
+
 }
