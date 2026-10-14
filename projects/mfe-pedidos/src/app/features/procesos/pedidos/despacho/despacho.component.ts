@@ -1,6 +1,7 @@
-import {Component, OnInit} from '@angular/core';
+import {Component, inject, OnInit} from '@angular/core';
 import {getSessionItem} from '../../../../core/utils/storage.utils';
 import {PendienteListComponent} from '../components/pendiente-list/pendiente-list.component';
+import {Router} from '@angular/router';
 
 @Component({
   selector: 'app-despacho',
@@ -13,6 +14,8 @@ import {PendienteListComponent} from '../components/pendiente-list/pendiente-lis
 })
 export class DespachoComponent implements OnInit {
 
+  private readonly router = inject(Router);
+
   usrId: any
 
   ngOnInit(): void {
@@ -20,6 +23,14 @@ export class DespachoComponent implements OnInit {
     if (username) {
       this.usrId = username
     }
+  }
+
+  regresar() {
+    this.router.navigate(['/erp/pedidos/comercial/pedido-clientes']).then(() => {});
+  }
+
+  regresarmp() {
+    this.router.navigate(['/erp/pedidos/comercial/mapas-vendedores']).then(() => {});
   }
 
 }

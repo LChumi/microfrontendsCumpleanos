@@ -43,7 +43,7 @@
           <td class="px-4 py-3 font-semibold text-slate-800">{{ r.id.codigo }}</td>
           <td class="px-4 py-3 text-slate-600">{{ r.fecha | date: 'dd/MM/yyyy HH:mm' }}</td>
           <td class="px-4 py-3 text-slate-600">{{ r.gondola?.nombre ?? '—' }}</td>
-          <td class="px-4 py-3 text-slate-600">{{ r.nombreBodega ?? '—' }}</td>
+          <td class="px-4 py-3 text-slate-600">{{ r.nombreBodega }}</td>
           <td class="px-4 py-3 text-slate-600">{{ r.observacion }}</td>
           <td class="px-4 py-3">
             @if (r.urgente === 1) {
