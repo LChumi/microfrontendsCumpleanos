@@ -1,0 +1,39 @@
+<!-- mapa-puntos-venta.component.html -->
+<div class="flex flex-col gap-3">
+
+  <!-- Filtros -->
+  <div class="flex flex-wrap items-end gap-3 rounded-lg bg-white p-3 shadow">
+    <label class="flex flex-col text-sm text-gray-600">
+      Vendedor (username)
+      <input [(ngModel)]="usuario" placeholder="lchumi"
+             class="mt-1 rounded border border-gray-300 px-2 py-1.5" />
+    </label>
+    <label class="flex flex-col text-sm text-gray-600">
+      Desde
+      <input type="datetime-local" [(ngModel)]="desde"
+             class="mt-1 rounded border border-gray-300 px-2 py-1.5" />
+    </label>
+    <label class="flex flex-col text-sm text-gray-600">
+      Hasta
+      <input type="datetime-local" [(ngModel)]="hasta"
+             class="mt-1 rounded border border-gray-300 px-2 py-1.5" />
+    </label>
+    <button (click)="verUltimas()"
+            class="rounded bg-gray-700 px-3 py-1.5 text-sm font-medium text-white hover:bg-gray-800">
+      Últimas posiciones
+    </button>
+    <button (click)="verRecorrido()"
+            class="rounded bg-blue-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-blue-700">
+      Recorrido
+    </button>
+    <button (click)="verCalor()"
+            class="rounded bg-orange-500 px-3 py-1.5 text-sm font-medium text-white hover:bg-orange-600">
+      Mapa de calor
+    </button>
+  </div>
+
+  <!-- Mapa -->
+  <div class="relative z-0 overflow-hidden rounded-lg shadow">
+    <div #mapContainer class="h-[60vh] min-h-[400px] w-full"></div>
+  </div>
+</div>

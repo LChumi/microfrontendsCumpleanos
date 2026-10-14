@@ -1,0 +1,24 @@
+<div class="flex items-center gap-3 rounded-lg bg-white p-3 shadow">
+  @if (tracker.activo()) {
+    <span class="flex items-center gap-2 text-sm text-green-700">
+      <span class="h-2.5 w-2.5 animate-pulse rounded-full bg-green-500"></span>
+      Jornada activa
+    </span>
+    <button (click)="tracker.detener()"
+            class="rounded bg-red-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-red-700">
+      Terminar jornada
+    </button>
+  } @else {
+    <button (click)="tracker.iniciar(usuario)"
+            class="rounded bg-green-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-green-700">
+      Iniciar jornada
+    </button>
+  }
+  @if (tracker.error(); as e) {
+    <span class="text-sm text-red-600">{{ e }}</span>
+  }
+  <button (click)="enviarUbiSimluacionfinalizarPedido()"
+          class="rounded bg-green-600 px-3 py-1.5 text-sm font-medium text-white hover:bg-green-700">
+    Enviar
+  </button>
+</div>
