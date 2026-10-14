@@ -14,3 +14,9 @@
 @import "../public/styles/flags/flags.css";
 @import "../public/styles/badges.scss";
 @import "../public/styles/code.scss";
+
+.leaflet-container img,
+.leaflet-container .leaflet-tile {
+  max-width: none !important;
+  max-height: none !important;
+}

@@ -33,6 +33,7 @@
 						],
 						"styles": [
 							"projects/shell/src/styles.scss",
+              "node_modules/leaflet/dist/leaflet.css",
 							"node_modules/primeng/resources/primeng.min.css",
 							"node_modules/primeicons/primeicons.css"
 						],
