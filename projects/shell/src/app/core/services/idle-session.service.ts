@@ -8,52 +8,63 @@ import {AuthService} from 'shared-auth';
 })
 export class IdleSessionService {
 
-  private readonly authService = inject(AuthService)
+  private readonly authService = inject(AuthService);
+  private readonly zone = inject(NgZone);
 
-  private readonly WARNING_TIMEOUT = 20 * 60 * 1000; //20 min aviso
-  private readonly LOGOUT_TIMEOUT  = 30 * 60 * 1000; //30 min cierre forzado
+  private readonly WARNING_TIMEOUT = 50 * 60 * 1000;
+  private readonly LOGOUT_TIMEOUT  = 60 * 60 * 1000;
+  private readonly THROTTLE_MS = 1000;
 
-  private warningTimer!: ReturnType<typeof setTimeout>;
-  private logoutTimer!: ReturnType<typeof setTimeout>;
+  private warningTimer?: ReturnType<typeof setTimeout>;
+  private logoutTimer?: ReturnType<typeof setTimeout>;
   private started = false;
+  private warningShown = false;
+  private lastReset = 0;
 
-  private activityEvents = ['click', 'mousemove', 'keydown', 'scroll', 'touchstart'];
-  private boundReset = this.resetTimers.bind(this);
+  private readonly activityEvents = ['click', 'mousemove', 'keydown', 'scroll', 'touchstart'];
+
+  // Misma referencia para add/removeEventListener
+  private readonly onActivity = (): void => {
+    if (this.warningShown) return;                              // modal abierto: ignorar
+    if (Date.now() - this.lastReset < this.THROTTLE_MS) return; // throttle
+    this.resetTimers();
+  };
 
   public onIdleWarning$ = new Subject<void>();
   public onSessionExpired$ = new Subject<void>();
 
-  constructor(private zone: NgZone) {}
-
-  start(){
-    if (this.started){ return }
+  start(): void {
+    if (this.started) return;
     this.started = true;
 
     this.zone.runOutsideAngular(() => {
-      this.activityEvents.forEach(event => {
-        document.addEventListener(event, this.boundReset, { passive: true });
-      });
+      this.activityEvents.forEach(e =>
+        document.addEventListener(e, this.onActivity, { passive: true })
+      );
     });
 
     this.resetTimers();
   }
 
-  stop(){
+  stop(): void {
     this.started = false;
-    this.activityEvents.forEach(event =>
-      document.removeEventListener(event, this.boundReset)
+    this.warningShown = false;
+    this.activityEvents.forEach(e =>
+      document.removeEventListener(e, this.onActivity)
     );
-
     clearTimeout(this.warningTimer);
     clearTimeout(this.logoutTimer);
   }
 
   //lama si el usuario responde alerta
   resetTimers(): void {
+    this.warningShown = false;
+    this.lastReset = Date.now();
     clearTimeout(this.warningTimer);
     clearTimeout(this.logoutTimer);
 
     this.warningTimer = setTimeout(() => {
+      this.warningShown = true;
       this.zone.run(() => this.onIdleWarning$.next());
     }, this.WARNING_TIMEOUT);
 
@@ -62,10 +73,10 @@ export class IdleSessionService {
     }, this.LOGOUT_TIMEOUT);
   }
 
-  private expireSession(){
+  private expireSession(): void {
+    this.stop();                 // primero detener, así no se dispara dos veces
     clearSessionItems();
     this.authService.logout();
-    this.stop();
     this.onSessionExpired$.next();
   }
 }
