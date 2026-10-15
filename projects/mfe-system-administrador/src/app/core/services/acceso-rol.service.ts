@@ -31,4 +31,8 @@ export class AccesoRolService {
   update(menu: AccesoRol): Observable<AccesoRol> {
     return this.http.put<AccesoRol>(`${this.url}/acceso-rol`, menu)
   }
+
+  delete(id: number): Observable<AccesoRol> {
+    return this.http.delete<AccesoRol>(`${this.url}/acceso-rol/${id}`)
+  }
 }
