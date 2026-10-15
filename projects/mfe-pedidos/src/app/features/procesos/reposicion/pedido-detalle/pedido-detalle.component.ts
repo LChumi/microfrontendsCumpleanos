@@ -14,7 +14,7 @@ import {GondolaSelectComponent} from '../components/gondola-select/gondola-selec
 import {StockOptimoService} from '../../../../core/services/stock-optimo.service';
 import {NonNullableFormBuilder, ReactiveFormsModule, Validators} from "@angular/forms";
 import {ProductoReposicionUpdateDto} from '../../../../core/dto/producto-reposicion-update.dto';
-import {map} from 'rxjs';
+import {finalize, map} from 'rxjs';
 import {NotificationService} from 'shared-notifications';
 
 @Component({
@@ -35,6 +35,7 @@ export class PedidoDetalleComponent implements OnInit {
   // ---------- refs ----------
   buscadorRef = viewChild<ElementRef<HTMLInputElement>>('buscador');
   cantidadRef = viewChild<ElementRef<HTMLInputElement>>('cantidadInput');
+  excelRef = viewChild<ElementRef<HTMLInputElement>>('excelInput');
 
   // ---------- inyecciones ----------
   private readonly route = inject(ActivatedRoute);
@@ -83,6 +84,19 @@ export class PedidoDetalleComponent implements OnInit {
     max: [0, [Validators.required, Validators.min(0)]],
   });
 
+  //upload
+  subiendo = signal(false);
+  cargandoItems = signal(true);
+
+  puedeSubir = computed(() =>
+    !!this.pedido() && !this.subiendo() && !this.enviando()
+  );
+
+  /** true mientras hay una operación que debe bloquear la captura */
+  ocupado = computed(() =>
+    this.enviando() || this.subiendo() || this.cargandoItems() || this.buscando() || this.agregando()
+  );
+
   // ---------- derivados ----------
   esUrgente = computed(() => this.pedido()?.urgente === 1);
 
@@ -123,14 +137,14 @@ export class PedidoDetalleComponent implements OnInit {
     !this.sinStockZh() &&
     !this.excedeStock() &&
     this.cantidad() > 0 &&
-    !this.agregando()
+    !this.ocupado()
   );
 
   enviando = signal(false);
   confirmandoEnvio = signal(false);
 
   puedeEnviar = computed(() =>
-    !!this.pedido() && this.items().length > 0 && !this.enviando()
+    !!this.pedido() && this.items().length > 0 && !this.enviando() && !this.subiendo()
   );
 
   // ---------- ciclo de vida ----------
@@ -143,9 +157,12 @@ export class PedidoDetalleComponent implements OnInit {
   }
 
   private cargarItems() {
-    this.dreposicionSvc.getProductsByCreposicion(this.codigo).subscribe({
-      next: l => this.items.set([...l].sort((a, b) => b.id - a.id)),   // los más nuevos primero
-      error: e => console.error(e),
+    this.cargandoItems.set(true);
+    this.dreposicionSvc.getProductsByCreposicion(this.codigo)
+      .pipe(finalize(() => this.cargandoItems.set(false)))
+      .subscribe({
+        next: l => this.items.set([...l].sort((a, b) => b.id - a.id)),   // los más nuevos primero
+        error: e => console.error(e),
     });
   }
 
@@ -153,7 +170,7 @@ export class PedidoDetalleComponent implements OnInit {
   mostrarProducto() {
     const bodega = this.pedido()?.bodegaId;
     const dato = this.barraItem().trim().toUpperCase();
-    if (!bodega || !dato || this.buscando()) return;
+    if (!bodega || !dato || this.ocupado()) return;
 
     // limpiar el input apenas se busca
     this.barraItem.set('');
@@ -222,7 +239,7 @@ export class PedidoDetalleComponent implements OnInit {
   cancelarProducto() {
     this.producto.set(null);
     this.encontrados.set([]);
-    this.buscadorRef()?.nativeElement.focus();
+    this.enfocarBuscador()
   }
 
   // ---------- agregar ----------
@@ -448,4 +465,56 @@ export class PedidoDetalleComponent implements OnInit {
     this.resaltadoId.set(id);
     this.resaltadoTimer = setTimeout(() => this.resaltadoId.set(null), 3500);
   }
+
+  // ---------- carga de Excel ----------
+  onExcelSeleccionado(e: Event) {
+    const input = e.target as HTMLInputElement;
+    const file = input.files?.[0];
+    input.value = '';   // permite volver a elegir el mismo archivo
+    if (!file || !this.puedeSubir()) return;
+
+    if (!/\.(xlsx|xls)$/i.test(file.name)) {
+      this.notif.showToast({
+        type: 'warning',
+        summary: 'Archivo no válido',
+        detail: 'Solo se permiten archivos Excel (.xlsx o .xls)',
+        autoCloseMs: 3000,
+      });
+      return;
+    }
+
+    this.subiendo.set(true);
+
+    this.dreposicionSvc.uploadFile(file, this.codigo).subscribe({
+      next: resp => {
+        this.subiendo.set(false);
+        this.notif.showToast({
+          type: resp.success ? 'success' : 'error',
+          summary: resp.success ? 'Excel cargado' : 'No se pudo cargar',
+          detail: resp.message,
+          autoCloseMs: 6000,   // el mensaje puede traer observaciones largas
+        });
+        if (resp.success) this.cargarItems();
+      },
+      error: err => {
+        console.error(err);
+        this.subiendo.set(false);
+        this.notif.showToast({
+          type: 'error',
+          summary: 'Error',
+          detail: 'No se pudo procesar el archivo',
+          autoCloseMs: 4000,
+        });
+      },
+    });
+  }
+
+  abrirSelectorExcel() {
+    this.excelRef()?.nativeElement.click();
+  }
+
+  private enfocarBuscador() {
+    setTimeout(() => this.buscadorRef()?.nativeElement.focus());
+  }
+
 }
