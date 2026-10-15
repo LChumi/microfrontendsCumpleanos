@@ -18,7 +18,7 @@ export class GeolocationService {
           accuracy: p.coords.accuracy,
         }),
         (err) => reject(new Error(this.mensaje(err))),
-        { enableHighAccuracy: true, timeout: 10_000, maximumAge: 0 }
+        { enableHighAccuracy: true, timeout: 30_000, maximumAge: 10_000 }
       );
     });
   }
