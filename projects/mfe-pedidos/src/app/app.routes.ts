@@ -47,5 +47,25 @@ export const routes: Routes = [
         ]
       }
     ]
+  },
+  {
+    path: 'comercial',
+    data: {breadcrumb: 'Comercial'},
+    children: [
+      {
+        path: 'pedido-clientes',
+        data: {breadcrumb: 'Pedidos'},
+        title: 'Pedidos | Assist Web',
+        loadComponent: () =>
+          import('./features/procesos/comercial/pedido-clientes/pedido-clientes.component').then(m => m.PedidoClientesComponent)
+      },
+      {
+        path: 'mapas-vendedores',
+        data: {breadcrumb: 'Mapas de Vendedores'},
+        title: 'Mapas de Vendedores | Assist Web',
+        loadComponent: () =>
+          import('./features/procesos/comercial/mapa-puntos-venta/mapa-puntos-venta.component').then(m => m.MapaPuntosVentaComponent)
+      }
+    ]
   }
 ];
