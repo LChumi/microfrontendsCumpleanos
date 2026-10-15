@@ -104,7 +104,17 @@
   <input #buscador type="text" [value]="barraItem()" (input)="onInput(barraItem, $event)"
          (keyup.enter)="mostrarProducto()" placeholder="Código de ítem o barra..."
          [disabled]="ocupado()"
-         class="flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm uppercase focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400">
+         class="min-w-0 flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm uppercase focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400">
+
+  <!-- Escanear con cámara -->
+  <button type="button" [disabled]="ocupado()" (click)="abrirCamara()"
+          aria-label="Escanear con cámara" title="Escanear con cámara"
+          class="appearance-none border-0 p-0 shadow-none inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-slate-100 text-slate-600 hover:bg-slate-200 active:bg-slate-300 disabled:cursor-not-allowed disabled:text-slate-400">
+    <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M3 7V5a2 2 0 0 1 2-2h2M17 3h2a2 2 0 0 1 2 2v2M21 17v2a2 2 0 0 1-2 2h-2M7 21H5a2 2 0 0 1-2-2v-2M7 12h10"/>
+    </svg>
+  </button>
+
   <button type="button" [disabled]="ocupado()" (click)="mostrarProducto()"
           class="appearance-none border-0 shadow-none rounded-lg bg-blue-500 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400">
     {{ buscando() ? 'Buscando...' : 'Buscar' }}
@@ -383,5 +393,29 @@
         </button>
       </div>
     </div>
+  </div>
+}
+<!--  ESCÁNER DE CÁMARA  -->
+@if (camaraAbierta()) {
+  <div class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/80 p-4"
+       (click)="cerrarCamara()">
+    <div class="w-full max-w-md overflow-hidden rounded-xl bg-black shadow-2xl"
+         (click)="$event.stopPropagation()">
+      <zxing-scanner
+        [formats]="formatosCodigoBarras"
+        [device]="dispositivoActual()"
+        [tryHarder]="true"
+        (camerasFound)="camarasEncontradas($event)"
+        (permissionResponse)="permisoCamara($event)"
+        (scanSuccess)="codigoEscaneado($event)">
+      </zxing-scanner>
+    </div>
+
+    <p class="mt-3 text-sm text-white/80">Apunta la cámara al código de barras</p>
+
+    <button type="button" (click)="cerrarCamara()"
+            class="appearance-none border-0 mt-4 rounded-lg bg-white px-5 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100">
+      Cancelar
+    </button>
   </div>
 }

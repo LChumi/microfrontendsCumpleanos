@@ -16,6 +16,8 @@ import {NonNullableFormBuilder, ReactiveFormsModule, Validators} from "@angular/
 import {ProductoReposicionUpdateDto} from '../../../../core/dto/producto-reposicion-update.dto';
 import {finalize, map} from 'rxjs';
 import {NotificationService} from 'shared-notifications';
+import {ZXingScannerModule} from '@zxing/ngx-scanner';
+import {BarcodeFormat} from '@zxing/library';
 
 @Component({
   selector: 'app-pedido-detalle',
@@ -25,7 +27,8 @@ import {NotificationService} from 'shared-notifications';
     CantidadEditableComponent,
     EliminarConfirmComponent,
     GondolaSelectComponent,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    ZXingScannerModule
   ],
   templateUrl: './pedido-detalle.component.html',
   styles: ``
@@ -147,6 +150,16 @@ export class PedidoDetalleComponent implements OnInit {
     !!this.pedido() && this.items().length > 0 && !this.enviando() && !this.subiendo()
   );
 
+  //Camara
+  camaraAbierta = signal(false);
+  dispositivoActual = signal<MediaDeviceInfo | undefined>(undefined);
+  readonly formatosCodigoBarras: BarcodeFormat[] = [
+    BarcodeFormat.EAN_13,
+    BarcodeFormat.EAN_8,
+    BarcodeFormat.CODE_128,
+    BarcodeFormat.UPC_A,
+  ];
+
   // ---------- ciclo de vida ----------
   ngOnInit() {
     this.creposicionSvc.getPedido(this.codigo, this.empresa).subscribe({
@@ -163,7 +176,7 @@ export class PedidoDetalleComponent implements OnInit {
       .subscribe({
         next: l => this.items.set([...l].sort((a, b) => b.id - a.id)),   // los más nuevos primero
         error: e => console.error(e),
-    });
+      });
   }
 
   // ---------- búsqueda ----------
@@ -515,6 +528,39 @@ export class PedidoDetalleComponent implements OnInit {
 
   private enfocarBuscador() {
     setTimeout(() => this.buscadorRef()?.nativeElement.focus());
+  }
+
+  //scanner
+  abrirCamara() {
+    if (this.ocupado()) return;
+    this.camaraAbierta.set(true);
+  }
+
+  cerrarCamara() {
+    this.camaraAbierta.set(false);
+  }
+
+  camarasEncontradas(dispositivos: MediaDeviceInfo[]) {
+    const trasera = dispositivos.find(d => /back|rear|environment|trasera/i.test(d.label));
+    this.dispositivoActual.set(trasera ?? dispositivos[dispositivos.length - 1]);
+  }
+
+  permisoCamara(permitido: boolean) {
+    if (!permitido) {
+      this.cerrarCamara();
+      this.notif.showToast({
+        type: 'warning',
+        summary: 'Cámara',
+        detail: 'Debes permitir el acceso a la cámara',
+        autoCloseMs: 3000,
+      });
+    }
+  }
+
+  codigoEscaneado(codigo: string) {
+    this.cerrarCamara();          // el @if destruye el scanner y apaga la cámara
+    this.barraItem.set(codigo);
+    this.mostrarProducto();
   }
 
 }
