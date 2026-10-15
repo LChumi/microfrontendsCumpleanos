@@ -45,4 +45,17 @@ export class DreposicionService {
     return this.http.get<ProductoReposicionDto[]>(`${this.url}/dreposicion/buscar-productos/${bodega}`, {params})
   }
 
+  uploadFile(file: File, creposicion: number) {
+
+    const formData = new FormData();
+
+    formData.append('file', file);
+    formData.append('creposicion', creposicion.toString());
+
+    return this.http.post<ServiceResponse>(
+      `${this.url}/file`,
+      formData
+    );
+  }
+
 }
