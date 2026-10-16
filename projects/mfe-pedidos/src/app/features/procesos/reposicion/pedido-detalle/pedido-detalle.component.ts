@@ -44,6 +44,7 @@ export class PedidoDetalleComponent implements OnInit {
 
   videoRef = viewChild<ElementRef<HTMLVideoElement>>('video');
   camaraAbierta = signal(false);
+  procesandoFoto = signal(false);
 
   // ---------- refs ----------
   buscadorRef = viewChild<ElementRef<HTMLInputElement>>('buscador');
@@ -539,17 +540,19 @@ export class PedidoDetalleComponent implements OnInit {
     setTimeout(() => this.buscadorRef()?.nativeElement.focus());
   }
 
-  //scanner
   // ---------- scanner ----------
   private readonly canvas = document.createElement('canvas');
   private readonly ctx = this.canvas.getContext('2d', {willReadFrequently: true})!;
   private ultimoCodigo = '';
   private repeticiones = 0;
+  private erroresSeguidos = 0;
+  private detectorNativo?: { detect(src: ImageBitmapSource): Promise<{ rawValue: string }[]> };
 
   abrirCamara() {
     if (this.ocupado()) return;
     this.ultimoCodigo = '';
     this.repeticiones = 0;
+    this.erroresSeguidos = 0;
     this.camaraAbierta.set(true);
     setTimeout(() => this.iniciarEscaner());   // espera a que exista el <video>
   }
@@ -559,6 +562,61 @@ export class PedidoDetalleComponent implements OnInit {
     this.camaraAbierta.set(false);
   }
 
+  // ----- detector -----
+  /** Detector nativo (Google, Chrome Android) si soporta EAN-13. Si no, queda zxing. */
+  private async prepararDetector() {
+    if (this.detectorNativo) return;
+
+    const BD = (window as any).BarcodeDetector;
+    console.log('Contexto seguro:', window.isSecureContext, '| BarcodeDetector existe:', !!BD);   // quítalo después
+    if (!BD) return;
+
+    try {
+      const formatos: string[] = await BD.getSupportedFormats();
+      if (formatos.includes('ean_13')) {
+        this.detectorNativo = new BD({formats: ['ean_13']});
+      }
+    } catch (e) {
+      console.warn('No se pudo iniciar el detector nativo', e);
+    }
+  }
+
+  private ean13Valido(c: string): boolean {
+    if (!/^\d{13}$/.test(c)) return false;
+    let s = 0;
+    for (let i = 0; i < 12; i++) s += Number(c[i]) * (i % 2 === 0 ? 1 : 3);
+    return (10 - (s % 10)) % 10 === Number(c[12]);
+  }
+
+  /** Devuelve el texto leído o null. Nativo primero, zxing como respaldo. */
+  private async detectar(video: HTMLVideoElement): Promise<string | null> {
+    if (this.detectorNativo) {
+      try {
+        const r = await this.detectorNativo.detect(video);
+        return r[0]?.rawValue ?? null;
+      } catch (e) {
+        console.warn('Detector nativo falló, paso a zxing', e);
+        this.detectorNativo = undefined;
+      }
+    }
+
+    this.canvas.width = video.videoWidth;
+    this.canvas.height = video.videoHeight;
+    this.ctx.drawImage(video, 0, 0);
+    const img = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+
+    const r = await readBarcodes(img, {
+      formats: ['EAN-13'],
+      tryHarder: true,
+      tryRotate: true,
+      tryInvert: true,
+      tryDownscale: true,
+      maxNumberOfSymbols: 1,
+    });
+    return r[0]?.isValid ? r[0].text : null;
+  }
+
+  // ----- cámara y bucle -----
   private async iniciarEscaner() {
     const video = this.videoRef()?.nativeElement;
     if (!video) return;
@@ -585,19 +643,18 @@ export class PedidoDetalleComponent implements OnInit {
       video.srcObject = stream;
       await video.play();
 
-      // enfoque continuo y zoom, cada uno por separado (si uno falla, no arrastra al otro)
+      // enfoque continuo si el equipo lo permite (en muchos Android solo hay "manual")
       const track = stream.getVideoTracks()[0];
       const caps: any = track.getCapabilities?.() ?? {};
-
       if (caps.focusMode?.includes('continuous')) {
         await track.applyConstraints({advanced: [{focusMode: 'continuous'} as any]}).catch(() => {});
       }
-      if (caps.zoom) {
-        const z = Math.min(caps.zoom.max, Math.max(caps.zoom.min, 1.5));
-        await track.applyConstraints({advanced: [{zoom: z} as any]}).catch(() => {});
-      }
 
-      this.leerFrame(video);
+      await this.prepararDetector();
+      console.log('Motor:', this.detectorNativo ? 'nativo (Google)' : 'zxing-wasm');   // quítalo después
+      if (!this.escaneoActivo) return;
+
+      await this.leerFrame(video);
     } catch (e) {
       console.error(e);
       this.cerrarCamara();
@@ -615,43 +672,28 @@ export class PedidoDetalleComponent implements OnInit {
 
     try {
       if (video.readyState >= 2 && video.videoWidth > 0) {
-        this.canvas.width = video.videoWidth;
-        this.canvas.height = video.videoHeight;
-        this.ctx.drawImage(video, 0, 0);
-
-        const imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
-        const resultados = await readBarcodes(imageData, {
-          formats: ['EAN-13'],
-          tryHarder: true,
-          tryRotate: true,
-          tryInvert: true,
-          tryDownscale: true,
-          maxNumberOfSymbols: 1,
-        });
-
-        if (resultados.length && resultados[0].isValid && this.escaneoActivo) {
-          // exige la misma lectura en 2 frames seguidos para descartar falsos positivos
-          if (this.confirmar(resultados[0].text)) {
-            this.codigoEscaneado(resultados[0].text);
-            return;
-          }
+        const texto = await this.detectar(video);
+        if (texto && this.ean13Valido(texto) && this.escaneoActivo && this.confirmar(texto)) {
+          this.codigoEscaneado(texto);
+          return;
         }
       }
     } catch (e) {
-      console.error('Error del lector', e);
-      this.cerrarCamara();
-      this.notif.showToast({
-        type: 'error',
-        summary: 'Escáner',
-        detail: 'No se pudo iniciar el lector de códigos',
-        autoCloseMs: 3000,
-      });
-      return;
+      console.warn('Lectura fallida, sigo intentando', e);
+      if (++this.erroresSeguidos >= 5) {
+        this.cerrarCamara();
+        this.notif.showToast({
+          type: 'error', summary: 'Escáner',
+          detail: 'No se pudo iniciar el lector de códigos', autoCloseMs: 3000,
+        });
+        return;
+      }
     }
 
     this.escaneoTimer = setTimeout(() => this.leerFrame(video), 150);
   }
 
+  /** Exige la misma lectura en 2 frames seguidos (el checksum no basta contra falsos positivos). */
   private confirmar(texto: string): boolean {
     if (texto === this.ultimoCodigo) {
       this.repeticiones++;
@@ -676,6 +718,83 @@ export class PedidoDetalleComponent implements OnInit {
     this.cerrarCamara();
     this.barraItem.set(codigo);
     this.mostrarProducto();
+  }
+
+  abrirSelectorFoto() {
+    this.cerrarCamara();   // suelta la cámara en vivo
+
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = 'image/*';
+    input.setAttribute('capture', 'environment');   // en PC se ignora
+
+    input.onchange = () => {
+      const file = input.files?.[0];
+      console.log('foto recibida', file?.name, file?.size);   // quítalo después
+      if (file) void this.procesarFoto(file);
+    };
+
+    input.click();   // debe ejecutarse dentro del clic del usuario, sin await antes
+  }
+
+  private async procesarFoto(file: File) {
+    this.procesandoFoto.set(true);
+    try {
+      const texto = await this.leerArchivo(file);
+      console.log('texto leído:', texto);   // quítalo después
+      if (texto && this.ean13Valido(texto)) {
+        this.codigoEscaneado(texto);
+        return;
+      }
+      this.notif.showToast({
+        type: 'warning',
+        summary: 'Sin lectura',
+        detail: 'No se detectó un código. Intenta otra foto, más cerca y enfocada.',
+        autoCloseMs: 3500,
+      });
+    } catch (err) {
+      console.error('Error leyendo foto', err);
+      this.notif.showToast({
+        type: 'error',
+        summary: 'Error',
+        detail: 'No se pudo procesar la foto',
+        autoCloseMs: 3500,
+      });
+    } finally {
+      this.procesandoFoto.set(false);
+    }
+  }
+
+  private async leerArchivo(file: File): Promise<string | null> {
+    await this.prepararDetector();
+
+    // reduce la foto (12 MP+ es lento y no aporta); respeta la orientación EXIF
+    const bmp = await createImageBitmap(file, {resizeWidth: 1920, resizeQuality: 'high'});
+    try {
+      if (this.detectorNativo) {
+        try {
+          const r = await this.detectorNativo.detect(bmp);
+          if (r[0]?.rawValue) return r[0].rawValue;
+        } catch { /* paso a zxing */ }
+      }
+
+      this.canvas.width = bmp.width;
+      this.canvas.height = bmp.height;
+      this.ctx.drawImage(bmp, 0, 0);
+      const img = this.ctx.getImageData(0, 0, bmp.width, bmp.height);
+
+      const r = await readBarcodes(img, {
+        formats: ['EAN-13'],
+        tryHarder: true,
+        tryRotate: true,
+        tryInvert: true,
+        tryDownscale: true,
+        maxNumberOfSymbols: 1,
+      });
+      return r[0]?.isValid ? r[0].text : null;
+    } finally {
+      bmp.close();
+    }
   }
 
 }

@@ -26,7 +26,7 @@
   <div class="flex items-center justify-between gap-2 px-3 py-3 md:px-4">
 
     <button type="button" (click)="regresar()"
-            class="appearance-none border-0 shadow-none inline-flex h-10 items-center gap-1.5 rounded-lg bg-slate-100 px-3 text-sm font-semibold text-slate-600 hover:bg-slate-200 active:bg-slate-300">
+            class="appearance-none border-0 shadow-none inline-flex h-10 shrink-0 items-center gap-1.5 rounded-lg bg-slate-100 px-3 text-sm font-semibold text-slate-600 hover:bg-slate-200 active:bg-slate-300">
       <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
         <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
       </svg>
@@ -42,7 +42,7 @@
       <button type="button" [disabled]="!puedeSubir()" (click)="abrirSelectorExcel()"
               title="Cargar productos desde Excel (barra, item, cantidad)"
               aria-label="Cargar Excel"
-              class="appearance-none border-0 p-0 shadow-none inline-flex h-10 w-10 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 transition hover:bg-emerald-100 active:bg-emerald-200 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400">
+              class="appearance-none border-0 p-0 shadow-none inline-flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-emerald-50 text-emerald-700 transition hover:bg-emerald-100 active:bg-emerald-200 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400">
         @if (subiendo()) {
           <svg class="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24">
             <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
@@ -58,7 +58,7 @@
       <!-- Enviar -->
       <div class="relative">
         <button type="button" [disabled]="!puedeEnviar()" (click)="pedirConfirmacionEnvio()"
-                class="appearance-none border-0 shadow-none inline-flex h-10 items-center gap-2 rounded-lg bg-blue-500 px-4 text-sm font-semibold text-white transition hover:bg-blue-600 active:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400">
+                class="appearance-none border-0 shadow-none inline-flex h-10 items-center gap-2 whitespace-nowrap rounded-lg bg-blue-500 px-4 text-sm font-semibold text-white transition hover:bg-blue-600 active:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400">
           @if (enviando()) {
             <svg class="h-5 w-5 animate-spin" fill="none" viewBox="0 0 24 24">
               <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="3"></circle>
@@ -81,9 +81,9 @@
             </p>
             <div class="flex justify-end gap-2">
               <button type="button" (click)="cancelarEnvio()"
-                      class="border-0 rounded-md px-3 py-1.5 text-xs font-medium text-slate-600 hover:bg-slate-100">No</button>
+                      class="border-0 rounded-md px-3 py-2 text-xs font-medium text-slate-600 hover:bg-slate-100 md:py-1.5">No</button>
               <button type="button" (click)="enviarPedido()"
-                      class="border-0 rounded-md bg-blue-600 px-3 py-1.5 text-xs font-medium text-white hover:bg-blue-700">Sí, enviar</button>
+                      class="border-0 rounded-md bg-blue-600 px-3 py-2 text-xs font-medium text-white hover:bg-blue-700 md:py-1.5">Sí, enviar</button>
             </div>
           </div>
         }
@@ -100,11 +100,12 @@
 </div>
 
 <!--  BUSCADOR  -->
-<div class="flex gap-2 p-4">
+<div class="flex gap-2 p-3 md:p-4">
   <input #buscador type="text" [value]="barraItem()" (input)="onInput(barraItem, $event)"
          (keyup.enter)="mostrarProducto()" placeholder="Código de ítem o barra..."
          [disabled]="ocupado()"
-         class="min-w-0 flex-1 rounded-lg border border-slate-300 px-3 py-2 text-sm uppercase focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400">
+         autocomplete="off" autocapitalize="characters" enterkeyhint="search"
+         class="h-10 min-w-0 flex-1 rounded-lg border border-slate-300 px-3 text-base uppercase focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:cursor-not-allowed disabled:bg-slate-100 disabled:text-slate-400 md:text-sm">
 
   <!-- Escanear con cámara -->
   <button type="button" [disabled]="ocupado()" (click)="abrirCamara()"
@@ -116,25 +117,25 @@
   </button>
 
   <button type="button" [disabled]="ocupado()" (click)="mostrarProducto()"
-          class="appearance-none border-0 shadow-none rounded-lg bg-blue-500 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400">
+          class="appearance-none border-0 shadow-none h-10 shrink-0 whitespace-nowrap rounded-lg bg-blue-500 px-4 text-sm font-semibold text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400">
     {{ buscando() ? 'Buscando...' : 'Buscar' }}
   </button>
 </div>
 
 <!--  VARIOS RESULTADOS  -->
 @if (encontrados().length > 0) {
-  <div class="mx-4 mb-4 divide-y divide-slate-100 rounded-xl border border-slate-200 bg-white shadow-sm">
+  <div class="mx-3 mb-4 max-h-80 divide-y divide-slate-100 overflow-y-auto rounded-xl border border-slate-200 bg-white shadow-sm md:mx-4">
     @for (e of encontrados(); track e.codigoProducto) {
       <button type="button" (click)="seleccionarProducto(e)"
-              class="appearance-none flex w-full items-center gap-3 border-0 bg-transparent p-3 text-left hover:bg-slate-50">
+              class="appearance-none flex w-full items-center gap-3 border-0 bg-transparent p-3 text-left hover:bg-slate-50 active:bg-slate-100">
         <app-producto-imagen [barra]="e.barra" [alt]="e.item" tamano="h-12 w-12"
                              (ampliar)="imagenAmpliada.set($event)"/>
         <div class="min-w-0 flex-1">
           <div class="text-xs text-slate-400">{{ e.barra }}</div>
-          <p class="text-sm text-slate-700">{{ e.item }}</p>
+          <p class="break-words text-sm text-slate-700">{{ e.item }}</p>
         </div>
         @if ((e.stockZh ?? 0) <= 0) {
-          <span class="rounded-full bg-red-50 px-2 py-0.5 text-xs font-semibold text-red-600">Sin stock</span>
+          <span class="shrink-0 rounded-full bg-red-50 px-2 py-0.5 text-xs font-semibold text-red-600">Sin stock</span>
         }
       </button>
     }
@@ -143,54 +144,58 @@
 
 <!--  PRODUCTO ENCONTRADO  -->
 @if (producto(); as p) {
-  <section class="mx-4 mb-4 rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+  <section class="mx-3 mb-4 rounded-xl border border-slate-200 bg-white p-3 shadow-sm md:mx-4 md:p-4">
     <div class="grid gap-4 md:grid-cols-2">
 
       <!-- Datos -->
-      <div class="flex items-start gap-3">
-        <app-producto-imagen [barra]="p.barra" [alt]="p.item" tamano="h-14 w-14"
-                             (ampliar)="imagenAmpliada.set($event)"/>
-        <div class="min-w-0 flex-1">
-          <div class="text-xs text-slate-400">{{ p.barra }}</div>
-          <p class="mt-1 text-sm font-medium text-slate-700">{{ p.item }}</p>
-          <p class="text-sm text-slate-600">{{ p.descripcion }}</p>
+      <div class="min-w-0">
+        <div class="flex items-start gap-3">
+          <app-producto-imagen [barra]="p.barra" [alt]="p.item" tamano="h-14 w-14"
+                               (ampliar)="imagenAmpliada.set($event)"/>
+          <div class="min-w-0 flex-1">
+            <div class="text-xs text-slate-400">{{ p.barra }}</div>
+            <p class="mt-1 break-words text-sm font-medium text-slate-700">{{ p.item }}</p>
+            <p class="break-words text-sm text-slate-600">{{ p.descripcion }}</p>
+          </div>
+        </div>
 
-          <dl class="mt-3 grid grid-cols-2 gap-x-4 gap-y-1 text-xs text-slate-500">
-            <div>
-              <dt class="inline">PVP:</dt>
-              <dd class="inline font-semibold text-slate-800">{{ p.precio }}</dd>
-            </div>
-            <div>
-              <dt class="inline">CXB:</dt>
-              <dd class="inline font-semibold text-slate-800">{{ p.cxb }}</dd>
-            </div>
-            <div>
-              <dt class="inline">Stock Almacén:</dt>
-              <dd class="inline font-semibold text-slate-800">{{ p.stock }}</dd>
-            </div>
-            <div>
-              <dt class="inline">Stock Bodega:</dt>
-              <dd class="inline font-semibold" [class.text-red-600]="sinStockZh()"
-                  [class.text-slate-800]="!sinStockZh()">{{ p.stockZh }}
-              </dd>
-            </div>
-            <div>
-              <dt class="inline">Tránsito:</dt>
-              <dd class="inline font-semibold text-slate-800">{{ p.transito }}</dd>
-            </div>
-            <div>
-              <dt class="inline">Mín:</dt>
-              <dd class="inline font-semibold text-slate-800">{{ p.min }}</dd>
-            </div>
-            <div>
-              <dt class="inline">Máx:</dt>
-              <dd class="inline font-semibold text-slate-800">{{ p.max }}</dd>
-            </div>
-          </dl>
+        <!-- Métricas: ancho completo en móvil (chips), alineadas con el texto en desktop -->
+        <dl class="mt-3 grid grid-cols-2 gap-1.5 text-xs text-slate-500 md:gap-x-4 md:gap-y-1 md:pl-[68px]">
+          <div class="flex items-baseline justify-between gap-2 rounded-md bg-slate-50 px-2 py-1.5 md:justify-start md:gap-1 md:bg-transparent md:p-0">
+            <dt>PVP:</dt>
+            <dd class="font-semibold text-slate-800">{{ p.precio }}</dd>
+          </div>
+          <div class="flex items-baseline justify-between gap-2 rounded-md bg-slate-50 px-2 py-1.5 md:justify-start md:gap-1 md:bg-transparent md:p-0">
+            <dt>CXB:</dt>
+            <dd class="font-semibold text-slate-800">{{ p.cxb }}</dd>
+          </div>
+          <div class="flex items-baseline justify-between gap-2 rounded-md bg-slate-50 px-2 py-1.5 md:justify-start md:gap-1 md:bg-transparent md:p-0">
+            <dt>Stock Almacén:</dt>
+            <dd class="font-semibold text-slate-800">{{ p.stock }}</dd>
+          </div>
+          <div class="flex items-baseline justify-between gap-2 rounded-md bg-slate-50 px-2 py-1.5 md:justify-start md:gap-1 md:bg-transparent md:p-0">
+            <dt>Stock Bodega:</dt>
+            <dd class="font-semibold" [class.text-red-600]="sinStockZh()"
+                [class.text-slate-800]="!sinStockZh()">{{ p.stockZh }}</dd>
+          </div>
+          <div class="flex items-baseline justify-between gap-2 rounded-md bg-slate-50 px-2 py-1.5 md:justify-start md:gap-1 md:bg-transparent md:p-0">
+            <dt>Tránsito:</dt>
+            <dd class="font-semibold text-slate-800">{{ p.transito }}</dd>
+          </div>
+          <div class="flex items-baseline justify-between gap-2 rounded-md bg-slate-50 px-2 py-1.5 md:justify-start md:gap-1 md:bg-transparent md:p-0">
+            <dt>Mín:</dt>
+            <dd class="font-semibold text-slate-800">{{ p.min }}</dd>
+          </div>
+          <div class="flex items-baseline justify-between gap-2 rounded-md bg-slate-50 px-2 py-1.5 md:justify-start md:gap-1 md:bg-transparent md:p-0">
+            <dt>Máx:</dt>
+            <dd class="font-semibold text-slate-800">{{ p.max }}</dd>
+          </div>
+        </dl>
 
-          @if (!esUrgente()) {
+        @if (!esUrgente()) {
+          <div class="mt-3 md:pl-[68px]">
             <button type="button" (click)="abrirMinMax()"
-                    class="appearance-none border-0 shadow-none mt-3 inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-1.5 text-xs font-semibold text-slate-600 hover:bg-slate-200">
+                    class="appearance-none border-0 shadow-none inline-flex items-center gap-1.5 rounded-lg bg-slate-100 px-3 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-200 active:bg-slate-300 md:py-1.5">
               <svg class="h-4 w-4 text-blue-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24"
                    height="24" fill="none" viewBox="0 0 24 24">
                 <path stroke="currentColor" stroke-linecap="round" stroke-width="2"
@@ -198,36 +203,36 @@
               </svg>
               Min/Max
             </button>
-          }
-        </div>
+          </div>
+        }
       </div>
 
       <!-- Captura -->
       <div class="space-y-3">
         <label class="block">
           <span class="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500">Cantidad</span>
-          <input #cantidadInput type="number" min="1" [value]="cantidad()"
+          <input #cantidadInput type="number" min="1" inputmode="numeric" [value]="cantidad()"
                  (input)="onNumber(cantidad, $event)" (keyup.enter)="agregar()"
-                 class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                 class="h-10 w-full rounded-lg border border-slate-300 px-3 text-base focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 md:text-sm">
         </label>
         <label class="block">
           <span class="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500">Observaciones</span>
           <input type="text" [value]="observacion()" (input)="onInput(observacion, $event)"
-                 class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+                 class="h-10 w-full rounded-lg border border-slate-300 px-3 text-base focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 md:text-sm">
         </label>
 
         @if (esUrgente()) {
           <app-gondola-select [bodegaId]="pedido()?.bodegaId ?? null" [(seleccionada)]="gondolaId"/>
         } @else if (gondolaPedidoNombre()) {
           <p class="text-xs text-slate-500">
-            Góndola del reposicion: <span class="font-semibold text-slate-700">{{ gondolaPedidoNombre() }}</span>
+            Góndola de la reposición: <span class="font-semibold text-slate-700">{{ gondolaPedidoNombre() }}</span>
           </p>
         }
       </div>
     </div>
 
     @if (yaEnPedido()) {
-      <p class="mt-3 text-xs font-medium text-amber-600">Este producto ya está en la reposicion.</p>
+      <p class="mt-3 text-xs font-medium text-amber-600">Este producto ya está en la reposición.</p>
     }
 
     @if (sinStockZh()) {
@@ -236,13 +241,13 @@
       <p class="mt-3 text-xs font-medium text-red-600">La cantidad supera el stock de Bodega ({{ p.stockZh }}).</p>
     }
 
-    <div class="mt-4 flex justify-end gap-2">
+    <div class="mt-4 grid grid-cols-2 gap-2 md:flex md:justify-end">
       <button type="button" (click)="cancelarProducto()"
-              class="appearance-none border-0 shadow-none rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-200">
+              class="appearance-none border-0 shadow-none h-11 rounded-lg bg-slate-100 px-4 text-sm font-semibold text-slate-600 hover:bg-slate-200 active:bg-slate-300 md:h-10">
         Cancelar
       </button>
       <button type="button" [disabled]="!puedeAgregar()" (click)="agregar()"
-              class="appearance-none border-0 shadow-none rounded-lg bg-blue-500 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400">
+              class="appearance-none border-0 shadow-none h-11 whitespace-nowrap rounded-lg bg-blue-500 px-4 text-sm font-semibold text-white hover:bg-blue-600 active:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400 md:h-10">
         {{ agregando() ? 'Agregando...' : 'Agregar' }}
       </button>
     </div>
@@ -305,7 +310,7 @@
 </div>
 
 <!--  LISTA: MOBILE  -->
-<div class="grid gap-3 p-4 md:hidden">
+<div class="grid gap-3 p-3 md:hidden">
   @if (cargandoItems() && items().length === 0) {
     @for (n of [1,2,3]; track n) {
       <div class="animate-pulse rounded-xl border border-slate-200 bg-white p-3 shadow-sm">
@@ -325,7 +330,30 @@
     }
   } @else {
     @for (p of items(); track p.id) {
-      <!-- tu tarjeta móvil actual sin cambios -->
+      <div class="rounded-xl border p-3 shadow-sm transition-colors duration-300"
+           [class.bg-white]="resaltadoId() !== p.id"
+           [class.border-slate-300]="resaltadoId() !== p.id"
+           [class.bg-amber-100]="resaltadoId() === p.id"
+           [class.border-amber-500]="resaltadoId() === p.id"
+           [class.ring-2]="resaltadoId() === p.id"
+           [class.ring-amber-300]="resaltadoId() === p.id">
+        <div class="flex items-start gap-3">
+          <app-producto-imagen [barra]="p.barra" [alt]="p.item" tamano="h-14 w-14"
+                               (ampliar)="imagenAmpliada.set($event)"/>
+          <div class="min-w-0 flex-1">
+            <div class="text-xs text-slate-400">{{ p.barra }}</div>
+            <p class="break-words text-sm text-slate-700">{{ p.descripcion }}</p>
+            @if (p.observacion) {
+              <p class="mt-1 break-words text-xs text-slate-500">{{ p.observacion }}</p>
+            }
+            <p class="mt-1 text-xs text-slate-500">Góndola: {{ p.gondola || '—' }}</p>
+          </div>
+        </div>
+        <div class="mt-3 flex items-center justify-between gap-2 border-t border-slate-100 pt-3">
+          <app-cantidad-editable [solicitada]="p.canSol" [valor]="p.canApr" (cambiado)="actualizarCanApr(p, $event)"/>
+          <app-eliminar-confirm [eliminando]="eliminandoId() === p.id" (confirmado)="eliminar(p.id)"/>
+        </div>
+      </div>
     } @empty {
       <p class="p-8 text-center text-sm text-slate-400">Aún no hay productos en esta reposición.</p>
     }
@@ -338,6 +366,7 @@
        (click)="imagenAmpliada.set(null)">
     <div class="relative max-h-[90vh] max-w-[90vw]" (click)="$event.stopPropagation()">
       <button type="button" (click)="imagenAmpliada.set(null)"
+              aria-label="Cerrar"
               class="border-0 absolute -right-3 -top-3 flex h-9 w-9 items-center justify-center rounded-full bg-white text-slate-600 shadow-lg transition hover:bg-slate-100">
         <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
           <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
@@ -357,7 +386,7 @@
          (click)="$event.stopPropagation()" [formGroup]="minMaxForm">
       <div class="flex items-center justify-between">
         <h3 class="text-sm font-semibold text-slate-800">Editar mínimo y máximo</h3>
-        <button type="button" (click)="cerrarMinMax()"
+        <button type="button" (click)="cerrarMinMax()" aria-label="Cerrar"
                 class="appearance-none border-0 bg-transparent p-1 text-slate-400 hover:bg-slate-100 hover:text-slate-600 rounded-md">
           <svg class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
             <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
@@ -372,29 +401,30 @@
       <div class="mt-4 grid grid-cols-2 gap-3">
         <label class="block">
           <span class="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500">Mínimo</span>
-          <input type="number" formControlName="min"
-                 class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+          <input type="number" inputmode="numeric" formControlName="min"
+                 class="h-10 w-full rounded-lg border border-slate-300 px-3 text-base focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 md:text-sm">
         </label>
         <label class="block">
           <span class="mb-1 block text-xs font-medium uppercase tracking-wide text-slate-500">Máximo</span>
-          <input type="number" formControlName="max"
-                 class="w-full rounded-lg border border-slate-300 px-3 py-2 text-sm focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500">
+          <input type="number" inputmode="numeric" formControlName="max"
+                 class="h-10 w-full rounded-lg border border-slate-300 px-3 text-base focus:border-blue-500 focus:outline-none focus:ring-1 focus:ring-blue-500 md:text-sm">
         </label>
       </div>
 
-      <div class="mt-5 flex justify-end gap-2">
+      <div class="mt-5 grid grid-cols-2 gap-2 md:flex md:justify-end">
         <button type="button" (click)="cerrarMinMax()"
-                class="appearance-none border-0 shadow-none rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-600 hover:bg-slate-200">
+                class="appearance-none border-0 shadow-none h-11 rounded-lg bg-slate-100 px-4 text-sm font-semibold text-slate-600 hover:bg-slate-200 active:bg-slate-300 md:h-10">
           Cancelar
         </button>
         <button type="button" [disabled]="minMaxForm.invalid" (click)="guardarMinMax()"
-                class="appearance-none border-0 shadow-none rounded-lg bg-blue-500 px-4 py-2 text-sm font-semibold text-white hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400">
+                class="appearance-none border-0 shadow-none h-11 rounded-lg bg-blue-500 px-4 text-sm font-semibold text-white hover:bg-blue-600 active:bg-blue-700 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400 md:h-10">
           Guardar
         </button>
       </div>
     </div>
   </div>
 }
+
 <!--  ESCÁNER DE CÁMARA  -->
 @if (camaraAbierta()) {
   <div class="fixed inset-0 z-50 flex flex-col items-center justify-center bg-black/80 p-4"
@@ -402,16 +432,30 @@
     <div class="w-full max-w-md overflow-hidden rounded-xl bg-black shadow-2xl"
          (click)="$event.stopPropagation()">
       <video #video playsinline muted autoplay
-             class="block aspect-video w-full object-contain"></video>
+             class="block max-h-[65dvh] w-full object-contain"></video>
     </div>
 
-    <p class="mt-3 text-center text-sm text-white/80">
+    <p class="mt-3 px-2 text-center text-sm text-white/80">
       Muestra el código de barras completo y espera a que se vea nítido
     </p>
 
-    <button type="button" (click)="cerrarCamara()"
-            class="appearance-none border-0 mt-4 rounded-lg bg-white px-5 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100">
-      Cancelar
-    </button>
+    @if (procesandoFoto()) {
+      <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/60">
+        <div class="rounded-xl bg-white px-5 py-4 text-sm font-medium text-slate-700 shadow-xl">
+          Leyendo código…
+        </div>
+      </div>
+    }
+
+    <div class="mt-4 flex gap-2">
+      <button type="button" (click)="abrirSelectorFoto()"
+              class="appearance-none border-0 h-11 rounded-lg bg-blue-500 px-5 text-sm font-semibold text-white hover:bg-blue-600">
+        Tomar foto
+      </button>
+      <button type="button" (click)="cerrarCamara()"
+              class="appearance-none border-0 h-11 rounded-lg bg-white px-6 text-sm font-semibold text-slate-700 hover:bg-slate-100">
+        Cancelar
+      </button>
+    </div>
   </div>
 }
