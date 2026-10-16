@@ -401,17 +401,13 @@
        (click)="cerrarCamara()">
     <div class="w-full max-w-md overflow-hidden rounded-xl bg-black shadow-2xl"
          (click)="$event.stopPropagation()">
-      <zxing-scanner
-        [formats]="formatosCodigoBarras"
-        [device]="dispositivoActual()"
-        [tryHarder]="true"
-        (camerasFound)="camarasEncontradas($event)"
-        (permissionResponse)="permisoCamara($event)"
-        (scanSuccess)="codigoEscaneado($event)">
-      </zxing-scanner>
+      <video #video playsinline muted autoplay
+             class="block aspect-video w-full object-contain"></video>
     </div>
 
-    <p class="mt-3 text-sm text-white/80">Apunta la cámara al código de barras</p>
+    <p class="mt-3 text-center text-sm text-white/80">
+      Muestra el código de barras completo y espera a que se vea nítido
+    </p>
 
     <button type="button" (click)="cerrarCamara()"
             class="appearance-none border-0 mt-4 rounded-lg bg-white px-5 py-2 text-sm font-semibold text-slate-700 hover:bg-slate-100">

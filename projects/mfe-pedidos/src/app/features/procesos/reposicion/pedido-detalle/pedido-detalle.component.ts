@@ -1,4 +1,4 @@
-import {Component, computed, ElementRef, inject, OnInit, signal, viewChild, WritableSignal} from '@angular/core';
+import {Component, computed, ElementRef, inject, OnInit, signal, viewChild, WritableSignal, DestroyRef} from '@angular/core';
 import {ActivatedRoute, Router} from '@angular/router';
 import {CreposicionService} from '../../../../core/services/creposicion.service';
 import {DreposicionService} from '../../../../core/services/dreposicion.service';
@@ -16,8 +16,15 @@ import {NonNullableFormBuilder, ReactiveFormsModule, Validators} from "@angular/
 import {ProductoReposicionUpdateDto} from '../../../../core/dto/producto-reposicion-update.dto';
 import {finalize, map} from 'rxjs';
 import {NotificationService} from 'shared-notifications';
-import {ZXingScannerModule} from '@zxing/ngx-scanner';
-import {BarcodeFormat} from '@zxing/library';
+import { prepareZXingModule, readBarcodes } from 'zxing-wasm/reader';
+import {environment} from '../../../../../environments/environment';
+
+prepareZXingModule({
+  overrides: {
+    locateFile: (path: string, prefix: string) =>
+      path.endsWith('.wasm') ? `${environment.mfeBaseUrl}/zxing_reader.wasm` : prefix + path,
+  },
+});
 
 @Component({
   selector: 'app-pedido-detalle',
@@ -28,12 +35,15 @@ import {BarcodeFormat} from '@zxing/library';
     EliminarConfirmComponent,
     GondolaSelectComponent,
     ReactiveFormsModule,
-    ZXingScannerModule
   ],
   templateUrl: './pedido-detalle.component.html',
-  styles: ``
+  styles: `
+  `
 })
 export class PedidoDetalleComponent implements OnInit {
+
+  videoRef = viewChild<ElementRef<HTMLVideoElement>>('video');
+  camaraAbierta = signal(false);
 
   // ---------- refs ----------
   buscadorRef = viewChild<ElementRef<HTMLInputElement>>('buscador');
@@ -56,6 +66,15 @@ export class PedidoDetalleComponent implements OnInit {
   readonly codigo = +this.route.snapshot.paramMap.get('id')!;
 
   private resaltadoTimer: ReturnType<typeof setTimeout> | null = null;
+
+  //scanner
+  private stream?: MediaStream;
+  private escaneoTimer: ReturnType<typeof setTimeout> | null = null;
+  private escaneoActivo = false;
+
+  constructor() {
+    inject(DestroyRef).onDestroy(() => this.detenerEscaner());
+  }
 
   // ---------- datos ----------
   pedido = signal<Creposicion | null>(null);
@@ -149,16 +168,6 @@ export class PedidoDetalleComponent implements OnInit {
   puedeEnviar = computed(() =>
     !!this.pedido() && this.items().length > 0 && !this.enviando() && !this.subiendo()
   );
-
-  //Camara
-  camaraAbierta = signal(false);
-  dispositivoActual = signal<MediaDeviceInfo | undefined>(undefined);
-  readonly formatosCodigoBarras: BarcodeFormat[] = [
-    BarcodeFormat.EAN_13,
-    BarcodeFormat.EAN_8,
-    BarcodeFormat.CODE_128,
-    BarcodeFormat.UPC_A,
-  ];
 
   // ---------- ciclo de vida ----------
   ngOnInit() {
@@ -531,34 +540,140 @@ export class PedidoDetalleComponent implements OnInit {
   }
 
   //scanner
+  // ---------- scanner ----------
+  private readonly canvas = document.createElement('canvas');
+  private readonly ctx = this.canvas.getContext('2d', {willReadFrequently: true})!;
+  private ultimoCodigo = '';
+  private repeticiones = 0;
+
   abrirCamara() {
     if (this.ocupado()) return;
+    this.ultimoCodigo = '';
+    this.repeticiones = 0;
     this.camaraAbierta.set(true);
+    setTimeout(() => this.iniciarEscaner());   // espera a que exista el <video>
   }
 
   cerrarCamara() {
+    this.detenerEscaner();
     this.camaraAbierta.set(false);
   }
 
-  camarasEncontradas(dispositivos: MediaDeviceInfo[]) {
-    const trasera = dispositivos.find(d => /back|rear|environment|trasera/i.test(d.label));
-    this.dispositivoActual.set(trasera ?? dispositivos[dispositivos.length - 1]);
-  }
+  private async iniciarEscaner() {
+    const video = this.videoRef()?.nativeElement;
+    if (!video) return;
 
-  permisoCamara(permitido: boolean) {
-    if (!permitido) {
+    this.escaneoActivo = true;
+    try {
+      const stream = await navigator.mediaDevices.getUserMedia({
+        video: {
+          facingMode: {ideal: 'environment'},
+          width: {ideal: 1920},
+          height: {ideal: 1080},
+        },
+        audio: false,
+      });
+
+      // el usuario pudo cerrar el modal mientras aceptaba el permiso
+      if (!this.escaneoActivo) {
+        stream.getTracks().forEach(t => t.stop());
+        return;
+      }
+
+      this.stream = stream;
+      video.muted = true;               // iOS lo exige
+      video.srcObject = stream;
+      await video.play();
+
+      // enfoque continuo y zoom, cada uno por separado (si uno falla, no arrastra al otro)
+      const track = stream.getVideoTracks()[0];
+      const caps: any = track.getCapabilities?.() ?? {};
+
+      if (caps.focusMode?.includes('continuous')) {
+        await track.applyConstraints({advanced: [{focusMode: 'continuous'} as any]}).catch(() => {});
+      }
+      if (caps.zoom) {
+        const z = Math.min(caps.zoom.max, Math.max(caps.zoom.min, 1.5));
+        await track.applyConstraints({advanced: [{zoom: z} as any]}).catch(() => {});
+      }
+
+      this.leerFrame(video);
+    } catch (e) {
+      console.error(e);
       this.cerrarCamara();
       this.notif.showToast({
         type: 'warning',
         summary: 'Cámara',
-        detail: 'Debes permitir el acceso a la cámara',
+        detail: 'No se pudo abrir la cámara. Revisa los permisos.',
         autoCloseMs: 3000,
       });
     }
   }
 
+  private async leerFrame(video: HTMLVideoElement) {
+    if (!this.escaneoActivo) return;
+
+    try {
+      if (video.readyState >= 2 && video.videoWidth > 0) {
+        this.canvas.width = video.videoWidth;
+        this.canvas.height = video.videoHeight;
+        this.ctx.drawImage(video, 0, 0);
+
+        const imageData = this.ctx.getImageData(0, 0, this.canvas.width, this.canvas.height);
+        const resultados = await readBarcodes(imageData, {
+          formats: ['EAN-13'],
+          tryHarder: true,
+          tryRotate: true,
+          tryInvert: true,
+          tryDownscale: true,
+          maxNumberOfSymbols: 1,
+        });
+
+        if (resultados.length && resultados[0].isValid && this.escaneoActivo) {
+          // exige la misma lectura en 2 frames seguidos para descartar falsos positivos
+          if (this.confirmar(resultados[0].text)) {
+            this.codigoEscaneado(resultados[0].text);
+            return;
+          }
+        }
+      }
+    } catch (e) {
+      console.error('Error del lector', e);
+      this.cerrarCamara();
+      this.notif.showToast({
+        type: 'error',
+        summary: 'Escáner',
+        detail: 'No se pudo iniciar el lector de códigos',
+        autoCloseMs: 3000,
+      });
+      return;
+    }
+
+    this.escaneoTimer = setTimeout(() => this.leerFrame(video), 150);
+  }
+
+  private confirmar(texto: string): boolean {
+    if (texto === this.ultimoCodigo) {
+      this.repeticiones++;
+    } else {
+      this.ultimoCodigo = texto;
+      this.repeticiones = 1;
+    }
+    return this.repeticiones >= 2;
+  }
+
+  private detenerEscaner() {
+    this.escaneoActivo = false;
+    if (this.escaneoTimer) {
+      clearTimeout(this.escaneoTimer);
+      this.escaneoTimer = null;
+    }
+    this.stream?.getTracks().forEach(t => t.stop());
+    this.stream = undefined;
+  }
+
   codigoEscaneado(codigo: string) {
-    this.cerrarCamara();          // el @if destruye el scanner y apaga la cámara
+    this.cerrarCamara();
     this.barraItem.set(codigo);
     this.mostrarProducto();
   }
