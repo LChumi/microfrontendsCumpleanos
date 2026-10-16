@@ -937,7 +937,12 @@
 								"glob": "**/*",
 								"input": "projects/mfe-pedidos/public",
 								"output": "."
-							}
+							},
+              {
+                "glob": "zxing_reader.wasm",
+                "input": "node_modules/zxing-wasm/dist/reader",
+                "output": "."
+              }
 						],
 						"styles": [
 							"projects/mfe-pedidos/src/styles.scss"
