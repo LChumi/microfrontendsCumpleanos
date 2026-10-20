@@ -1,21 +1,12 @@
-import {Component, computed, ElementRef, inject, OnInit, signal, viewChild, WritableSignal} from '@angular/core';
-import {ActivatedRoute, Router} from '@angular/router';
-import {CreposicionService} from '../../../../core/services/creposicion.service';
-import {DreposicionService} from '../../../../core/services/dreposicion.service';
+import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import {getSessionItem} from '../../../../core/utils/storage.utils';
-import {Creposicion, ID} from '../../../../core/models/creposicion';
-import {ProductoReposicionDto} from '../../../../core/dto/producto-reposicion.dto';
-import {Dreposicion} from '../../../../core/models/dreposicion';
-import {cargarImagenDefecto} from '../../../../core/utils/images.utils';
 import {ProductoImagenComponent} from '../components/producto-imagen/producto-imagen.component';
 import {CantidadEditableComponent} from '../components/cantidad-editable/cantidad-editable.component';
 import {EliminarConfirmComponent} from '../components/eliminar-confirm/eliminar-confirm.component';
 import {GondolaSelectComponent} from '../components/gondola-select/gondola-select.component';
 import {StockOptimoService} from '../../../../core/services/stock-optimo.service';
 import {NonNullableFormBuilder, ReactiveFormsModule, Validators} from "@angular/forms";
-import {ProductoReposicionUpdateDto} from '../../../../core/dto/producto-reposicion-update.dto';
-import {finalize, map, Observable} from 'rxjs';
-import {NotificationService} from 'shared-notifications';
+import {map, Observable} from 'rxjs';
 import {BarcodeScannerComponent} from '../components/barcode-scanner/barcode-scanner.component';
 import {ExcelUploadButtonComponent} from '../components/excel-upload-button/excel-upload-button.component';
 import {ReposicionBase} from '../shared/reposicion-base';
@@ -31,8 +22,6 @@ import {EncabezadoEnvioComponent} from '../shared/encabezado-envio/encabezado-en
   standalone: true,
   imports: [
     ProductoImagenComponent,
-    CantidadEditableComponent,
-    EliminarConfirmComponent,
     GondolaSelectComponent,
     ReactiveFormsModule,
     BarcodeScannerComponent,

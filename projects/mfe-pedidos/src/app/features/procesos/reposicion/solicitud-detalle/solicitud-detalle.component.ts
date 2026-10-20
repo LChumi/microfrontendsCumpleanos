@@ -9,14 +9,12 @@ import {EliminarConfirmComponent} from '../components/eliminar-confirm/eliminar-
 import {PaginatorModule} from 'primeng/paginator';
 import {ProductoImagenComponent} from '../components/producto-imagen/producto-imagen.component';
 import {ReactiveFormsModule} from '@angular/forms';
-import {finalize, map, Observable, switchMap, throwError} from 'rxjs';
+import {map, Observable, switchMap, throwError} from 'rxjs';
 import {BodegaStoreService} from '../../../../core/services/bodega-store.service';
 import {DatePipe} from '@angular/common';
 import {BarcodeScannerComponent} from '../components/barcode-scanner/barcode-scanner.component';
 import {ExcelUploadButtonComponent} from '../components/excel-upload-button/excel-upload-button.component';
 import {EmpresaCodigosRequest} from '../../../../core/dto/empresa-codigos-request';
-import {PrePedidoRequestDto} from '../../../../core/dto/prepedido-request.dto';
-import {HttpErrorResponse} from '@angular/common/http';
 import {ReposicionBase} from '../shared/reposicion-base';
 import {EnvioResultado} from '../../../../core/dto/envio-resultado';
 import {MetricaComponent} from '../shared/metrica/metrica.component';
@@ -32,8 +30,6 @@ const RUTA_LISTADO = '/erp/pedidos/procesos/transferencia/nuevo-solicitud';
   selector: 'app-solicitud-detalle',
   standalone: true,
   imports: [
-    CantidadEditableComponent,
-    EliminarConfirmComponent,
     PaginatorModule,
     ProductoImagenComponent,
     ReactiveFormsModule,
