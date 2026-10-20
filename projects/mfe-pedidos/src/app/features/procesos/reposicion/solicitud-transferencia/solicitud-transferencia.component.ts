@@ -46,7 +46,7 @@ export class SolicitudTransferenciaComponent implements OnInit {
     return this.pendientes().map(r => ({
       ...r,
       nombreBodega: nombreDe(r.bodegaId),
-      bodSolicita: nombreDe(r.bodegaId) // TODO: usar el campo real de bodega solicitante
+      bodSolicita: nombreDe(r.bodegaId)
     }));
   });
 

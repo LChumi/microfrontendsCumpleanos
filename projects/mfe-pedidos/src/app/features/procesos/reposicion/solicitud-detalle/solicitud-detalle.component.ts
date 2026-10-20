@@ -13,7 +13,7 @@ import {CantidadEditableComponent} from '../components/cantidad-editable/cantida
 import {EliminarConfirmComponent} from '../components/eliminar-confirm/eliminar-confirm.component';
 import {PaginatorModule} from 'primeng/paginator';
 import {ProductoImagenComponent} from '../components/producto-imagen/producto-imagen.component';
-import {NonNullableFormBuilder, ReactiveFormsModule, Validators} from '@angular/forms';
+import {ReactiveFormsModule} from '@angular/forms';
 import {ActivatedRoute, Router} from '@angular/router';
 import {CreposicionService} from '../../../../core/services/creposicion.service';
 import {DreposicionService} from '../../../../core/services/dreposicion.service';
@@ -28,20 +28,12 @@ import {cargarImagenDefecto} from '../../../../core/utils/images.utils';
 import {ID} from '../../../../core/models/gondola';
 import {BodegaStoreService} from '../../../../core/services/bodega-store.service';
 import {takeUntilDestroyed} from '@angular/core/rxjs-interop';
-import {readBarcodes} from 'zxing-wasm/reader';
 import {DatePipe} from '@angular/common';
+import {BarcodeScannerComponent} from '../components/barcode-scanner/barcode-scanner.component';
+import {ExcelUploadButtonComponent} from '../components/excel-upload-button/excel-upload-button.component';
 
 // TODO: pon aquí la ruta real del listado de solicitudes de transferencia
-const RUTA_LISTADO = '/erp/pedidos/procesos/transferencia/nueva-solicitud';
-
-const OPCIONES_ZXING = {
-  formats: ['EAN-13'] as ['EAN-13'],
-  tryHarder: true,
-  tryRotate: true,
-  tryInvert: true,
-  tryDownscale: true,
-  maxNumberOfSymbols: 1,
-};
+const RUTA_LISTADO = '/erp/pedidos/procesos/transferencia/nuevo-solicitud';
 
 @Component({
   selector: 'app-solicitud-detalle',
@@ -52,14 +44,16 @@ const OPCIONES_ZXING = {
     PaginatorModule,
     ProductoImagenComponent,
     ReactiveFormsModule,
-    DatePipe
+    DatePipe,
+    BarcodeScannerComponent,
+    ExcelUploadButtonComponent
   ],
   templateUrl: './solicitud-detalle.component.html',
   styles: ``
 })
 export class SolicitudDetalleComponent implements OnInit {
 
-  // ---------- dependencias ----------
+  //  dependencias
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
@@ -72,52 +66,45 @@ export class SolicitudDetalleComponent implements OnInit {
   private readonly usuario = getSessionItem('username')!;
   readonly codigo = Number(this.route.snapshot.paramMap.get('id'));
 
-  // ---------- refs ----------
-  readonly videoRef = viewChild<ElementRef<HTMLVideoElement>>('video');
+  //  refs
   readonly buscadorRef = viewChild<ElementRef<HTMLInputElement>>('buscador');
   readonly cantidadRef = viewChild<ElementRef<HTMLInputElement>>('cantidadInput');
-  readonly excelRef = viewChild<ElementRef<HTMLInputElement>>('excelInput');
 
-  // ---------- datos ----------
+  //  datos
   readonly solicitud = signal<Creposicion | null>(null);
   readonly items = signal<ProductoReposicionDto[]>([]);
   readonly cargandoItems = signal(true);
 
-  // ---------- búsqueda ----------
+  //  búsqueda
   readonly barraItem = signal('');
   readonly buscando = signal(false);
   readonly encontrados = signal<ProductoReposicionDto[]>([]);
   readonly producto = signal<ProductoReposicionDto | null>(null);
 
-  // ---------- captura del producto ----------
+  //  captura del producto
   readonly cantidad = signal(1);
   readonly observacion = signal('');
   readonly agregando = signal(false);
 
-  // ---------- acciones sobre items ----------
+  //  acciones sobre items
   readonly eliminandoId = signal<number | null>(null);
   readonly resaltadoId = signal<number | null>(null);
   private resaltadoTimer: ReturnType<typeof setTimeout> | null = null;
 
-  // ---------- visor / cámara ----------
+  //  visor / cámara
   readonly imagenAmpliada = signal<string | null>(null);
   readonly camaraAbierta = signal(false);
-  readonly procesandoFoto = signal(false);
 
-  // ---------- estado de operaciones ----------
-  readonly subiendo = signal(false);
+  //  estado de operaciones
+  subiendo = signal(false);
   readonly enviando = signal(false);
   readonly confirmandoEnvio = signal(false);
 
-  // ---------- nombres de bodega ----------
+  //  nombres de bodega
   readonly bodegaRequiere = computed(() => this.nombreBodega(this.solicitud()?.bodegaId));
   readonly bodegaSolicita = computed(() => this.nombreBodega(this.solicitud()?.bodegaFinId));
 
-  // ---------- derivados ----------
-  readonly puedeSubir = computed(() =>
-    !!this.solicitud() && !this.subiendo() && !this.enviando()
-  );
-
+  //  derivados
   /** true mientras hay una operación que debe bloquear la captura */
   readonly ocupado = computed(() =>
     this.enviando() || this.subiendo() || this.cargandoItems() || this.buscando() || this.agregando()
@@ -152,24 +139,6 @@ export class SolicitudDetalleComponent implements OnInit {
     !!this.solicitud() && this.items().length > 0 && !this.enviando() && !this.subiendo()
   );
 
-  // ---------- scanner ----------
-  private stream?: MediaStream;
-  private escaneoTimer: ReturnType<typeof setTimeout> | null = null;
-  private escaneoActivo = false;
-  private ultimoCodigo = '';
-  private repeticiones = 0;
-  private erroresSeguidos = 0;
-  private readonly canvas = document.createElement('canvas');
-  private readonly ctx = this.canvas.getContext('2d', {willReadFrequently: true})!;
-  private detectorNativo?: { detect(src: ImageBitmapSource): Promise<{ rawValue: string }[]> };
-
-  constructor() {
-    this.destroyRef.onDestroy(() => {
-      this.detenerEscaner();
-      if (this.resaltadoTimer) clearTimeout(this.resaltadoTimer);
-    });
-  }
-
   ngOnInit() {
     this.bodegaStore.cargar();
 
@@ -186,7 +155,7 @@ export class SolicitudDetalleComponent implements OnInit {
     this.cargarItems();
   }
 
-  // ---------- helpers ----------
+  //  helpers
   private nombreBodega(id?: number | null): string {
     if (!id) return '—';
     const bodegas = this.bodegaStore.bodegas();
@@ -213,8 +182,8 @@ export class SolicitudDetalleComponent implements OnInit {
     setTimeout(() => this.buscadorRef()?.nativeElement.focus());
   }
 
-  // ---------- carga de items ----------
-  private cargarItems() {
+  //  carga de items
+  cargarItems() {
     this.cargandoItems.set(true);
     this.dreposicionSvc.getProductsByCreposicion(this.codigo)
       .pipe(
@@ -230,7 +199,7 @@ export class SolicitudDetalleComponent implements OnInit {
       });
   }
 
-  // ---------- búsqueda ----------
+  //  búsqueda
   mostrarProducto() {
     const bodega = this.solicitud()?.bodegaId;
     const bodFin = this.solicitud()?.bodegaFinId;
@@ -340,7 +309,7 @@ export class SolicitudDetalleComponent implements OnInit {
     this.resaltadoTimer = setTimeout(() => this.resaltadoId.set(null), 3500);
   }
 
-  // ---------- agregar ----------
+  //  agregar
   agregar() {
     if (!this.puedeAgregar()) return;
     const p = this.producto()!;
@@ -378,7 +347,7 @@ export class SolicitudDetalleComponent implements OnInit {
       });
   }
 
-  // ---------- items ----------
+  //  items
   actualizarCanApr(p: ProductoReposicionDto, canApr: number) {
     const request: ProductoReposicionUpdateDto = {
       codigo: p.id,
@@ -423,7 +392,7 @@ export class SolicitudDetalleComponent implements OnInit {
       });
   }
 
-  // ---------- enviar solicitud ----------
+  //  enviar solicitud
   pedirConfirmacionEnvio() {
     if (!this.puedeEnviar()) return;
     this.confirmandoEnvio.set(true);
@@ -467,288 +436,28 @@ export class SolicitudDetalleComponent implements OnInit {
       });
   }
 
-  // ---------- navegación ----------
+  //  navegación
   regresar() {
     void this.router.navigate([RUTA_LISTADO]);
   }
 
-  // ---------- carga de Excel ----------
-  abrirSelectorExcel() {
-    this.excelRef()?.nativeElement.click();
-  }
+  //  carga de Excel
+  readonly subirExcel = (file: File) => this.dreposicionSvc.uploadFile(file, this.codigo)
 
-  onExcelSeleccionado(e: Event) {
-    const input = e.target as HTMLInputElement;
-    const file = input.files?.[0];
-    input.value = '';   // permite volver a elegir el mismo archivo
-    if (!file || !this.puedeSubir()) return;
-
-    if (!/\.(xlsx|xls)$/i.test(file.name)) {
-      this.notif.showToast({
-        type: 'warning',
-        summary: 'Archivo no válido',
-        detail: 'Solo se permiten archivos Excel (.xlsx o .xls)',
-        autoCloseMs: 3000,
-      });
-      return;
-    }
-
-    this.subiendo.set(true);
-
-    this.dreposicionSvc.uploadFile(file, this.codigo)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: resp => {
-          this.subiendo.set(false);
-          this.notif.showToast({
-            type: resp.success ? 'success' : 'error',
-            summary: resp.success ? 'Excel cargado' : 'No se pudo cargar',
-            detail: resp.message,
-            autoCloseMs: 6000,   // el mensaje puede traer observaciones largas
-          });
-          if (resp.success) this.cargarItems();
-        },
-        error: err => {
-          console.error(err);
-          this.subiendo.set(false);
-          this.toastError('No se pudo procesar el archivo');
-        },
-      });
-  }
-
-  // ======================================================================
   // SCANNER
-  // ======================================================================
 
   abrirCamara() {
     if (this.ocupado()) return;
-    this.ultimoCodigo = '';
-    this.repeticiones = 0;
-    this.erroresSeguidos = 0;
     this.camaraAbierta.set(true);
-    setTimeout(() => void this.iniciarEscaner());   // espera a que exista el <video>
   }
 
   cerrarCamara() {
-    this.detenerEscaner();
     this.camaraAbierta.set(false);
   }
 
-  /** Detector nativo (Google, Chrome Android) si soporta EAN-13. Si no, queda zxing. */
-  private async prepararDetector() {
-    if (this.detectorNativo) return;
-
-    const BD = (window as any).BarcodeDetector;
-    if (!BD) return;
-
-    try {
-      const formatos: string[] = await BD.getSupportedFormats();
-      if (formatos.includes('ean_13')) {
-        this.detectorNativo = new BD({formats: ['ean_13']});
-      }
-    } catch (e) {
-      console.warn('No se pudo iniciar el detector nativo', e);
-    }
-  }
-
-  private ean13Valido(c: string): boolean {
-    if (!/^\d{13}$/.test(c)) return false;
-    let s = 0;
-    for (let i = 0; i < 12; i++) s += Number(c[i]) * (i % 2 === 0 ? 1 : 3);
-    return (10 - (s % 10)) % 10 === Number(c[12]);
-  }
-
-  private async leerConZxing(img: ImageData): Promise<string | null> {
-    const r = await readBarcodes(img, OPCIONES_ZXING);
-    return r[0]?.isValid ? r[0].text : null;
-  }
-
-  /** Devuelve el texto leído o null. Nativo primero, zxing como respaldo. */
-  private async detectar(video: HTMLVideoElement): Promise<string | null> {
-    if (this.detectorNativo) {
-      try {
-        const r = await this.detectorNativo.detect(video);
-        return r[0]?.rawValue ?? null;
-      } catch (e) {
-        console.warn('Detector nativo falló, paso a zxing', e);
-        this.detectorNativo = undefined;
-      }
-    }
-
-    this.canvas.width = video.videoWidth;
-    this.canvas.height = video.videoHeight;
-    this.ctx.drawImage(video, 0, 0);
-    return this.leerConZxing(this.ctx.getImageData(0, 0, video.videoWidth, video.videoHeight));
-  }
-
-  private async iniciarEscaner() {
-    const video = this.videoRef()?.nativeElement;
-    if (!video) return;
-
-    this.escaneoActivo = true;
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({
-        video: {
-          facingMode: {ideal: 'environment'},
-          width: {ideal: 1920},
-          height: {ideal: 1080},
-        },
-        audio: false,
-      });
-
-      // el usuario pudo cerrar el modal mientras aceptaba el permiso
-      if (!this.escaneoActivo) {
-        stream.getTracks().forEach(t => t.stop());
-        return;
-      }
-
-      this.stream = stream;
-      video.muted = true;               // iOS lo exige
-      video.srcObject = stream;
-      await video.play();
-
-      // enfoque continuo si el equipo lo permite
-      const track = stream.getVideoTracks()[0];
-      const caps: any = track.getCapabilities?.() ?? {};
-      if (caps.focusMode?.includes('continuous')) {
-        await track.applyConstraints({advanced: [{focusMode: 'continuous'} as any]}).catch(() => {});
-      }
-
-      await this.prepararDetector();
-      if (!this.escaneoActivo) return;
-
-      await this.leerFrame(video);
-    } catch (e) {
-      console.error(e);
-      this.cerrarCamara();
-      this.notif.showToast({
-        type: 'warning',
-        summary: 'Cámara',
-        detail: 'No se pudo abrir la cámara. Revisa los permisos.',
-        autoCloseMs: 3000,
-      });
-    }
-  }
-
-  private async leerFrame(video: HTMLVideoElement) {
-    if (!this.escaneoActivo) return;
-
-    try {
-      if (video.readyState >= 2 && video.videoWidth > 0) {
-        const texto = await this.detectar(video);
-        this.erroresSeguidos = 0;
-        if (texto && this.ean13Valido(texto) && this.escaneoActivo && this.confirmar(texto)) {
-          this.codigoEscaneado(texto);
-          return;
-        }
-      }
-    } catch (e) {
-      console.warn('Lectura fallida, sigo intentando', e);
-      if (++this.erroresSeguidos >= 5) {
-        this.cerrarCamara();
-        this.notif.showToast({
-          type: 'error',
-          summary: 'Escáner',
-          detail: 'No se pudo iniciar el lector de códigos',
-          autoCloseMs: 3000,
-        });
-        return;
-      }
-    }
-
-    this.escaneoTimer = setTimeout(() => void this.leerFrame(video), 150);
-  }
-
-  /** Exige la misma lectura en 2 frames seguidos (el checksum no basta contra falsos positivos). */
-  private confirmar(texto: string): boolean {
-    if (texto === this.ultimoCodigo) {
-      this.repeticiones++;
-    } else {
-      this.ultimoCodigo = texto;
-      this.repeticiones = 1;
-    }
-    return this.repeticiones >= 2;
-  }
-
-  private detenerEscaner() {
-    this.escaneoActivo = false;
-    if (this.escaneoTimer) {
-      clearTimeout(this.escaneoTimer);
-      this.escaneoTimer = null;
-    }
-    this.stream?.getTracks().forEach(t => t.stop());
-    this.stream = undefined;
-  }
-
-  private codigoEscaneado(codigo: string) {
-    this.cerrarCamara();
+  onCodigoEscaneado(codigo: string) {
+    this.cerrarCamara()
     this.barraItem.set(codigo);
-    this.mostrarProducto();
-  }
-
-  // ---------- lectura desde foto ----------
-  abrirSelectorFoto() {
-    this.cerrarCamara();   // suelta la cámara en vivo
-
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = 'image/*';
-    input.setAttribute('capture', 'environment');   // en PC se ignora
-
-    input.onchange = () => {
-      const file = input.files?.[0];
-      if (file) void this.procesarFoto(file);
-    };
-
-    input.click();   // debe ejecutarse dentro del clic del usuario, sin await antes
-  }
-
-  private async procesarFoto(file: File) {
-    this.procesandoFoto.set(true);
-    try {
-      const texto = await this.leerArchivo(file);
-      if (texto && this.ean13Valido(texto)) {
-        this.codigoEscaneado(texto);
-        return;
-      }
-      this.notif.showToast({
-        type: 'warning',
-        summary: 'Sin lectura',
-        detail: 'No se detectó un código. Intenta otra foto, más cerca y enfocada.',
-        autoCloseMs: 3500,
-      });
-    } catch (err) {
-      console.error('Error leyendo foto', err);
-      this.notif.showToast({
-        type: 'error',
-        summary: 'Error',
-        detail: 'No se pudo procesar la foto',
-        autoCloseMs: 3500,
-      });
-    } finally {
-      this.procesandoFoto.set(false);
-    }
-  }
-
-  private async leerArchivo(file: File): Promise<string | null> {
-    await this.prepararDetector();
-
-    // reduce la foto (12 MP+ es lento y no aporta); respeta la orientación EXIF
-    const bmp = await createImageBitmap(file, {resizeWidth: 1920, resizeQuality: 'high'});
-    try {
-      if (this.detectorNativo) {
-        try {
-          const r = await this.detectorNativo.detect(bmp);
-          if (r[0]?.rawValue) return r[0].rawValue;
-        } catch { /* paso a zxing */ }
-      }
-
-      this.canvas.width = bmp.width;
-      this.canvas.height = bmp.height;
-      this.ctx.drawImage(bmp, 0, 0);
-      return await this.leerConZxing(this.ctx.getImageData(0, 0, bmp.width, bmp.height));
-    } finally {
-      bmp.close();
-    }
+    this.mostrarProducto()
   }
 }
