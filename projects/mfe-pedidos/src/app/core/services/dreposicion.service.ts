@@ -45,6 +45,11 @@ export class DreposicionService {
     return this.http.get<ProductoReposicionDto[]>(`${this.url}/dreposicion/buscar-productos/${bodega}`, {params})
   }
 
+  getProductsByBodegas(bodega:number, bodFin:number, data:string): Observable<ProductoReposicionDto[]>{
+    const params = new HttpParams().set('data', data)
+    return this.http.get<ProductoReposicionDto[]>(`${this.url}/dreposicion/buscar-productos/${bodega}/${bodFin}`, {params})
+  }
+
   uploadFile(file: File, creposicion: number) {
 
     const formData = new FormData();

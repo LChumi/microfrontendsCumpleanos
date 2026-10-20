@@ -6,13 +6,13 @@ export interface ProductoReposicionDto {
   barra:          string;
   item:           string;
   descripcion:    string;
-  observacion:    string;
+  observacion:    string | null;
   usuario:        string;
   gondola:        string;
   gonCod?:        number;
   canSol:         number;
   canApr:         number;
-  stock:          number;
+  stock:          number | null;
   transito:       number;
   codigoStock:    number;
   min:            number;

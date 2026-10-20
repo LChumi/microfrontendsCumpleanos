@@ -103,6 +103,10 @@ export class GenerarReposicionComponent implements OnInit{
     this.anular([r.id.codigo]);
   }
 
+  ir(){
+    void this.router.navigate(['/erp/pedidos/procesos/transferencia/nuevo-solicitud']);
+  }
+
   private anular(codigos: number[]) {
     if (!codigos.length || this.anulando()) return;
 

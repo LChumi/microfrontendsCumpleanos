@@ -11,6 +11,14 @@
     }
   </div>
 
+  <button type="button"
+          [disabled]="anulando()"
+          (click)="ir()"
+          aria-label="Eliminar pedido"
+          class="appearance-none self-start border-0 shadow-none rounded-lg bg-red-50 p-2 text-red-600 active:bg-red-100 disabled:opacity-50">
+    IR
+  </button>
+
   <div class="flex shrink-0 items-center gap-2">
     @if (algunoSeleccionado()) {
       <button
