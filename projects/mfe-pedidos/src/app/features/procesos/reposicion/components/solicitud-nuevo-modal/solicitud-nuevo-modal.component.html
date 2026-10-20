@@ -1,0 +1,48 @@
+<div class="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4" (click)="cancelar.emit()">
+  <div class="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl" (click)="$event.stopPropagation()">
+    <div class="flex items-center justify-between">
+      <div><h3 class="text-base font-semibold text-slate-800">Nueva Solicitud</h3>
+        <p class="mt-0.5 text-xs text-slate-500">Solicitud de transferencia</p></div>
+      <button type="button" (click)="cancelar.emit()"
+              class="border-0 rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-600">✕
+      </button>
+    </div>
+
+    <div class="relative mt-5 space-y-4">
+      <div class="relative z-30">
+        <span class="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500">Bodega Requiere</span>
+        <app-bodega-select (bodegaSeleccionada)="onBodegaSeleccionada($event)"/>
+      </div>
+      <div class="relative z-20">
+        <span class="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500">Bodega Solicita</span>
+        <app-bodega-select (bodegaSeleccionada)="onBodegaFinSeleccionada($event)"/>
+      </div>
+
+      <label class="block">
+        <span class="mb-1.5 block text-xs font-semibold uppercase tracking-wide text-slate-500">Observaciones</span>
+        <textarea
+          rows="3"
+          [value]="observacion()"
+          (input)="observacion.set($any($event.target).value)"
+          placeholder="Solicitud de transferencia..."
+          class="w-full resize-none rounded-xl border border-slate-300 bg-white px-3.5 py-3 text-sm uppercase text-slate-700 shadow-sm outline-none transition-all duration-150 placeholder:text-slate-400 hover:border-slate-400 focus:border-blue-500 focus:ring-2 focus:ring-blue-500/15"
+        ></textarea>
+      </label>
+
+      @if (error()) {
+        <p role="alert" class="rounded-lg bg-red-50 px-3 py-2 text-xs font-medium text-red-600">{{ error() }}</p>
+      }
+    </div>
+
+    <div class="mt-6 flex justify-end gap-2 border-t border-slate-100 pt-4">
+      <button type="button" (click)="cancelar.emit()"
+              class="rounded-lg bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-600 transition hover:bg-slate-200">
+        Cancelar
+      </button>
+      <button type="button" [disabled]="!puedeGuardar()" (click)="guardar()"
+              class="rounded-lg bg-blue-500 px-5 py-2 text-sm font-semibold text-white transition hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400">
+        {{ guardando() ? 'Guardando...' : 'Guardar' }}
+      </button>
+    </div>
+  </div>
+</div>
