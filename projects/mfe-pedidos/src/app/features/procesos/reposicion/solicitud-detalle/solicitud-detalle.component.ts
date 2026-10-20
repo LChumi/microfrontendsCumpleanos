@@ -4,8 +4,6 @@ import {
   inject,
   OnInit,
 } from '@angular/core';
-import {CantidadEditableComponent} from '../components/cantidad-editable/cantidad-editable.component';
-import {EliminarConfirmComponent} from '../components/eliminar-confirm/eliminar-confirm.component';
 import {PaginatorModule} from 'primeng/paginator';
 import {ProductoImagenComponent} from '../components/producto-imagen/producto-imagen.component';
 import {ReactiveFormsModule} from '@angular/forms';

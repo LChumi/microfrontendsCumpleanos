@@ -1,8 +1,6 @@
 import {Component, computed, inject, OnInit, signal} from '@angular/core';
 import {getSessionItem} from '../../../../core/utils/storage.utils';
 import {ProductoImagenComponent} from '../components/producto-imagen/producto-imagen.component';
-import {CantidadEditableComponent} from '../components/cantidad-editable/cantidad-editable.component';
-import {EliminarConfirmComponent} from '../components/eliminar-confirm/eliminar-confirm.component';
 import {GondolaSelectComponent} from '../components/gondola-select/gondola-select.component';
 import {StockOptimoService} from '../../../../core/services/stock-optimo.service';
 import {NonNullableFormBuilder, ReactiveFormsModule, Validators} from "@angular/forms";
