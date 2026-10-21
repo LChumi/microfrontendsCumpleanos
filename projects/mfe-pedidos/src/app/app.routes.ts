@@ -45,6 +45,26 @@ export const routes: Routes = [
               import('./features/procesos/reposicion/pedido-detalle/pedido-detalle.component').then(m => m.PedidoDetalleComponent)
           }
         ]
+      },
+      {
+        path: 'transferencia',
+        data: {breadcrumb: 'Solicitud de Transferencia'},
+        children:[
+          {
+            path: 'nueva-solicitud',
+            data: {breadcrumb: 'Nuevo Solicitud', favorite: true},
+            title: 'Nueva Solicitud de Transferencia',
+            loadComponent: () =>
+              import('./features/procesos/reposicion/solicitud-transferencia/solicitud-transferencia.component').then(m => m.SolicitudTransferenciaComponent)
+          },
+          {
+            path: 'solicitud/:id',
+            data: {breadcrumb: 'Solicitud-transferencia'},
+            title: 'Solicitud Transferencia | Assist Web',
+            loadComponent: () =>
+              import('./features/procesos/reposicion/solicitud-detalle/solicitud-detalle.component').then(m => m.SolicitudDetalleComponent)
+          }
+        ]
       }
     ]
   },
