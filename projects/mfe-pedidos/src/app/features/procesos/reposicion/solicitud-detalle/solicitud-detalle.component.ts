@@ -22,7 +22,7 @@ import {BuscadorBarraComponent} from '../shared/buscador-barra/buscador-barra.co
 import {EncabezadoEnvioComponent} from '../shared/encabezado-envio/encabezado-envio.component';
 
 // TODO: pon aquí la ruta real del listado de solicitudes de transferencia
-const RUTA_LISTADO = '/erp/pedidos/procesos/transferencia/nuevo-solicitud';
+const RUTA_LISTADO = '/erp/pedidos/procesos/transferencia/nueva-solicitud';
 
 @Component({
   selector: 'app-solicitud-detalle',

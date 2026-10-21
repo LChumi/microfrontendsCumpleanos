@@ -329,7 +329,7 @@ export abstract class ReposicionBase {
 
   protected fallo(detail: string, err?: unknown) {
     if (err) console.error(err);
-    const msg = (err as HttpErrorResponse)?.error?.message;
+    const msg = err instanceof HttpErrorResponse ? err.error?.message : (err as Error)?.message;
     this.notif.showToast({
       type: 'error', summary: 'Error', detail: msg ?? detail, autoCloseMs: 4000,
     });
