@@ -1,4 +1,4 @@
-<!-- ============ CABECERA ============ -->
+<!--CABECERA-->
 <div
   class="sticky top-0 z-20 flex items-center justify-between gap-2 border-b border-slate-200 bg-white/95 px-3 py-3 backdrop-blur md:mt-3 md:px-4">
   <div class="flex min-w-0 flex-wrap items-center gap-x-2 gap-y-0.5">
@@ -10,14 +10,6 @@
       </span>
     }
   </div>
-
-  <button type="button"
-          [disabled]="anulando()"
-          (click)="ir()"
-          aria-label="Eliminar pedido"
-          class="appearance-none self-start border-0 shadow-none rounded-lg bg-red-50 p-2 text-red-600 active:bg-red-100 disabled:opacity-50">
-    IR
-  </button>
 
   <div class="flex shrink-0 items-center gap-2">
     @if (algunoSeleccionado()) {
@@ -49,7 +41,7 @@
   <p class="p-8 text-center text-sm text-slate-400">No tienes pedidos en proceso.</p>
 }
 
-<!-- ============ DESKTOP ============ -->
+<!--DESKTOP-->
 <div class="hidden overflow-x-auto md:block">
   <table class="w-full text-sm">
     <thead class="bg-slate-50 text-left text-xs uppercase text-slate-500">
@@ -120,7 +112,7 @@
   </table>
 </div>
 
-<!-- ============ MOBILE ============ -->
+<!--MOBILE-->
 @if (reposiciones().length > 0) {
   <div class="flex items-center gap-2 px-4 pt-4 md:hidden">
     <input id="sel-todos-m" type="checkbox"
