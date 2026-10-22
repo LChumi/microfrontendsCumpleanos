@@ -12,7 +12,11 @@ export class GondolaService {
   private readonly url = `${environment.apiUrl}/pedidos`
   private readonly http = inject(HttpClient)
 
-  getGondolasByUser(empresa: number, user: number, bodega: number): Observable<Gondola[]> {
+  getGondolasByUser(empresa: number, user: number): Observable<Gondola[]> {
+    return this.http.get<Gondola[]>(`${this.url}/gondolas/list/user/${empresa}/${user}`);
+  }
+
+  getGondolasByUserBod(empresa: number, user: number, bodega: number): Observable<Gondola[]> {
     return this.http.get<Gondola[]>(`${this.url}/gondolas/list/user/${empresa}/${user}/${bodega}`);
   }
 

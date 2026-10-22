@@ -37,7 +37,6 @@ export class PedidoNuevoModalComponent {
     const almacenId = bodega?.almacen ?? null;
     this.bodegaId.set(id);
     this.almacenId.set(almacenId);
-    this.gondolaId.set(null);
   }
 
   guardar() {

@@ -22,7 +22,7 @@
       </div>
       @if (!urgente()) {
         <div class="relative z-20">
-          <app-gondola-select [bodegaId]="bodegaId()" [(seleccionada)]="gondolaId"/>
+          <app-gondola-select [(seleccionada)]="gondolaId"/>
         </div>
       }
 
@@ -48,7 +48,7 @@
               class="rounded-lg border-0 bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-600 shadow-none transition hover:bg-slate-200">
         Cancelar
       </button>
-      <button type="button" [disabled]="!bodegaId() || guardando()" (click)="guardar()"
+      <button type="button" [disabled]="!bodegaId() || (!urgente() && gondolaId() == null) || guardando()" (click)="guardar()"
               class="rounded-lg border-0 bg-blue-500 px-5 py-2 text-sm font-semibold text-white shadow-none transition hover:bg-blue-600 disabled:cursor-not-allowed disabled:bg-slate-200 disabled:text-slate-400">{{ guardando() ? 'Guardando...' : 'Guardar' }}
       </button>
     </div>

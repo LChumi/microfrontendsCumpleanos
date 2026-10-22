@@ -162,7 +162,7 @@
         </label>
 
         @if (esUrgente()) {
-          <app-gondola-select [bodegaId]="pedido()?.bodegaId ?? null" [(seleccionada)]="gondolaId"/>
+          <app-gondola-select [(seleccionada)]="gondolaId"/>
         } @else if (gondolaPedidoNombre()) {
           <p class="text-xs text-slate-500">
             Góndola de la reposición: <span class="font-semibold text-slate-700">{{ gondolaPedidoNombre() }}</span>
