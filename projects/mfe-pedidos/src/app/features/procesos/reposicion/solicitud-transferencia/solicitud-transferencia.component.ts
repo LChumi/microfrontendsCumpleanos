@@ -1,5 +1,5 @@
 import {Component, computed, DestroyRef, inject, OnInit, signal} from '@angular/core';
-import {DatePipe, NgTemplateOutlet} from '@angular/common';
+import {DatePipe, NgClass, NgTemplateOutlet} from '@angular/common';
 import {getSessionItem} from '../../../../core/utils/storage.utils';
 import {Router} from '@angular/router';
 import {BodegaStoreService} from '../../../../core/services/bodega-store.service';
@@ -14,7 +14,7 @@ const TIPO_SOLICITUD = 3;
 @Component({
   selector: 'app-solicitud-transferencia',
   standalone: true,
-  imports: [DatePipe, NgTemplateOutlet, SolicitudNuevoModalComponent],
+  imports: [DatePipe, NgTemplateOutlet, SolicitudNuevoModalComponent, NgClass],
   templateUrl: './solicitud-transferencia.component.html'
 })
 export class SolicitudTransferenciaComponent implements OnInit {
